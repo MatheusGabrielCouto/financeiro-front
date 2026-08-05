@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useMemo, useState } from "react"
-import { ExportCsvButton } from "@/components/export-csv-button"
+import { ExportDataButtons } from "@/components/export-data-buttons"
 import { ProxyActionButton } from "@/components/proxy-action-button"
 import { formatCurrency, formatDate, formatMonthLabel } from "@/lib/format"
 import type { CsvCell } from "@/lib/csv"
@@ -385,16 +385,17 @@ export const FechamentoWizard = ({
           {step === 5 ? (
             <div className="space-y-4">
               <p className="text-sm text-muted">
-                Exporte o resumo do fechamento ou baixe o CSV completo em
-                Relatórios / Extrato.
+                Exporte o resumo do fechamento em CSV ou PDF, ou baixe o mês
+                completo em Relatórios / Extrato.
               </p>
               <div className="flex flex-wrap gap-2">
-                <ExportCsvButton
+                <ExportDataButtons
                   filename={filename}
+                  title={`Fechamento — ${monthLabel}`}
                   headers={["Seção", "Item", "Valor", "Detalhe"]}
                   rows={exportRows}
-                  label="Exportar resumo CSV"
-                  ariaLabel={`Exportar fechamento de ${monthLabel}`}
+                  csvLabel="Resumo CSV"
+                  pdfLabel="Resumo PDF"
                   onExported={() => setExported(true)}
                 />
                 <button

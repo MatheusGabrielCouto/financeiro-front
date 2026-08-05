@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { redirect } from "next/navigation"
 import { CreateTransactionForm } from "@/components/create-transaction-form"
-import { ExportCsvButton } from "@/components/export-csv-button"
+import { ExportDataButtons } from "@/components/export-data-buttons"
 import { ExtratoMovements } from "@/components/extrato-movements"
 import { MonthYearFilter } from "@/components/month-year-filter"
 import { QuickTransactionLauncher } from "@/components/quick-transaction-launcher"
@@ -112,12 +112,13 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 <MonthYearFilter month={month} year={year} basePath="/extrato" />
               </Suspense>
               <div className="flex flex-wrap items-center justify-end gap-2">
-                <ExportCsvButton
+                <ExportDataButtons
                   filename={csvFilename}
+                  title={`Extrato — ${monthLabel}`}
                   headers={csvHeaders}
                   rows={csvRows}
-                  label="Exportar CSV"
-                  ariaLabel={`Exportar extrato de ${monthLabel} em CSV`}
+                  csvLabel="CSV"
+                  pdfLabel="PDF"
                 />
                 <QuickTransactionLauncher categories={categories} variant="toolbar" />
               </div>

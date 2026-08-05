@@ -1,0 +1,87 @@
+"use client"
+
+import type { KeyboardEvent } from "react"
+import { buildCsv, downloadCsv, type CsvCell } from "@/lib/csv"
+import { downloadPdfTable } from "@/lib/pdf"
+
+type ExportDataButtonsProps = {
+  filename: string
+  title?: string
+  headers: string[]
+  rows: CsvCell[][]
+  csvLabel?: string
+  pdfLabel?: string
+  disabled?: boolean
+  className?: string
+  onExported?: () => void
+}
+
+const defaultButtonClass =
+  "rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-slate-900/50"
+
+export const ExportDataButtons = ({
+  filename,
+  title,
+  headers,
+  rows,
+  csvLabel = "Exportar CSV",
+  pdfLabel = "Exportar PDF",
+  disabled = false,
+  className = defaultButtonClass,
+  onExported,
+}: ExportDataButtonsProps) => {
+  const isDisabled = disabled || rows.length === 0
+
+  const handleCsv = () => {
+    if (isDisabled) return
+    const csv = buildCsv(headers, rows)
+    downloadCsv(filename, csv)
+    onExported?.()
+  }
+
+  const handlePdf = () => {
+    if (isDisabled) return
+    downloadPdfTable({
+      filename,
+      title,
+      headers,
+      rows,
+    })
+    onExported?.()
+  }
+
+  const handleKeyDown =
+    (action: () => void) => (event: KeyboardEvent<HTMLButtonElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault()
+        action()
+      }
+    }
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        onClick={handleCsv}
+        onKeyDown={handleKeyDown(handleCsv)}
+        disabled={isDisabled}
+        tabIndex={0}
+        aria-label={csvLabel}
+        className={className}
+      >
+        {csvLabel}
+      </button>
+      <button
+        type="button"
+        onClick={handlePdf}
+        onKeyDown={handleKeyDown(handlePdf)}
+        disabled={isDisabled}
+        tabIndex={0}
+        aria-label={pdfLabel}
+        className={className}
+      >
+        {pdfLabel}
+      </button>
+    </div>
+  )
+}

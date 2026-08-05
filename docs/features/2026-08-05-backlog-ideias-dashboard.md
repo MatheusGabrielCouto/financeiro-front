@@ -60,12 +60,12 @@ Início, extrato, relatórios, insights, notificações, dívidas, a pagar do m�
 
 ---
 
-### 5. Exportar relatório (PDF / CSV) (média) — feito (CSV)
+### 5. Exportar relatório (PDF / CSV) (média) — feito
 
 **Problema:** compartilhar ou arquivar o mês fora do app é manual.  
 **Proposta:** botão em `/relatorios` e `/extrato` — CSV do extrato; PDF resumido (receitas, gastos, por categoria, sobra).  
 **Escopo v1:** CSV no client; PDF gerado no client ou endpoint simples no back.  
-**Implementação:** `ExportCsvButton` + `lib/csv` (BOM UTF-8); extrato e relatório mensal. PDF fica para depois.
+**Implementação:** `ExportDataButtons` + `lib/csv` / `lib/pdf` (jsPDF); extrato, relatório e fechamento.
 
 ---
 

@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Suspense, type ReactNode } from "react"
 import { redirect } from "next/navigation"
 import { ColumnChart, SimpleBars } from "@/components/simple-bars"
-import { ExportCsvButton } from "@/components/export-csv-button"
+import { ExportDataButtons } from "@/components/export-data-buttons"
 import { MonthCompareCard } from "@/components/month-compare-card"
 import { MonthYearFilter } from "@/components/month-year-filter"
 import { MonthsFilter } from "@/components/months-filter"
@@ -360,12 +360,13 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                       basePath="/relatorios"
                     />
                   </div>
-                  <ExportCsvButton
+                  <ExportDataButtons
                     filename={reportCsvFilename}
+                    title={`Relatório — ${monthLabel}`}
                     headers={reportCsvHeaders}
                     rows={reportCsvRows}
-                    label="Exportar CSV"
-                    ariaLabel={`Exportar relatório de ${monthLabel} em CSV`}
+                    csvLabel="CSV"
+                    pdfLabel="PDF"
                     className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
