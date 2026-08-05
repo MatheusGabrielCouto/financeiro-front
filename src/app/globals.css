@@ -124,3 +124,31 @@ html {
 .onboarding-step {
   animation: onboarding-step 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* Thin, low-contrast scrollbar for sidebars / dense panels */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted) 28%, transparent) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--muted) 28%, transparent);
+  border-radius: 999px;
+}
+
+.scrollbar-thin:hover::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--muted) 48%, transparent);
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner {
+  background: transparent;
+}

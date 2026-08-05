@@ -183,7 +183,7 @@ export const AppShell = ({
     isRail: boolean
     showMobileClose: boolean
   }) => (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       <div
         className={`flex h-16 items-center border-b border-sidebar-border/60 ${
           isRail ? "justify-center px-2" : "justify-between px-4"
@@ -226,7 +226,7 @@ export const AppShell = ({
       </div>
 
       <nav
-        className={`flex-1 space-y-4 overflow-y-auto pb-4 pt-3 ${
+        className={`scrollbar-thin min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain pb-4 pt-3 ${
           isRail ? "px-2" : "px-3"
         }`}
         aria-label="Navegação principal"
