@@ -25,7 +25,7 @@ const formatDelta = (delta: number | null) => {
   if (delta === 0) return "0%"
   const abs = Math.abs(delta)
   const rounded = abs >= 10 ? abs.toFixed(0) : abs.toFixed(1)
-  return `${delta > 0 ? "+" : "−"}${rounded}%`
+  return `${delta > 0 ? "+" : "-"}${rounded}%`
 }
 
 const DeltaBadge = ({
@@ -37,7 +37,7 @@ const DeltaBadge = ({
   const positive = isDeltaPositive(delta, metric.lowerIsBetter)
   const tone =
     positive == null
-      ? "bg-slate-100 text-slate-600"
+      ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
       : positive
         ? "bg-emerald-50 text-success"
         : "bg-red-50 text-danger"
@@ -52,7 +52,12 @@ const DeltaBadge = ({
 const MetricRow = ({ metric }: { metric: CompareMetric }) => (
   <div className="rounded-xl border border-border/70 bg-background/60 px-3 py-3">
     <div className="flex items-center justify-between gap-2">
-      <p className="text-sm font-medium text-muted">{metric.label}</p>
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-muted">{metric.label}</p>
+        {metric.hint ? (
+          <p className="mt-0.5 text-[11px] text-muted">{metric.hint}</p>
+        ) : null}
+      </div>
       <DeltaBadge metric={metric} />
     </div>
     <div className="mt-2 flex items-end justify-between gap-2">
@@ -134,13 +139,14 @@ export const MonthCompareCard = ({
             {currentLabel} vs {previousLabel}
           </h2>
           <p className="mt-1 text-sm text-muted">
-            Receita, saídas, sobra e top categorias em relação ao mês passado.
+            Separando o que já saiu no extrato do que ainda está em aberto —
+            a sobra prevista já desconta os dois.
           </p>
         </div>
         {isHome ? (
           <Link
             href="/relatorios"
-            className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50"
+            className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
             aria-label="Abrir relatórios"
           >
             Relatórios
@@ -148,7 +154,7 @@ export const MonthCompareCard = ({
         ) : null}
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
           <MetricRow key={metric.id} metric={metric} />
         ))}
@@ -156,7 +162,7 @@ export const MonthCompareCard = ({
 
       {topCategories.length > 0 ? (
         <div className="mt-4">
-          <p className="text-sm font-semibold">Top categorias (gasto)</p>
+          <p className="text-sm font-semibold">Top categorias (já pagas no extrato)</p>
           <ul className="mt-2 space-y-2">
             {topCategories.map((item) => (
               <CategoryRow key={item.id} item={item} />

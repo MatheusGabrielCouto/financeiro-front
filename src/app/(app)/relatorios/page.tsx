@@ -14,6 +14,7 @@ import {
   getExpensesByCategory,
   getExpensesByMonth,
 } from "@/lib/finance-api"
+import { buildMonthFlowBreakdown } from "@/lib/month-flow"
 import type {
   CaixinhaBreakdownItem,
   DebtBreakdownItem,
@@ -236,20 +237,20 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
       ])
 
     const summary = details.summary
-    const totalIncome =
-      summary.totalIncome ??
-      summary.recurringIncome + (summary.outrasEntradas ?? 0)
+    const flow = buildMonthFlowBreakdown(details)
+    const previousFlow = previousDetails
+      ? buildMonthFlowBreakdown(previousDetails)
+      : null
+    const totalIncome = flow.income
     const totalFixedOut =
       (summary.recurringPayments ?? 0) +
       (summary.debts ?? 0) +
       (summary.plannedExpensesOpen ?? 0)
     const balanceChartMax = Math.max(totalIncome, totalFixedOut, 1)
     const monthLabel = `${MONTH_NAMES[month - 1]} ${year}`
-    const balancePositive = summary.balanceAfterExpenses >= 0
-    const netPositive =
-      (summary.netStructural ?? summary.netExpected) >= 0
-    const monthSurplusPositive =
-      (summary.balanceAfterExpenses ?? summary.netExpected) >= 0
+    const balancePositive = flow.surplus >= 0
+    const netPositive = flow.structuralSurplus >= 0
+    const monthSurplusPositive = flow.surplus >= 0
 
     const incomes =
       details.recurringIncomeBreakdown ?? ([] as RecurringIncomeBreakdownItem[])
@@ -275,37 +276,10 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
     const bestMonth = [...evolution.monthly].sort((a, b) => b.net - a.net)[0]
     const worstMonth = [...evolution.monthly].sort((a, b) => a.net - b.net)[0]
 
-    const openRecurringTotal = recurrings
-      .filter((item) => !item.paidThisMonth)
-      .reduce((sum, item) => sum + item.value, 0)
-    const openDebtsTotal = openDebts.reduce((sum, item) => sum + item.value, 0)
-    const openPlannedTotal = plannedExpenses
-      .filter((item) => item.status === "SCHEDULED")
-      .reduce((sum, item) => sum + item.value, 0)
-    const openCommitmentsTotal =
-      openRecurringTotal + openDebtsTotal + openPlannedTotal
-    const paidExpensesTotal = summary.totalExpenses
-    const surplus = summary.balanceAfterExpenses ?? summary.netExpected
-    const afterPaidOnly = totalIncome - paidExpensesTotal
-
-    const previousPaid = previousDetails?.summary.totalExpenses ?? 0
-    const previousOpenRecurring = previousDetails
-      ? (previousDetails.recurringPaymentsBreakdown ?? [])
-          .filter((item) => !item.paidThisMonth)
-          .reduce((sum, item) => sum + item.value, 0)
-      : 0
-    const previousOpenDebts = previousDetails
-      ? (previousDetails.debtsBreakdown ?? [])
-          .filter((item) => item.status !== "PAY")
-          .reduce((sum, item) => sum + item.value, 0)
-      : 0
-    const previousOpenPlanned = previousDetails
-      ? (previousDetails.plannedExpensesBreakdown ?? [])
-          .filter((item) => item.status === "SCHEDULED")
-          .reduce((sum, item) => sum + item.value, 0)
-      : 0
-    const previousOpenTotal =
-      previousOpenRecurring + previousOpenDebts + previousOpenPlanned
+    const openCommitmentsTotal = flow.openCommitments
+    const paidExpensesTotal = flow.paidExpenses
+    const surplus = flow.surplus
+    const afterPaidOnly = flow.afterPaidOnly
 
     const reportCsvHeaders = ["Seção", "Item", "Valor", "Detalhe"]
     const reportCsvRows = [
@@ -337,7 +311,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
       [
         "Resumo",
         "Sobra estrutural",
-        summary.netStructural ?? summary.netExpected,
+        flow.structuralSurplus,
         "",
       ],
       ...categories.map((item) => [
@@ -375,38 +349,28 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
     ]
     const reportCsvFilename = `relatorio-${year}-${String(month).padStart(2, "0")}.csv`
 
-    const previousIncome = previousDetails
-      ? previousDetails.summary.totalIncome ??
-        previousDetails.summary.recurringIncome +
-          (previousDetails.summary.outrasEntradas ?? 0)
-      : null
-    const previousSurplus = previousDetails
-      ? previousDetails.summary.balanceAfterExpenses ??
-        previousDetails.summary.netExpected
-      : null
     const previousLabel = `${MONTH_NAMES[prevMonth - 1]} ${prevYear}`
 
     const reportPdfData = {
       monthLabel,
       summary: {
-        income: totalIncome,
-        paidExpenses: paidExpensesTotal,
-        openCommitments: openCommitmentsTotal,
-        surplus,
-        structuralSurplus: summary.netStructural ?? summary.netExpected,
-        afterPaidOnly,
+        income: flow.income,
+        paidExpenses: flow.paidExpenses,
+        openCommitments: flow.openCommitments,
+        surplus: flow.surplus,
+        structuralSurplus: flow.structuralSurplus,
+        afterPaidOnly: flow.afterPaidOnly,
       },
-      previous:
-        previousDetails && previousIncome != null && previousSurplus != null
-          ? {
-              label: previousLabel,
-              income: previousIncome,
-              paidExpenses: previousPaid,
-              openCommitments: previousOpenTotal,
-              surplus: previousSurplus,
-              afterPaidOnly: previousIncome - previousPaid,
-            }
-          : null,
+      previous: previousFlow
+        ? {
+            label: previousLabel,
+            income: previousFlow.income,
+            paidExpenses: previousFlow.paidExpenses,
+            openCommitments: previousFlow.openCommitments,
+            surplus: previousFlow.surplus,
+            afterPaidOnly: previousFlow.afterPaidOnly,
+          }
+        : null,
       categories: categories.map((item) => ({
         title: item.title,
         total: item.total,
@@ -490,34 +454,35 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
             <div className="relative mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {[
                 {
-                  label: "Receita do mês",
-                  value: totalIncome,
+                  label: "Receitas",
+                  value: flow.income,
                   hint: "Recorrente + outras entradas",
                   className: "text-emerald-300",
                 },
                 {
-                  label: "Compromissos",
-                  value: totalFixedOut,
-                  hint: "Contas fixas + parcelas + previstos",
+                  label: "Já pago",
+                  value: flow.paidExpenses,
+                  hint: "Saiu no extrato",
                   className: "text-amber-300",
                 },
                 {
-                  label: "Sobra do mês",
-                  value: summary.balanceAfterExpenses ?? summary.netExpected,
-                  hint: balancePositive
-                    ? "Inclui lançamentos do extrato"
-                    : "Resultado líquido negativo",
+                  label: "Em aberto",
+                  value: flow.openCommitments,
+                  hint: "Contas + parcelas + previstos",
+                  className: "text-red-300",
+                },
+                {
+                  label: "Sobra prevista",
+                  value: flow.surplus,
+                  hint:
+                    flow.openCommitments > 0
+                      ? `Só extrato daria ${formatCurrency(flow.afterPaidOnly)}`
+                      : monthSurplusPositive
+                        ? "Depois do pago e do aberto"
+                        : "Resultado líquido negativo",
                   className: monthSurplusPositive
                     ? "text-emerald-300"
                     : "text-red-300",
-                },
-                {
-                  label: "Sobra estrutural",
-                  value: summary.netStructural ?? summary.netExpected,
-                  hint: netPositive
-                    ? "Só receitas/compromissos fixos"
-                    : "Fixos apertados",
-                  className: netPositive ? "text-teal-200" : "text-red-300",
                 },
               ].map((card) => (
                 <article
@@ -571,14 +536,20 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
             </div>
             <div className="mt-5 rounded-2xl border border-border bg-slate-50 px-4 py-4 text-center">
               <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                Saldo após gastos
+                Sobra prevista
               </p>
               <p
                 className={`mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums ${
                   balancePositive ? "text-success" : "text-danger"
                 }`}
               >
-                {formatCurrency(summary.balanceAfterExpenses)}
+                {formatCurrency(flow.surplus)}
+              </p>
+              <p className="mt-1 text-xs text-muted">
+                Receitas − já pago − em aberto
+                {flow.openCommitments > 0
+                  ? ` · só extrato: ${formatCurrency(flow.afterPaidOnly)}`
+                  : ""}
               </p>
             </div>
           </article>
@@ -629,6 +600,33 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                 highlighted
               />
               <SummaryRow
+                label="Já pago (extrato)"
+                value={flow.paidExpenses}
+                tone="danger"
+                highlighted
+              />
+              <SummaryRow
+                label="Ainda em aberto"
+                value={flow.openCommitments}
+                tone="danger"
+              />
+              <SummaryRow
+                label="Sobra só com extrato"
+                value={flow.afterPaidOnly}
+                tone={flow.afterPaidOnly >= 0 ? "success" : "danger"}
+              />
+              <SummaryRow
+                label="Sobra prevista"
+                value={flow.surplus}
+                tone={monthSurplusPositive ? "success" : "danger"}
+                highlighted
+              />
+              <SummaryRow
+                label="Sobra estrutural (fixos)"
+                value={flow.structuralSurplus}
+                tone={netPositive ? "success" : "danger"}
+              />
+              <SummaryRow
                 label="Depósitos em caixinhas"
                 value={summary.caixinhaDeposits}
                 tone="accent"
@@ -644,22 +642,6 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                 label="Saldo total em caixinhas"
                 value={summary.caixinhaTotal}
                 tone="accent"
-              />
-              <SummaryRow
-                label="Sobra do mês (com extrato)"
-                value={summary.balanceAfterExpenses ?? summary.netExpected}
-                tone={monthSurplusPositive ? "success" : "danger"}
-              />
-              <SummaryRow
-                label="Sobra estrutural (fixos)"
-                value={summary.netStructural ?? summary.netExpected}
-                tone={netPositive ? "success" : "danger"}
-              />
-              <SummaryRow
-                label="Total gasto (lançamentos)"
-                value={summary.totalExpenses}
-                tone="danger"
-                highlighted
               />
             </div>
           </article>

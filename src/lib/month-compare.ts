@@ -1,8 +1,10 @@
 import type { ExpenseByCategoryItem, MonthDetails } from "@/lib/types"
+import { buildMonthFlowBreakdown } from "@/lib/month-flow"
 
 export type CompareMetric = {
   id: string
   label: string
+  hint?: string
   current: number
   previous: number
   /** When true, a decrease is visually positive (e.g. expenses) */
@@ -33,37 +35,46 @@ export const isDeltaPositive = (
   return improved
 }
 
-const pickIncome = (summary: MonthDetails["summary"]) =>
-  summary.totalIncome ??
-  summary.recurringIncome + (summary.outrasEntradas ?? 0)
-
-const pickSurplus = (summary: MonthDetails["summary"]) =>
-  summary.balanceAfterExpenses ?? summary.netExpected
-
 export const buildMonthCompareMetrics = (
   current: MonthDetails,
   previous: MonthDetails
-): CompareMetric[] => [
-  {
-    id: "income",
-    label: "Receitas",
-    current: pickIncome(current.summary),
-    previous: pickIncome(previous.summary),
-  },
-  {
-    id: "expenses",
-    label: "Saídas",
-    current: current.summary.totalExpenses,
-    previous: previous.summary.totalExpenses,
-    lowerIsBetter: true,
-  },
-  {
-    id: "surplus",
-    label: "Sobra",
-    current: pickSurplus(current.summary),
-    previous: pickSurplus(previous.summary),
-  },
-]
+): CompareMetric[] => {
+  const currentFlow = buildMonthFlowBreakdown(current)
+  const previousFlow = buildMonthFlowBreakdown(previous)
+
+  return [
+    {
+      id: "income",
+      label: "Receitas",
+      hint: "Entradas do mês",
+      current: currentFlow.income,
+      previous: previousFlow.income,
+    },
+    {
+      id: "paid",
+      label: "Já pago",
+      hint: "Saiu no extrato",
+      current: currentFlow.paidExpenses,
+      previous: previousFlow.paidExpenses,
+      lowerIsBetter: true,
+    },
+    {
+      id: "open",
+      label: "Em aberto",
+      hint: "Contas, parcelas e previstos",
+      current: currentFlow.openCommitments,
+      previous: previousFlow.openCommitments,
+      lowerIsBetter: true,
+    },
+    {
+      id: "surplus",
+      label: "Sobra prevista",
+      hint: "Depois do pago e do aberto",
+      current: currentFlow.surplus,
+      previous: previousFlow.surplus,
+    },
+  ]
+}
 
 export const buildTopCategoryCompare = (
   current: ExpenseByCategoryItem[] | undefined,

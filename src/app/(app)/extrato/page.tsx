@@ -104,7 +104,8 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 {monthLabel}
               </h1>
               <p className="mt-1 text-sm text-muted">
-                Acompanhe entradas, saídas e o impacto no saldo.
+                Só o que já entrou ou saiu na conta — não desconta o que ainda
+                está em aberto.
               </p>
             </div>
             <div className="flex flex-col items-stretch gap-3 sm:items-end">
@@ -115,7 +116,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 <ExportDataButtons
                   filename={csvFilename}
                   title={`Extrato — ${monthLabel}`}
-                  subtitle="Movimentações do período com saldo atualizado"
+                  subtitle="Somente lançamentos do extrato (não desconta compromissos em aberto)"
                   headers={csvHeaders}
                   rows={csvRows}
                   csvLabel="CSV"
@@ -143,12 +144,13 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
               </p>
             </article>
             <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
-              <p className="text-sm text-muted">Saídas</p>
+              <p className="text-sm text-muted">Já saiu</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 − {formatCurrency(outflow)}
               </p>
               <p className="mt-1 text-xs text-muted">
                 {sorted.filter((item) => item.type !== "CREDIT").length} lançamento(s)
+                no extrato
               </p>
             </article>
             <article
@@ -158,7 +160,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                   : "border-red-200/70 bg-red-50/40"
               }`}
             >
-              <p className="text-sm text-muted">Resultado do mês</p>
+              <p className="text-sm text-muted">Resultado do extrato</p>
               <p
                 className={`mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold ${
                   net >= 0 ? "text-foreground" : "text-danger"
@@ -168,7 +170,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 {formatCurrency(Math.abs(net))}
               </p>
               <p className="mt-1 text-xs text-muted">
-                {sorted.length} movimento(s) no período
+                Entradas − já saiu (sem o em aberto)
               </p>
             </article>
           </div>

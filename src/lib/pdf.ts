@@ -252,8 +252,11 @@ export const downloadPdfTable = ({
       summaryCards = [
         { label: "Lançamentos", value: String(rows.length) },
         { label: "Entradas", value: formatCurrencyPt(income) },
-        { label: "Saídas", value: formatCurrencyPt(outflow) },
-        { label: "Resultado", value: formatCurrencyPt(income - outflow) },
+        { label: "Já saiu", value: formatCurrencyPt(outflow) },
+        {
+          label: "Resultado (extrato)",
+          value: formatCurrencyPt(income - outflow),
+        },
       ]
     } else if (tipoIdx >= 0) {
       summaryCards = [

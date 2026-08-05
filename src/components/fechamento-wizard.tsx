@@ -43,11 +43,14 @@ type FechamentoWizardProps = {
   plannedOpen: ClosingPlannedItem[]
   summary: {
     income: number
-    expenses: number
+    paidExpenses: number
+    openCommitments: number
+    afterPaidOnly: number
     surplus: number
     pendingTotal: number
   }
   exportRows: CsvCell[][]
+  reportData: import("@/lib/report-pdf").ReportPdfData
 }
 
 const steps = [
@@ -86,6 +89,7 @@ export const FechamentoWizard = ({
   plannedOpen,
   summary,
   exportRows,
+  reportData,
 }: FechamentoWizardProps) => {
   const [step, setStep] = useState(1)
   const [surplusAck, setSurplusAck] = useState(false)
@@ -329,7 +333,7 @@ export const FechamentoWizard = ({
 
           {step === 4 ? (
             <div className="space-y-4">
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/40">
                   <p className="text-sm text-muted">Receitas</p>
                   <p className="mt-2 text-xl font-semibold tabular-nums">
@@ -337,9 +341,19 @@ export const FechamentoWizard = ({
                   </p>
                 </article>
                 <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
-                  <p className="text-sm text-muted">Saídas</p>
+                  <p className="text-sm text-muted">Já pago</p>
                   <p className="mt-2 text-xl font-semibold tabular-nums text-warning">
-                    {formatCurrency(summary.expenses)}
+                    {formatCurrency(summary.paidExpenses)}
+                  </p>
+                  <p className="mt-1 text-xs text-muted">Saiu no extrato</p>
+                </article>
+                <article className="rounded-2xl border border-red-200/70 bg-red-50/40 p-4 dark:border-red-900/60 dark:bg-red-950/20">
+                  <p className="text-sm text-muted">Em aberto</p>
+                  <p className="mt-2 text-xl font-semibold tabular-nums text-danger">
+                    {formatCurrency(summary.openCommitments)}
+                  </p>
+                  <p className="mt-1 text-xs text-muted">
+                    Ainda falta pagar
                   </p>
                 </article>
                 <article
@@ -349,7 +363,7 @@ export const FechamentoWizard = ({
                       : "border-red-200/70 bg-red-50/40 dark:border-red-900/60 dark:bg-red-950/20"
                   }`}
                 >
-                  <p className="text-sm text-muted">Sobra</p>
+                  <p className="text-sm text-muted">Sobra prevista</p>
                   <p
                     className={`mt-2 text-xl font-semibold tabular-nums ${
                       summary.surplus >= 0 ? "text-success" : "text-danger"
@@ -357,12 +371,16 @@ export const FechamentoWizard = ({
                   >
                     {formatCurrency(summary.surplus)}
                   </p>
+                  <p className="mt-1 text-xs text-muted">
+                    Só extrato daria {formatCurrency(summary.afterPaidOnly)}
+                  </p>
                 </article>
               </div>
-              <p className="text-sm text-muted">
-                Ainda há {formatCurrency(summary.pendingTotal)} em compromissos
-                pendentes neste mês.
-              </p>
+              <div className="rounded-xl border border-amber-200/70 bg-amber-50/40 px-4 py-3 text-sm text-muted dark:border-amber-900/50 dark:bg-amber-950/20">
+                A sobra prevista já desconta o que está em aberto (
+                {formatCurrency(summary.openCommitments)}). Por isso não é
+                apenas receitas menos o que saiu no extrato.
+              </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -392,9 +410,10 @@ export const FechamentoWizard = ({
                 <ExportDataButtons
                   filename={filename}
                   title={`Fechamento — ${monthLabel}`}
-                  subtitle="Resumo do ritual de fechamento do mês"
+                  subtitle="Receitas, já pago, em aberto e sobra prevista do mês"
                   headers={["Seção", "Item", "Valor", "Detalhe"]}
                   rows={exportRows}
+                  reportData={reportData}
                   csvLabel="Resumo CSV"
                   pdfLabel="Resumo PDF"
                   onExported={() => setExported(true)}

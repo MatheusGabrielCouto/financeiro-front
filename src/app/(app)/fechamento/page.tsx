@@ -3,16 +3,18 @@ import { redirect } from "next/navigation"
 import { FechamentoWizard } from "@/components/fechamento-wizard"
 import { MonthYearFilter } from "@/components/month-year-filter"
 import { ApiError } from "@/lib/api-server"
-import { getCurrentMonthYear } from "@/lib/format"
+import { formatMonthLabel, getCurrentMonthYear } from "@/lib/format"
 import {
   getDetails,
   getInstallments,
   getPaymentReminders,
 } from "@/lib/finance-api"
+import { buildMonthFlowBreakdown } from "@/lib/month-flow"
 import {
   buildPayableItems,
   payableItemHref,
 } from "@/lib/payable-items"
+import type { ReportPdfData } from "@/lib/report-pdf"
 
 type FechamentoPageProps = {
   searchParams: Promise<{ month?: string; year?: string }>
@@ -74,20 +76,38 @@ const FechamentoPage = async ({ searchParams }: FechamentoPageProps) => {
         status: item.status,
       }))
 
-    const income =
-      details.summary.totalIncome ??
-      details.summary.recurringIncome + (details.summary.outrasEntradas ?? 0)
-    const expenses = details.summary.totalExpenses
-    const surplus =
-      details.summary.balanceAfterExpenses ?? details.summary.netExpected
+    const flow = buildMonthFlowBreakdown(details)
     const pendingTotal = items
       .filter((item) => item.status === "SCHEDULE")
       .reduce((sum, item) => sum + item.value, 0)
+    const monthLabel = formatMonthLabel(month, year)
 
     const exportRows = [
-      ["Resumo", "Receitas", income, ""],
-      ["Resumo", "Saídas", expenses, ""],
-      ["Resumo", "Sobra", surplus, ""],
+      ["Resumo", "Receitas", flow.income, "Entradas do mês"],
+      [
+        "Resumo",
+        "Já pago (extrato)",
+        flow.paidExpenses,
+        "Saiu no extrato",
+      ],
+      [
+        "Resumo",
+        "Ainda em aberto",
+        flow.openCommitments,
+        "Contas + parcelas + previstos",
+      ],
+      [
+        "Resumo",
+        "Sobra só com extrato",
+        flow.afterPaidOnly,
+        "Receitas - já pago (sem o aberto)",
+      ],
+      [
+        "Resumo",
+        "Sobra prevista",
+        flow.surplus,
+        "Receitas - já pago - ainda em aberto",
+      ],
       ["Resumo", "Pendentes (valor)", pendingTotal, ""],
       ["Resumo", "Atrasados (qtd)", overdue.length, ""],
       ["Resumo", "Pra pagar aberto (qtd)", reminders.length, ""],
@@ -112,6 +132,52 @@ const FechamentoPage = async ({ searchParams }: FechamentoPageProps) => {
       ]),
     ]
 
+    const categories = details.expensesByCategory ?? []
+    const categoryTotal = categories.reduce((sum, item) => sum + item.total, 0)
+
+    const reportData: ReportPdfData = {
+      monthLabel,
+      summary: {
+        income: flow.income,
+        paidExpenses: flow.paidExpenses,
+        openCommitments: flow.openCommitments,
+        surplus: flow.surplus,
+        structuralSurplus: flow.structuralSurplus,
+        afterPaidOnly: flow.afterPaidOnly,
+      },
+      previous: null,
+      categories: categories.map((item) => ({
+        title: item.title,
+        total: item.total,
+        share: categoryTotal > 0 ? (item.total / categoryTotal) * 100 : 0,
+      })),
+      incomes: (details.recurringIncomeBreakdown ?? []).map((item) => ({
+        title: item.title,
+        value: item.value,
+        detail: `Dia ${item.dayOfMonth}`,
+      })),
+      recurrings: (details.recurringPaymentsBreakdown ?? []).map((item) => ({
+        title: item.title,
+        value: item.value,
+        detail: item.paidThisMonth ? "Paga" : "Em aberto",
+      })),
+      debts: (details.debtsBreakdown ?? []).map((item) => ({
+        title: item.debtTitle,
+        value: item.value,
+        detail: item.status === "PAY" ? "Paga" : "Em aberto",
+      })),
+      planned: (details.plannedExpensesBreakdown ?? []).map((item) => ({
+        title: item.title,
+        value: item.value,
+        detail:
+          item.status === "PAID"
+            ? "Pago"
+            : item.status === "CANCELLED"
+              ? "Cancelado"
+              : "Em aberto",
+      })),
+    }
+
     return (
       <div className="space-y-4">
         <div className="flex justify-end">
@@ -134,12 +200,15 @@ const FechamentoPage = async ({ searchParams }: FechamentoPageProps) => {
           }))}
           plannedOpen={plannedOpen}
           summary={{
-            income,
-            expenses,
-            surplus,
+            income: flow.income,
+            paidExpenses: flow.paidExpenses,
+            openCommitments: flow.openCommitments,
+            afterPaidOnly: flow.afterPaidOnly,
+            surplus: flow.surplus,
             pendingTotal,
           }}
           exportRows={exportRows}
+          reportData={reportData}
         />
       </div>
     )
