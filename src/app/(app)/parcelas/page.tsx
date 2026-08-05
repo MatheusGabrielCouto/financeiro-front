@@ -31,9 +31,10 @@ type PayableItem = {
   value: number
   dueDate: Date
   status: "PAY" | "SCHEDULE"
-  kind: "installment" | "recurring"
+  kind: "installment" | "recurring" | "planned"
   installmentId?: string
   recurringId?: string
+  plannedId?: string
   isOverdue: boolean
   interestRate?: number
   interestRateType?: "MONTHLY" | "DAILY"
@@ -120,7 +121,30 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
       }
     })
 
-    const allItems = [...installmentItems, ...recurringItems].sort(
+    const plannedItems: PayableItem[] = (
+      details.plannedExpensesBreakdown ?? []
+    ).map((item) => {
+      const dueDate = new Date(item.dueDate)
+      dueDate.setHours(0, 0, 0, 0)
+      const itemStatus = item.status === "PAID" ? "PAY" : "SCHEDULE"
+      const categoryLabel = item.category?.title
+        ? ` · ${item.category.title}`
+        : ""
+
+      return {
+        id: `planned-${item.id}`,
+        title: item.title,
+        subtitle: `Gasto previsto${categoryLabel}`,
+        value: item.value,
+        dueDate,
+        status: itemStatus,
+        kind: "planned",
+        plannedId: item.id,
+        isOverdue: itemStatus === "SCHEDULE" && dueDate < today,
+      }
+    })
+
+    const allItems = [...installmentItems, ...recurringItems, ...plannedItems].sort(
       (a, b) => {
         if (a.status !== b.status) {
           return a.status === "SCHEDULE" ? -1 : 1
@@ -134,6 +158,7 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
       if (status === "pagas" && item.status !== "PAY") return false
       if (tipo === "parcelas" && item.kind !== "installment") return false
       if (tipo === "fixas" && item.kind !== "recurring") return false
+      if (tipo === "previstos" && item.kind !== "planned") return false
       return true
     })
 
@@ -159,7 +184,20 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
       { id: "todos", label: "Todos" },
       { id: "parcelas", label: "Parcelas" },
       { id: "fixas", label: "Contas fixas" },
+      { id: "previstos", label: "Previstos" },
     ]
+
+    const kindLabel = (kind: PayableItem["kind"]) => {
+      if (kind === "recurring") return "Conta fixa"
+      if (kind === "planned") return "Gasto previsto"
+      return "Parcela"
+    }
+
+    const kindBadgeClass = (kind: PayableItem["kind"]) => {
+      if (kind === "recurring") return "bg-slate-100 text-slate-600"
+      if (kind === "planned") return "bg-amber-50 text-warning"
+      return "bg-teal-50 text-accent"
+    }
 
     return (
       <div className="space-y-6">
@@ -173,7 +211,7 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                 A pagar em {monthLabel}
               </h1>
               <p className="mt-1 text-sm text-muted">
-                Parcelas de dívidas e contas fixas do período selecionado.
+                Parcelas, contas fixas e gastos previstos do período.
               </p>
             </div>
 
@@ -312,7 +350,8 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
               <div className="rounded-xl bg-background px-4 py-14 text-center">
                 <p className="font-semibold">Nada para pagar neste período</p>
                 <p className="mt-1 text-sm text-muted">
-                  Não há parcelas nem contas fixas em {monthLabel}.
+                  Não há parcelas, contas fixas nem gastos previstos em{" "}
+                  {monthLabel}.
                 </p>
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
                   <Link
@@ -326,6 +365,12 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                     className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
                   >
                     Contas fixas
+                  </Link>
+                  <Link
+                    href="/gastos-previstos"
+                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
+                  >
+                    Gastos previstos
                   </Link>
                 </div>
               </div>
@@ -354,15 +399,9 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                             {item.title}
                           </p>
                           <span
-                            className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
-                              item.kind === "recurring"
-                                ? "bg-slate-100 text-slate-600"
-                                : "bg-teal-50 text-accent"
-                            }`}
+                            className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${kindBadgeClass(item.kind)}`}
                           >
-                            {item.kind === "recurring"
-                              ? "Conta fixa"
-                              : "Parcela"}
+                            {kindLabel(item.kind)}
                           </span>
                           {item.isOverdue ? (
                             <span className="inline-flex items-center gap-1.5">
@@ -414,6 +453,19 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                             loadingLabel="Pagando..."
                             variant="primary"
                             ariaLabel={`Pagar conta fixa ${item.title}`}
+                          />
+                        ) : null}
+
+                        {item.status === "SCHEDULE" &&
+                        item.kind === "planned" &&
+                        item.plannedId ? (
+                          <ProxyActionButton
+                            path={`/planned-expense/${item.plannedId}/pay`}
+                            method="POST"
+                            label="Pagar"
+                            loadingLabel="Pagando..."
+                            variant="primary"
+                            ariaLabel={`Pagar gasto previsto ${item.title}`}
                           />
                         ) : null}
                       </div>

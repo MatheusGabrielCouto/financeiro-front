@@ -41,7 +41,7 @@ type UpcomingItem = {
   title: string
   value: number
   dueDate: Date
-  kind: "installment" | "recurring"
+  kind: "installment" | "recurring" | "planned"
   status: "PAY" | "SCHEDULE"
   interestRate?: number
   interestRateType?: "MONTHLY" | "DAILY"
@@ -169,6 +169,15 @@ const DashboardPage = async () => {
           status: "SCHEDULE" as const,
         }
       }),
+      ...pendingPlanned.map((item) => ({
+        id: `planned-${item.id}`,
+        entityId: item.id,
+        title: item.title,
+        value: item.value,
+        dueDate: new Date(item.dueDate),
+        kind: "planned" as const,
+        status: "SCHEDULE" as const,
+      })),
     ].sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
 
     const firstName = user?.name?.split(" ")[0] ?? "olá"
@@ -566,13 +575,14 @@ const DashboardPage = async () => {
                 <div className="rounded-xl bg-emerald-50 px-4 py-10 text-center">
                   <p className="font-semibold text-success">Tudo em dia neste mês</p>
                   <p className="mt-1 text-sm text-muted">
-                    Não há parcelas nem contas fixas pendentes para {monthLabel}.
+                    Não há parcelas, contas fixas nem gastos previstos pendentes
+                    para {monthLabel}.
                   </p>
                   <Link
-                    href="/dividas"
+                    href="/gastos-previstos"
                     className="mt-4 inline-flex text-sm font-medium text-accent hover:underline"
                   >
-                    Ver minhas dívidas
+                    Ver gastos previstos
                   </Link>
                 </div>
               ) : (
@@ -589,12 +599,16 @@ const DashboardPage = async () => {
                             className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                               item.kind === "recurring"
                                 ? "bg-slate-100 text-slate-600"
-                                : "bg-teal-50 text-accent"
+                                : item.kind === "planned"
+                                  ? "bg-amber-50 text-warning"
+                                  : "bg-teal-50 text-accent"
                             }`}
                           >
                             {item.kind === "recurring"
                               ? "Conta fixa"
-                              : "Parcela"}
+                              : item.kind === "planned"
+                                ? "Gasto previsto"
+                                : "Parcela"}
                           </span>
                           {item.kind === "installment" ? (
                             <OverdueInterestHint
@@ -619,6 +633,15 @@ const DashboardPage = async () => {
                           <PayInstallmentButton
                             installmentId={item.entityId}
                             debtTitle={item.title}
+                          />
+                        ) : item.kind === "planned" ? (
+                          <ProxyActionButton
+                            path={`/planned-expense/${item.entityId}/pay`}
+                            method="POST"
+                            label="Pagar"
+                            loadingLabel="Pagando..."
+                            variant="primary"
+                            ariaLabel={`Pagar gasto previsto ${item.title}`}
                           />
                         ) : (
                           <ProxyActionButton
