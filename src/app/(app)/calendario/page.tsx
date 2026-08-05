@@ -200,7 +200,6 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
     const isCurrentMonth =
       month === current.month && year === current.year
     const selectedWeekday = weekdayLong(selectedDate)
-    const previewLimit = 2
 
     return (
       <div className="space-y-6">
@@ -316,28 +315,23 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
                     return (
                       <div
                         key={`empty-${index}`}
-                        className="min-h-[4.5rem] rounded-2xl bg-slate-50/40 dark:bg-slate-900/30 sm:min-h-[5.75rem]"
+                        className="min-h-[3.75rem] rounded-2xl bg-slate-50/40 dark:bg-slate-900/30 sm:min-h-[4.5rem]"
                         aria-hidden
                       />
                     )
                   }
 
                   const count = cell.items.length
-                  const pendingCountDay = cell.items.filter(
-                    (item) => item.status === "SCHEDULE"
-                  ).length
-                  const preview = cell.items
-                    .filter((item) => item.status === "SCHEDULE")
-                    .slice(0, previewLimit)
 
                   return (
                     <Link
                       key={cell.day}
                       href={buildDayHref(month, year, cell.day)}
+                      scroll={false}
                       aria-label={`Dia ${cell.day}, ${count} compromisso(s)`}
                       aria-current={cell.isSelected ? "date" : undefined}
                       tabIndex={0}
-                      className={`group relative flex min-h-[4.5rem] flex-col rounded-2xl border p-2 transition duration-200 sm:min-h-[5.75rem] sm:p-2.5 ${
+                      className={`group relative flex min-h-[3.75rem] flex-col rounded-2xl border p-2 transition duration-200 sm:min-h-[4.5rem] sm:p-2.5 ${
                         cell.isSelected
                           ? "border-accent/60 bg-teal-50/70 shadow-[0_0_0_1px_rgba(15,118,110,0.12)] dark:border-teal-500/40 dark:bg-teal-950/35"
                           : cell.isToday
@@ -359,52 +353,44 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
                         >
                           {cell.day}
                         </span>
-                        {cell.tone ? (
+                        {count > 0 ? (
                           <span
-                            className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${toneDot[cell.tone]}`}
-                            aria-hidden
-                          />
+                            className={`inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${
+                              cell.isSelected
+                                ? "bg-accent/15 text-accent"
+                                : "bg-slate-100 text-muted dark:bg-slate-800"
+                            }`}
+                          >
+                            {count}
+                          </span>
                         ) : null}
                       </div>
 
                       {count > 0 ? (
-                        <div className="mt-auto space-y-1 pt-2">
-                          <div className="hidden space-y-0.5 md:block">
-                            {preview.map((item) => (
-                              <p
+                        <div className="mt-auto flex items-center gap-1 pt-2">
+                          {cell.items.slice(0, 4).map((item) => {
+                            const tone = getPayableTone(item, today)
+                            const color =
+                              tone === "paid"
+                                ? "bg-emerald-400/70"
+                                : toneDot[tone]
+                            return (
+                              <span
                                 key={item.id}
-                                className="truncate rounded-md bg-white/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-950/40 dark:text-slate-300"
-                              >
-                                {item.title}
-                              </p>
-                            ))}
-                            {pendingCountDay > previewLimit ? (
-                              <p className="px-0.5 text-[10px] font-medium text-muted">
-                                +{pendingCountDay - previewLimit}
-                              </p>
-                            ) : null}
-                          </div>
-                          <div className="flex items-center justify-between gap-1 md:hidden">
-                            <span className="text-[10px] font-semibold text-muted">
-                              {pendingCountDay > 0
-                                ? `${pendingCountDay}`
-                                : `${count}`}
+                                className={`h-1.5 w-1.5 rounded-full ${color}`}
+                                aria-hidden
+                              />
+                            )
+                          })}
+                          {count > 4 ? (
+                            <span className="text-[9px] font-medium text-muted">
+                              +{count - 4}
                             </span>
-                            {cell.pendingTotal > 0 ? (
-                              <span className="truncate text-[9px] tabular-nums text-muted">
-                                {formatCurrency(cell.pendingTotal)}
-                              </span>
-                            ) : null}
-                          </div>
-                          {cell.pendingTotal > 0 ? (
-                            <p className="hidden truncate text-[10px] font-medium tabular-nums text-muted md:block">
-                              {formatCurrency(cell.pendingTotal)}
-                            </p>
                           ) : null}
                         </div>
                       ) : (
                         <div className="mt-auto pt-3">
-                          <span className="block h-px w-4 bg-slate-200/80 dark:bg-slate-700" />
+                          <span className="block h-px w-3 bg-slate-200/70 dark:bg-slate-700" />
                         </div>
                       )}
                     </Link>
