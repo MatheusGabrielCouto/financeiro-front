@@ -31,6 +31,14 @@ type CalendarioPageProps = {
 
 const WEEKDAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
 
+const toneBar: Record<CalendarDueTone, string> = {
+  paid: "bg-emerald-500",
+  overdue: "bg-danger",
+  today: "bg-amber-400",
+  week: "bg-accent",
+  later: "bg-slate-300",
+}
+
 const toneDot: Record<Exclude<CalendarDueTone, "paid">, string> = {
   overdue: "bg-danger",
   today: "bg-amber-400",
@@ -39,11 +47,11 @@ const toneDot: Record<Exclude<CalendarDueTone, "paid">, string> = {
 }
 
 const toneBadge: Record<CalendarDueTone, string> = {
-  paid: "bg-emerald-50 text-success",
-  overdue: "bg-red-50 text-danger",
-  today: "bg-amber-50 text-warning",
-  week: "bg-teal-50 text-accent",
-  later: "bg-slate-100 text-slate-600",
+  paid: "bg-emerald-50 text-success dark:bg-emerald-950/40",
+  overdue: "bg-red-50 text-danger dark:bg-red-950/40",
+  today: "bg-amber-50 text-warning dark:bg-amber-950/40",
+  week: "bg-teal-50 text-accent dark:bg-teal-950/40",
+  later: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
 }
 
 const toneLabel: Record<CalendarDueTone, string> = {
@@ -56,6 +64,9 @@ const toneLabel: Record<CalendarDueTone, string> = {
 
 const buildDayHref = (month: number, year: number, day: number) =>
   `/calendario?month=${month}&year=${year}&day=${day}`
+
+const weekdayLong = (date: Date) =>
+  new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(date)
 
 const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
   const params = await searchParams
@@ -116,6 +127,7 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
     const selectedPending = selectedItems.filter(
       (item) => item.status === "SCHEDULE"
     )
+    const selectedPaid = selectedItems.filter((item) => item.status === "PAY")
     const selectedTotal = selectedPending.reduce(
       (sum, item) => sum + item.value,
       0
@@ -128,8 +140,10 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
       inMonth: boolean
       isToday: boolean
       isSelected: boolean
+      isWeekend: boolean
       items: PayableItem[]
       tone: Exclude<CalendarDueTone, "paid"> | null
+      pendingTotal: number
     }> = []
 
     for (let i = 0; i < firstWeekday; i += 1) {
@@ -138,8 +152,10 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
         inMonth: false,
         isToday: false,
         isSelected: false,
+        isWeekend: false,
         items: [],
         tone: null,
+        pendingTotal: 0,
       })
     }
 
@@ -148,13 +164,18 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
       date.setHours(0, 0, 0, 0)
       const dayItems = byDay.get(dayKey(date)) ?? []
       const tones = dayItems.map((item) => getPayableTone(item, today))
+      const weekday = date.getDay()
       cells.push({
         day,
         inMonth: true,
         isToday: date.getTime() === today.getTime(),
         isSelected: day === selectedDay,
+        isWeekend: weekday === 0 || weekday === 6,
         items: dayItems,
         tone: worstTone(tones),
+        pendingTotal: dayItems
+          .filter((item) => item.status === "SCHEDULE")
+          .reduce((sum, item) => sum + item.value, 0),
       })
     }
 
@@ -164,217 +185,330 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
         inMonth: false,
         isToday: false,
         isSelected: false,
+        isWeekend: false,
         items: [],
         tone: null,
+        pendingTotal: 0,
       })
     }
 
     const monthLabel = formatMonthLabel(month, year)
-    const pendingCount = items.filter((item) => item.status === "SCHEDULE").length
+    const pendingItems = items.filter((item) => item.status === "SCHEDULE")
+    const pendingCount = pendingItems.length
     const overdueCount = items.filter((item) => item.isOverdue).length
+    const pendingTotal = pendingItems.reduce((sum, item) => sum + item.value, 0)
     const isCurrentMonth =
       month === current.month && year === current.year
+    const selectedWeekday = weekdayLong(selectedDate)
+    const previewLimit = 2
 
     return (
       <div className="space-y-6">
-        <section className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-                {isCurrentMonth ? "Este mês" : "Período"}
-              </p>
-              <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight md:text-3xl">
-                Calendário de {monthLabel}
-              </h1>
-              <p className="mt-2 text-sm text-muted">
-                Parcelas, contas fixas e previstos no mês — clique no dia para
-                ver os detalhes.
-              </p>
-            </div>
-            <Suspense
-              fallback={<div className="text-sm text-muted">Carregando...</div>}
-            >
-              <MonthYearFilter
-                month={month}
-                year={year}
-                basePath="/calendario"
-              />
-            </Suspense>
-          </div>
+        <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50">
+          <div className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-teal-900 px-5 py-6 text-white md:px-7 md:py-7">
+            <div className="pointer-events-none absolute -right-12 -top-20 h-56 w-56 rounded-full bg-teal-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-0 left-1/4 h-36 w-36 rounded-full bg-emerald-300/10 blur-2xl" />
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
-              <p className="text-sm text-muted">Compromissos no mês</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
-                {items.length}
-              </p>
-            </article>
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
-              <p className="text-sm text-muted">Pendentes</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
-                {pendingCount}
-              </p>
-            </article>
-            <article className="rounded-2xl border border-red-200/70 bg-red-50/40 p-4">
-              <p className="text-sm text-muted">Atrasados</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-danger">
-                {overdueCount}
-              </p>
-            </article>
+            <div className="relative flex flex-wrap items-start justify-between gap-5">
+              <div className="max-w-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-200/90">
+                  {isCurrentMonth ? "Vencimentos do mês" : "Período selecionado"}
+                </p>
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight md:text-4xl">
+                  {monthLabel}
+                </h1>
+                <p className="mt-2 text-sm text-slate-300">
+                  Parcelas, contas fixas e previstos no calendário. Toque no dia
+                  para ver o que vence.
+                </p>
+              </div>
+              <Suspense
+                fallback={
+                  <div className="rounded-xl bg-white/10 px-4 py-3 text-sm text-slate-200">
+                    Carregando...
+                  </div>
+                }
+              >
+                <div className="[&_button]:border-white/15 [&_button]:bg-white/10 [&_button]:text-white [&_button:hover]:bg-white/15 [&_div]:border-white/15 [&_div]:bg-white/5 [&_select]:text-white [&_span]:bg-teal-400/20 [&_span]:text-teal-100">
+                  <MonthYearFilter
+                    month={month}
+                    year={year}
+                    basePath="/calendario"
+                  />
+                </div>
+              </Suspense>
+            </div>
+
+            <div className="relative mt-7 grid gap-3 sm:grid-cols-3">
+              <article className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="text-xs text-slate-300">Pendentes</p>
+                <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums text-amber-200">
+                  {pendingCount}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {formatCurrency(pendingTotal)} a pagar
+                </p>
+              </article>
+              <article className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="text-xs text-slate-300">Atrasados</p>
+                <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums text-red-300">
+                  {overdueCount}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {overdueCount === 0 ? "Nada atrasado" : "Pedem atenção"}
+                </p>
+              </article>
+              <article className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="text-xs text-slate-300">No calendário</p>
+                <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums">
+                  {items.length}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  Inclui o que já foi pago
+                </p>
+              </article>
+            </div>
           </div>
         </section>
 
-        <section className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
-          <div className="rounded-2xl border border-border/80 bg-surface p-3 shadow-sm shadow-slate-200/40 md:p-5">
-            <div className="mb-3 grid grid-cols-7 gap-1 px-1">
-              {WEEKDAYS.map((label) => (
-                <p
-                  key={label}
-                  className="text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-muted"
-                >
-                  {label}
+        <section className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.9fr)]">
+          <div className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/40">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-4 md:px-5">
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
+                  Mês
+                </h2>
+                <p className="mt-0.5 text-sm text-muted">
+                  Densidade por dia · segunda a domingo
                 </p>
-              ))}
+              </div>
+              <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] text-muted">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-danger" /> Atrasado
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" /> Hoje
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Em 7 dias
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-300" /> Depois
+                </span>
+              </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1.5">
-              {cells.map((cell, index) => {
-                if (!cell.inMonth || cell.day == null) {
-                  return (
-                    <div
-                      key={`empty-${index}`}
-                      className="min-h-16 rounded-xl bg-slate-50/50 sm:min-h-20"
-                      aria-hidden
-                    />
-                  )
-                }
-
-                const count = cell.items.length
-                return (
-                  <Link
-                    key={cell.day}
-                    href={buildDayHref(month, year, cell.day)}
-                    aria-label={`Dia ${cell.day}, ${count} compromisso(s)`}
-                    aria-current={cell.isSelected ? "date" : undefined}
-                    className={`min-h-16 rounded-xl border p-2 transition sm:min-h-20 ${
-                      cell.isSelected
-                        ? "border-accent bg-teal-50/60 shadow-sm"
-                        : cell.isToday
-                          ? "border-amber-200 bg-amber-50/40 hover:bg-amber-50"
-                          : "border-border/70 bg-background/60 hover:bg-slate-50"
-                    }`}
+            <div className="p-3 md:p-4">
+              <div className="mb-2 grid grid-cols-7 gap-1.5 px-0.5">
+                {WEEKDAYS.map((label) => (
+                  <p
+                    key={label}
+                    className="py-1 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-muted"
                   >
-                    <div className="flex items-start justify-between gap-1">
-                      <span
-                        className={`text-sm font-semibold ${
-                          cell.isToday ? "text-warning" : "text-foreground"
-                        }`}
-                      >
-                        {cell.day}
-                      </span>
-                      {cell.tone ? (
-                        <span
-                          className={`mt-1 h-2 w-2 rounded-full ${toneDot[cell.tone]}`}
-                          aria-hidden
-                        />
-                      ) : null}
-                    </div>
-                    {count > 0 ? (
-                      <p className="mt-2 text-[11px] font-medium text-muted">
-                        {count} item{count === 1 ? "" : "s"}
-                      </p>
-                    ) : (
-                      <p className="mt-2 text-[11px] text-slate-300">—</p>
-                    )}
-                  </Link>
-                )
-              })}
-            </div>
+                    {label}
+                  </p>
+                ))}
+              </div>
 
-            <div className="mt-4 flex flex-wrap gap-3 px-1 text-xs text-muted">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-danger" /> Atrasado
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-amber-400" /> Hoje
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-accent" /> Em 7 dias
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-slate-300" /> Depois
-              </span>
+              <div className="grid grid-cols-7 gap-1.5">
+                {cells.map((cell, index) => {
+                  if (!cell.inMonth || cell.day == null) {
+                    return (
+                      <div
+                        key={`empty-${index}`}
+                        className="min-h-[4.5rem] rounded-2xl bg-slate-50/40 dark:bg-slate-900/30 sm:min-h-[5.75rem]"
+                        aria-hidden
+                      />
+                    )
+                  }
+
+                  const count = cell.items.length
+                  const pendingCountDay = cell.items.filter(
+                    (item) => item.status === "SCHEDULE"
+                  ).length
+                  const preview = cell.items
+                    .filter((item) => item.status === "SCHEDULE")
+                    .slice(0, previewLimit)
+
+                  return (
+                    <Link
+                      key={cell.day}
+                      href={buildDayHref(month, year, cell.day)}
+                      aria-label={`Dia ${cell.day}, ${count} compromisso(s)`}
+                      aria-current={cell.isSelected ? "date" : undefined}
+                      tabIndex={0}
+                      className={`group relative flex min-h-[4.5rem] flex-col rounded-2xl border p-2 transition duration-200 sm:min-h-[5.75rem] sm:p-2.5 ${
+                        cell.isSelected
+                          ? "border-accent/60 bg-teal-50/70 shadow-[0_0_0_1px_rgba(15,118,110,0.12)] dark:border-teal-500/40 dark:bg-teal-950/35"
+                          : cell.isToday
+                            ? "border-amber-300/70 bg-amber-50/50 hover:border-amber-300 hover:bg-amber-50/80 dark:border-amber-700/50 dark:bg-amber-950/25"
+                            : cell.isWeekend
+                              ? "border-transparent bg-slate-50/70 hover:border-border hover:bg-slate-50 dark:bg-slate-900/40 dark:hover:bg-slate-900/70"
+                              : "border-transparent bg-background/70 hover:border-border hover:bg-slate-50 dark:hover:bg-slate-900/50"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-1">
+                        <span
+                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold tabular-nums transition ${
+                            cell.isSelected
+                              ? "bg-accent text-white shadow-sm shadow-teal-900/20"
+                              : cell.isToday
+                                ? "bg-amber-400 text-slate-900"
+                                : "text-foreground group-hover:bg-slate-100 dark:group-hover:bg-slate-800"
+                          }`}
+                        >
+                          {cell.day}
+                        </span>
+                        {cell.tone ? (
+                          <span
+                            className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${toneDot[cell.tone]}`}
+                            aria-hidden
+                          />
+                        ) : null}
+                      </div>
+
+                      {count > 0 ? (
+                        <div className="mt-auto space-y-1 pt-2">
+                          <div className="hidden space-y-0.5 md:block">
+                            {preview.map((item) => (
+                              <p
+                                key={item.id}
+                                className="truncate rounded-md bg-white/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-950/40 dark:text-slate-300"
+                              >
+                                {item.title}
+                              </p>
+                            ))}
+                            {pendingCountDay > previewLimit ? (
+                              <p className="px-0.5 text-[10px] font-medium text-muted">
+                                +{pendingCountDay - previewLimit}
+                              </p>
+                            ) : null}
+                          </div>
+                          <div className="flex items-center justify-between gap-1 md:hidden">
+                            <span className="text-[10px] font-semibold text-muted">
+                              {pendingCountDay > 0
+                                ? `${pendingCountDay}`
+                                : `${count}`}
+                            </span>
+                            {cell.pendingTotal > 0 ? (
+                              <span className="truncate text-[9px] tabular-nums text-muted">
+                                {formatCurrency(cell.pendingTotal)}
+                              </span>
+                            ) : null}
+                          </div>
+                          {cell.pendingTotal > 0 ? (
+                            <p className="hidden truncate text-[10px] font-medium tabular-nums text-muted md:block">
+                              {formatCurrency(cell.pendingTotal)}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <div className="mt-auto pt-3">
+                          <span className="block h-px w-4 bg-slate-200/80 dark:bg-slate-700" />
+                        </div>
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
-          <aside className="rounded-2xl border border-border/80 bg-surface shadow-sm shadow-slate-200/40 xl:sticky xl:top-24 xl:self-start">
-            <div className="border-b border-border px-5 py-4">
-              <h2 className="text-base font-semibold">
-                {formatDate(selectedDate.toISOString())}
-              </h2>
-              <p className="mt-1 text-sm text-muted">
-                {selectedItems.length === 0
-                  ? "Nenhum compromisso neste dia"
-                  : `${selectedItems.length} item(ns) · ${formatCurrency(selectedTotal)} pendente(s)`}
+          <aside className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/40 xl:sticky xl:top-24 xl:self-start">
+            <div className="relative border-b border-border/70 bg-gradient-to-br from-slate-50 via-white to-teal-50/40 px-5 py-5 dark:from-slate-900 dark:via-slate-900 dark:to-teal-950/30">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
+                Dia selecionado
               </p>
+              <h2 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight capitalize">
+                {selectedWeekday}
+              </h2>
+              <p className="mt-0.5 text-sm text-muted">
+                {formatDate(selectedDate.toISOString())}
+              </p>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <div className="rounded-xl border border-border/70 bg-surface/80 px-3 py-2.5">
+                  <p className="text-[11px] text-muted">Pendente</p>
+                  <p className="mt-0.5 text-sm font-semibold tabular-nums text-warning">
+                    {formatCurrency(selectedTotal)}
+                  </p>
+                  <p className="text-[11px] text-muted">
+                    {selectedPending.length} item(ns)
+                  </p>
+                </div>
+                <div className="rounded-xl border border-border/70 bg-surface/80 px-3 py-2.5">
+                  <p className="text-[11px] text-muted">Já pago</p>
+                  <p className="mt-0.5 text-sm font-semibold tabular-nums text-success">
+                    {selectedPaid.length}
+                  </p>
+                  <p className="text-[11px] text-muted">neste dia</p>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2 p-3 md:p-4">
               {selectedItems.length === 0 ? (
-                <div className="rounded-xl bg-slate-50 px-4 py-10 text-center text-sm text-muted">
-                  Escolha outro dia ou abra{" "}
+                <div className="rounded-2xl border border-dashed border-border px-4 py-12 text-center">
+                  <p className="text-sm font-medium text-foreground">
+                    Dia livre
+                  </p>
+                  <p className="mt-1 text-sm text-muted">
+                    Nada vence nesta data. Veja o que ainda falta no mês.
+                  </p>
                   <Link
                     href={`/parcelas?month=${month}&year=${year}`}
-                    className="font-semibold text-accent hover:underline"
+                    className="mt-4 inline-flex rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     A pagar este mês
                   </Link>
-                  .
                 </div>
               ) : (
                 selectedItems.map((item) => {
                   const tone = getPayableTone(item, today)
                   return (
-                    <article
+                    <Link
                       key={item.id}
-                      className="rounded-2xl border border-border/80 bg-background/50 p-4"
+                      href={payableItemHref(item, month, year)}
+                      aria-label={`Abrir ${item.title}`}
+                      tabIndex={0}
+                      className="group flex gap-3 rounded-2xl border border-border/70 bg-background/40 p-3.5 transition hover:border-accent/30 hover:bg-teal-50/40 dark:hover:bg-teal-950/20"
                     >
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="truncate font-semibold">
-                              {item.title}
-                            </h3>
-                            <span
-                              className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${toneBadge[tone]}`}
-                            >
-                              {toneLabel[tone]}
-                            </span>
+                      <span
+                        className={`mt-1 h-10 w-1 shrink-0 rounded-full ${toneBar[tone]}`}
+                        aria-hidden
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="truncate font-semibold group-hover:text-accent">
+                                {item.title}
+                              </h3>
+                              <span
+                                className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${toneBadge[tone]}`}
+                              >
+                                {toneLabel[tone]}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-sm text-muted">
+                              {payableKindLabel(item.kind)} · {item.subtitle}
+                            </p>
                           </div>
-                          <p className="mt-1 text-sm text-muted">
-                            {payableKindLabel(item.kind)} · {item.subtitle}
+                          <p className="shrink-0 font-semibold tabular-nums">
+                            {formatCurrency(item.value)}
                           </p>
                         </div>
-                        <p className="font-semibold tabular-nums">
-                          {formatCurrency(item.value)}
-                        </p>
                       </div>
-                      <Link
-                        href={payableItemHref(item, month, year)}
-                        className="mt-3 inline-flex rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
-                      >
-                        Abrir
-                      </Link>
-                    </article>
+                    </Link>
                   )
                 })
               )}
             </div>
 
-            <div className="border-t border-border px-5 py-4">
+            <div className="border-t border-border/70 px-5 py-4">
               <Link
                 href={`/parcelas?month=${month}&year=${year}`}
-                className="inline-flex rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover sm:w-auto"
               >
                 Ir para pagamentos
               </Link>
