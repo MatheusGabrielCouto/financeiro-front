@@ -75,6 +75,14 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
+  if (pathname.startsWith("/pra-pagar")) {
+    return {
+      title: "Pra pagar",
+      section: "Planejamento",
+      crumbs: [{ label: "Pra pagar" }],
+    }
+  }
+
   if (pathname.startsWith("/planejador")) {
     return {
       title: "Planejador de dívidas",

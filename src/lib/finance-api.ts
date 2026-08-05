@@ -32,6 +32,9 @@ import type {
   PlannedDebtLine,
   PlannedDebtWorkbook,
   PlannedExpense,
+  PaymentReminder,
+  PaymentReminderStatus,
+  CreatePaymentReminderBody,
   CreatePlannedDebtLineBody,
   CreatePlannedExpenseBody,
   UpdatePlannedDebtLineBody,
@@ -275,3 +278,52 @@ export const payPlannedExpense = (id: string) =>
 
 export const deletePlannedExpense = (id: string) =>
   apiFetch<{ success: true }>(`/planned-expense/${id}`, { method: "DELETE" })
+
+export const getPaymentReminders = (params?: { status?: string }) => {
+  const search = new URLSearchParams()
+  if (params?.status) search.set("status", params.status)
+  const query = search.toString()
+  return apiFetch<PaymentReminder[]>(
+    `/payment-reminder${query ? `?${query}` : ""}`
+  )
+}
+
+export const createPaymentReminder = (body: CreatePaymentReminderBody) =>
+  apiFetch<PaymentReminder>("/payment-reminder", {
+    method: "POST",
+    body,
+  })
+
+export const updatePaymentReminder = (
+  id: string,
+  body: Partial<CreatePaymentReminderBody> & {
+    status?: PaymentReminderStatus
+  }
+) =>
+  apiFetch<PaymentReminder>(`/payment-reminder/${id}`, {
+    method: "PATCH",
+    body,
+  })
+
+export const markPaymentReminderDone = (id: string) =>
+  apiFetch<PaymentReminder>(`/payment-reminder/${id}/done`, {
+    method: "POST",
+  })
+
+export const markPaymentReminderUndone = (id: string) =>
+  apiFetch<PaymentReminder>(`/payment-reminder/${id}/undone`, {
+    method: "POST",
+  })
+
+export const paymentReminderToTransaction = (id: string) =>
+  apiFetch<PaymentReminder>(`/payment-reminder/${id}/to-transaction`, {
+    method: "POST",
+  })
+
+export const paymentReminderToPlannedExpense = (id: string) =>
+  apiFetch<PaymentReminder>(`/payment-reminder/${id}/to-planned-expense`, {
+    method: "POST",
+  })
+
+export const deletePaymentReminder = (id: string) =>
+  apiFetch<{ success: true }>(`/payment-reminder/${id}`, { method: "DELETE" })

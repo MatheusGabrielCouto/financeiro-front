@@ -161,6 +161,32 @@ export type CreatePlannedExpenseBody = {
   categoryId?: string | null
 }
 
+export type PaymentReminderStatus = "OPEN" | "DONE"
+export type PaymentReminderPriority = "LOW" | "MEDIUM" | "HIGH"
+
+export type PaymentReminder = {
+  id: string
+  title: string
+  notes: string
+  value: number
+  priority: PaymentReminderPriority
+  status: PaymentReminderStatus
+  doneAt: string | null
+  userId: string
+  categoryId: string | null
+  category: { id: string; title: string } | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type CreatePaymentReminderBody = {
+  title: string
+  notes?: string
+  value: number
+  priority?: PaymentReminderPriority
+  categoryId?: string | null
+}
+
 export type CaixinhaBreakdownItem = {
   id: string
   type: "deposit" | "withdrawal"
@@ -496,11 +522,13 @@ export type SpendingInsights = {
     variable: number
     recurring: number
     installments: number
+    plannedExpenses?: number
   }
   currentBreakdown: {
     variable: number
     recurring: number
     installments: number
+    plannedExpenses?: number
   }
   categoryAlerts: Array<{
     categoryId: string

@@ -206,6 +206,11 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
         current: insights.currentBreakdown.installments,
         average: insights.averageBreakdown.installments,
       },
+      {
+        label: "Gastos previstos",
+        current: insights.currentBreakdown.plannedExpenses ?? 0,
+        average: insights.averageBreakdown.plannedExpenses ?? 0,
+      },
     ]
     const compositionMax = Math.max(
       ...composition.flatMap((row) => [row.current, row.average]),

@@ -72,6 +72,7 @@ const navSections: NavSection[] = [
     title: "Planejamento",
     items: [
       { href: "/planejamento", label: "Planilha", icon: IconReports },
+      { href: "/pra-pagar", label: "Pra pagar", icon: IconInstallments },
       { href: "/gastos-previstos", label: "Gastos previstos", icon: IconInstallments },
       { href: "/caixinhas", label: "Caixinhas", icon: IconPiggy },
       { href: "/recorrentes", label: "Contas fixas", icon: IconRecurring },
