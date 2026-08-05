@@ -327,6 +327,67 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
     ]
     const reportCsvFilename = `relatorio-${year}-${String(month).padStart(2, "0")}.csv`
 
+    const previousIncome = previousDetails
+      ? previousDetails.summary.totalIncome ??
+        previousDetails.summary.recurringIncome +
+          (previousDetails.summary.outrasEntradas ?? 0)
+      : null
+    const previousSurplus = previousDetails
+      ? previousDetails.summary.balanceAfterExpenses ??
+        previousDetails.summary.netExpected
+      : null
+    const previousLabel = `${MONTH_NAMES[prevMonth - 1]} ${prevYear}`
+
+    const reportPdfData = {
+      monthLabel,
+      summary: {
+        income: totalIncome,
+        commitments: totalFixedOut,
+        surplus: summary.balanceAfterExpenses ?? summary.netExpected,
+        structuralSurplus: summary.netStructural ?? summary.netExpected,
+        expenses: summary.totalExpenses,
+      },
+      previous:
+        previousDetails && previousIncome != null && previousSurplus != null
+          ? {
+              label: previousLabel,
+              income: previousIncome,
+              expenses: previousDetails.summary.totalExpenses,
+              surplus: previousSurplus,
+            }
+          : null,
+      categories: categories.map((item) => ({
+        title: item.title,
+        total: item.total,
+        share: categoryTotal > 0 ? (item.total / categoryTotal) * 100 : 0,
+      })),
+      incomes: incomes.map((item) => ({
+        title: item.title,
+        value: item.value,
+        detail: `Dia ${item.dayOfMonth}`,
+      })),
+      recurrings: recurrings.map((item) => ({
+        title: item.title,
+        value: item.value,
+        detail: item.paidThisMonth ? "Paga" : "Em aberto",
+      })),
+      debts: debts.map((item) => ({
+        title: item.debtTitle,
+        value: item.value,
+        detail: item.status === "PAY" ? "Paga" : "Em aberto",
+      })),
+      planned: plannedExpenses.map((item) => ({
+        title: item.title,
+        value: item.value,
+        detail:
+          item.status === "PAID"
+            ? "Pago"
+            : item.status === "CANCELLED"
+              ? "Cancelado"
+              : "Em aberto",
+      })),
+    }
+
     return (
       <div className="space-y-6">
         <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50">
@@ -366,6 +427,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                     subtitle="Resumo financeiro e detalhamento do mês"
                     headers={reportCsvHeaders}
                     rows={reportCsvRows}
+                    reportData={reportPdfData}
                     csvLabel="CSV"
                     pdfLabel="PDF"
                     className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"

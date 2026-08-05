@@ -3,6 +3,10 @@
 import type { KeyboardEvent } from "react"
 import { buildCsv, downloadCsv, type CsvCell } from "@/lib/csv"
 import { downloadPdfTable } from "@/lib/pdf"
+import {
+  downloadReportPdf,
+  type ReportPdfData,
+} from "@/lib/report-pdf"
 
 type ExportDataButtonsProps = {
   filename: string
@@ -15,6 +19,8 @@ type ExportDataButtonsProps = {
   disabled?: boolean
   className?: string
   onExported?: () => void
+  /** When set, PDF uses the rich monthly report layout */
+  reportData?: ReportPdfData
 }
 
 const defaultButtonClass =
@@ -31,11 +37,12 @@ export const ExportDataButtons = ({
   disabled = false,
   className = defaultButtonClass,
   onExported,
+  reportData,
 }: ExportDataButtonsProps) => {
-  const isDisabled = disabled || rows.length === 0
+  const isDisabled = disabled || (rows.length === 0 && !reportData)
 
   const handleCsv = () => {
-    if (isDisabled) return
+    if (disabled || rows.length === 0) return
     const csv = buildCsv(headers, rows)
     downloadCsv(filename, csv)
     onExported?.()
@@ -43,13 +50,17 @@ export const ExportDataButtons = ({
 
   const handlePdf = () => {
     if (isDisabled) return
-    downloadPdfTable({
-      filename,
-      title,
-      subtitle,
-      headers,
-      rows,
-    })
+    if (reportData) {
+      downloadReportPdf({ filename, data: reportData })
+    } else {
+      downloadPdfTable({
+        filename,
+        title,
+        subtitle,
+        headers,
+        rows,
+      })
+    }
     onExported?.()
   }
 
@@ -67,7 +78,7 @@ export const ExportDataButtons = ({
         type="button"
         onClick={handleCsv}
         onKeyDown={handleKeyDown(handleCsv)}
-        disabled={isDisabled}
+        disabled={disabled || rows.length === 0}
         tabIndex={0}
         aria-label={csvLabel}
         className={className}
