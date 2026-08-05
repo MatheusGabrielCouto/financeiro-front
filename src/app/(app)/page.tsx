@@ -71,6 +71,7 @@ const DashboardPage = async () => {
       ])
 
     const recurringBreakdown = details.recurringPaymentsBreakdown ?? []
+    const plannedBreakdown = details.plannedExpensesBreakdown ?? []
     const paidInstallments = details.debtsBreakdown.filter(
       (item) => item.status === "PAY"
     )
@@ -80,6 +81,10 @@ const DashboardPage = async () => {
     const paidRecurring = recurringBreakdown.filter((item) => item.paidThisMonth)
     const pendingRecurring = recurringBreakdown.filter(
       (item) => !item.paidThisMonth
+    )
+    const paidPlanned = plannedBreakdown.filter((item) => item.status === "PAID")
+    const pendingPlanned = plannedBreakdown.filter(
+      (item) => item.status === "SCHEDULED"
     )
 
     const paidInstallmentsTotal = paidInstallments.reduce(
@@ -98,17 +103,44 @@ const DashboardPage = async () => {
       (sum, item) => sum + item.value,
       0
     )
+    const paidPlannedTotal = paidPlanned.reduce(
+      (sum, item) => sum + item.value,
+      0
+    )
+    const pendingPlannedTotal = pendingPlanned.reduce(
+      (sum, item) => sum + item.value,
+      0
+    )
 
-    const paidTotal = paidInstallmentsTotal + paidRecurringTotal
-    const scheduledTotal = pendingInstallmentsTotal + pendingRecurringTotal
-    const monthTotal =
-      details.summary.debts + details.summary.recurringPayments
-    const progress =
-      monthTotal > 0 ? Math.round((paidTotal / monthTotal) * 100) : 100
-    const pendingCount = pendingInstallments.length + pendingRecurring.length
-    const paidCount = paidInstallments.length + paidRecurring.length
-    const monthItemCount =
-      details.debtsBreakdown.length + recurringBreakdown.length
+    const paidCommitments =
+      paidInstallmentsTotal + paidRecurringTotal + paidPlannedTotal
+    const scheduledTotal =
+      pendingInstallmentsTotal + pendingRecurringTotal + pendingPlannedTotal
+    const commitmentTotal =
+      details.summary.debts +
+      details.summary.recurringPayments +
+      (details.summary.plannedExpensesOpen ?? 0)
+    const monthIncome =
+      details.summary.totalIncome ??
+      details.summary.recurringIncome + (details.summary.outrasEntradas ?? 0)
+    const monthOutflow = details.summary.totalExpenses
+    const otherExpenses =
+      details.summary.otherExpenses ??
+      Math.max(0, monthOutflow - paidCommitments)
+    const monthSurplus =
+      details.summary.balanceAfterExpenses ?? details.summary.netExpected
+    const hasCommitments = commitmentTotal > 0 || scheduledTotal > 0
+    const progress = hasCommitments
+      ? Math.round((paidCommitments / Math.max(commitmentTotal, 1)) * 100)
+      : monthIncome > 0
+        ? Math.min(100, Math.round((monthOutflow / monthIncome) * 100))
+        : monthOutflow > 0
+          ? 100
+          : 0
+    const pendingCount =
+      pendingInstallments.length +
+      pendingRecurring.length +
+      pendingPlanned.length
 
     const upcomingItems: UpcomingItem[] = [
       ...pendingInstallments.map((item) => ({
@@ -141,13 +173,18 @@ const DashboardPage = async () => {
 
     const firstName = user?.name?.split(" ")[0] ?? "olá"
     const monthLabel = formatMonthLabel(month, year)
-    const netPositive = details.summary.netExpected >= 0
+    const netPositive = monthSurplus >= 0
     const balanceCoversPending = amount.amount >= scheduledTotal
 
     const flowRows = [
       {
         label: "Receitas fixas",
         value: details.summary.recurringIncome,
+        tone: "income" as const,
+      },
+      {
+        label: "Outras entradas",
+        value: details.summary.outrasEntradas ?? 0,
         tone: "income" as const,
       },
       {
@@ -160,10 +197,20 @@ const DashboardPage = async () => {
         value: details.summary.debts,
         tone: "expense" as const,
       },
-    ]
+      {
+        label: "Gastos previstos",
+        value: details.summary.plannedExpensesOpen ?? 0,
+        tone: "expense" as const,
+      },
+      {
+        label: "Lançamentos (extrato)",
+        value: otherExpenses,
+        tone: "expense" as const,
+      },
+    ].filter((row) => row.value > 0)
     const flowMax = Math.max(
       ...flowRows.map((row) => row.value),
-      Math.abs(details.summary.netExpected),
+      Math.abs(monthSurplus),
       1
     )
 
@@ -231,11 +278,19 @@ const DashboardPage = async () => {
                 </p>
                 <p
                   className={`mt-3 text-sm font-medium ${
-                    balanceCoversPending ? "text-emerald-300" : "text-amber-300"
+                    scheduledTotal === 0
+                      ? monthOutflow > 0
+                        ? "text-slate-300"
+                        : "text-emerald-300"
+                      : balanceCoversPending
+                        ? "text-emerald-300"
+                        : "text-amber-300"
                   }`}
                 >
                   {scheduledTotal === 0
-                    ? "Nenhuma pendência neste mês"
+                    ? monthOutflow > 0
+                      ? `${formatCurrency(monthOutflow)} saíram no extrato este mês`
+                      : "Nenhuma pendência neste mês"
                     : balanceCoversPending
                       ? "Seu saldo cobre as pendências do mês"
                       : `Faltam ${formatCurrency(scheduledTotal - amount.amount)} para cobrir as pendências`}
@@ -244,7 +299,9 @@ const DashboardPage = async () => {
 
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm text-slate-300">Progresso do mês</p>
+                  <p className="text-sm text-slate-300">
+                    {hasCommitments ? "Progresso do mês" : "Fluxo do mês"}
+                  </p>
                   <span className="text-sm font-semibold text-teal-200">
                     {progress}%
                   </span>
@@ -257,15 +314,23 @@ const DashboardPage = async () => {
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-slate-400">Já pago</p>
+                    <p className="text-slate-400">
+                      {hasCommitments ? "Já pago" : "Saídas"}
+                    </p>
                     <p className="mt-0.5 font-semibold text-emerald-300">
-                      {formatCurrency(paidTotal)}
+                      {formatCurrency(
+                        hasCommitments ? paidCommitments : monthOutflow
+                      )}
                     </p>
                   </div>
                   <div>
-                    <p className="text-slate-400">Ainda falta</p>
+                    <p className="text-slate-400">
+                      {hasCommitments ? "Ainda falta" : "Entradas"}
+                    </p>
                     <p className="mt-0.5 font-semibold text-amber-300">
-                      {formatCurrency(scheduledTotal)}
+                      {formatCurrency(
+                        hasCommitments ? scheduledTotal : monthIncome
+                      )}
                     </p>
                   </div>
                 </div>
@@ -282,27 +347,27 @@ const DashboardPage = async () => {
             {
               label: "A pagar",
               value: formatCurrency(scheduledTotal),
-              hint: `${pendingCount} item(ns)`,
+              hint: `${pendingCount} compromisso(s)`,
               className: "border-amber-200/70 bg-amber-50/50",
               valueClass: "text-warning",
             },
             {
-              label: "Já pago",
-              value: formatCurrency(paidTotal),
-              hint: `${paidCount} item(ns)`,
+              label: "Saídas do mês",
+              value: formatCurrency(monthOutflow),
+              hint: "Lançamentos no extrato",
               className: "border-emerald-200/70 bg-emerald-50/40",
               valueClass: "text-success",
             },
             {
-              label: "Total do mês",
-              value: formatCurrency(monthTotal),
-              hint: `${monthItemCount} item(ns) · parcelas + contas fixas`,
+              label: "Entradas do mês",
+              value: formatCurrency(monthIncome),
+              hint: "Fixas + outras entradas",
               className: "border-border/80 bg-surface",
               valueClass: "text-foreground",
             },
             {
-              label: "Sobra prevista",
-              value: formatCurrency(details.summary.netExpected),
+              label: "Sobra do mês",
+              value: formatCurrency(monthSurplus),
               hint: netPositive ? "Mês sob controle" : "Atenção ao fluxo",
               className: netPositive
                 ? "border-teal-200/70 bg-teal-50/40"
@@ -583,7 +648,7 @@ const DashboardPage = async () => {
             <div className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
               <h2 className="text-base font-semibold">Fluxo do mês</h2>
               <p className="mt-1 text-sm text-muted">
-                Como chegamos na sobra prevista
+                Como chegamos na sobra com os lançamentos
               </p>
 
               <p
@@ -591,7 +656,7 @@ const DashboardPage = async () => {
                   netPositive ? "text-success" : "text-danger"
                 }`}
               >
-                {formatCurrency(details.summary.netExpected)}
+                {formatCurrency(monthSurplus)}
               </p>
 
               <div className="mt-5 space-y-3">

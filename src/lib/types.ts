@@ -73,6 +73,8 @@ export type DetailsSummary = {
   caixinhaWithdrawals: number
   caixinhaNetInMonth: number
   caixinhaTotal: number
+  otherExpenses?: number
+  netStructural?: number
   netExpected: number
   totalExpenses: number
   balanceAfterExpenses: number

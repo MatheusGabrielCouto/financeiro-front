@@ -240,7 +240,10 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
     const balanceChartMax = Math.max(totalIncome, totalFixedOut, 1)
     const monthLabel = `${MONTH_NAMES[month - 1]} ${year}`
     const balancePositive = summary.balanceAfterExpenses >= 0
-    const netPositive = summary.netExpected >= 0
+    const netPositive =
+      (summary.netStructural ?? summary.netExpected) >= 0
+    const monthSurplusPositive =
+      (summary.balanceAfterExpenses ?? summary.netExpected) >= 0
 
     const incomes =
       details.recurringIncomeBreakdown ?? ([] as RecurringIncomeBreakdownItem[])
@@ -316,18 +319,22 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                   className: "text-amber-300",
                 },
                 {
-                  label: "Sobra prevista",
-                  value: summary.netExpected,
-                  hint: netPositive ? "Fluxo sob controle" : "Atenção ao mês",
-                  className: netPositive ? "text-teal-200" : "text-red-300",
+                  label: "Sobra do mês",
+                  value: summary.balanceAfterExpenses ?? summary.netExpected,
+                  hint: balancePositive
+                    ? "Inclui lançamentos do extrato"
+                    : "Resultado líquido negativo",
+                  className: monthSurplusPositive
+                    ? "text-emerald-300"
+                    : "text-red-300",
                 },
                 {
-                  label: "Saldo após gastos",
-                  value: summary.balanceAfterExpenses,
-                  hint: balancePositive
-                    ? "Resultado líquido positivo"
-                    : "Resultado líquido negativo",
-                  className: balancePositive ? "text-emerald-300" : "text-red-300",
+                  label: "Sobra estrutural",
+                  value: summary.netStructural ?? summary.netExpected,
+                  hint: netPositive
+                    ? "Só receitas/compromissos fixos"
+                    : "Fixos apertados",
+                  className: netPositive ? "text-teal-200" : "text-red-300",
                 },
               ].map((card) => (
                 <article
@@ -444,8 +451,13 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                 tone="accent"
               />
               <SummaryRow
-                label="Receita líquida esperada"
-                value={summary.netExpected}
+                label="Sobra do mês (com extrato)"
+                value={summary.balanceAfterExpenses ?? summary.netExpected}
+                tone={monthSurplusPositive ? "success" : "danger"}
+              />
+              <SummaryRow
+                label="Sobra estrutural (fixos)"
+                value={summary.netStructural ?? summary.netExpected}
                 tone={netPositive ? "success" : "danger"}
               />
               <SummaryRow
