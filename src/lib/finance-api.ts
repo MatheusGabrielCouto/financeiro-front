@@ -38,6 +38,13 @@ import type {
   CreatePlannedDebtLineBody,
   CreatePlannedExpenseBody,
   UpdatePlannedDebtLineBody,
+  CreditCard,
+  CreditCardInvoice,
+  CreditCardLimit,
+  CreditCardRisk,
+  CreditCardStatement,
+  CreateCreditCardBody,
+  CreateCreditCardPurchaseBody,
 } from "@/lib/types"
 
 export const getAmount = () => apiFetch<AmountResponse>("/amount")
@@ -327,3 +334,59 @@ export const paymentReminderToPlannedExpense = (id: string) =>
 
 export const deletePaymentReminder = (id: string) =>
   apiFetch<{ success: true }>(`/payment-reminder/${id}`, { method: "DELETE" })
+
+export const getCreditCards = () => apiFetch<CreditCard[]>("/credit-card")
+
+export const createCreditCard = (body: CreateCreditCardBody) =>
+  apiFetch<CreditCard>("/credit-card", { method: "POST", body })
+
+export const deleteCreditCard = (id: string) =>
+  apiFetch<CreditCard>(`/credit-card/${id}`, { method: "DELETE" })
+
+export const getCreditCardInvoice = (
+  id: string,
+  month: number,
+  year: number
+) =>
+  apiFetch<CreditCardInvoice>(
+    `/credit-card/${id}/invoice?month=${month}&year=${year}`
+  )
+
+export const getCreditCardLimit = (id: string) =>
+  apiFetch<CreditCardLimit>(`/credit-card/${id}/limit`)
+
+export const getCreditCardRisk = (id: string) =>
+  apiFetch<CreditCardRisk>(`/credit-card/${id}/risk`)
+
+export const getCreditCardStatement = (
+  id: string,
+  month?: number,
+  year?: number
+) => {
+  const params = new URLSearchParams()
+  if (month) params.set("month", String(month))
+  if (year) params.set("year", String(year))
+  const query = params.toString()
+  return apiFetch<CreditCardStatement>(
+    `/credit-card/${id}/statement${query ? `?${query}` : ""}`
+  )
+}
+
+export const createCreditCardPurchase = (
+  id: string,
+  body: CreateCreditCardPurchaseBody
+) =>
+  apiFetch<unknown>(`/credit-card/${id}/purchase`, {
+    method: "POST",
+    body,
+  })
+
+export const payCreditCardInvoice = (
+  id: string,
+  month: number,
+  year: number
+) =>
+  apiFetch<{ paid: number }>(`/credit-card/${id}/pay-invoice`, {
+    method: "POST",
+    body: { month, year },
+  })

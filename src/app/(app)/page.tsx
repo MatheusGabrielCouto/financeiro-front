@@ -11,6 +11,7 @@ import {
   IconSimulate,
 } from "@/components/icons"
 import { BudgetSpotlight } from "@/components/budget-spotlight"
+import { CreditCardVisual } from "@/components/credit-card-visual"
 import { MonthCompareCard } from "@/components/month-compare-card"
 import { PayInstallmentButton } from "@/components/pay-installment-button"
 import { OverdueInterestHint } from "@/components/overdue-interest-hint"
@@ -32,12 +33,15 @@ import {
   getAmount,
   getBudgets,
   getCategories,
+  getCreditCardLimit,
+  getCreditCards,
   getDetails,
   getEmergencyReserve,
   getFuturePurchaseProjections,
   getPlannedDebtWorkbook,
   getRecurringIncomes,
 } from "@/lib/finance-api"
+import { buildCreditCardInvoiceAlerts } from "@/lib/credit-card-alerts"
 import { getPriorityNotificationCount } from "@/lib/notification-count"
 
 type UpcomingItem = {
@@ -79,6 +83,7 @@ const DashboardPage = async () => {
       categories,
       attentionCount,
       budgets,
+      creditCards,
     ] = await Promise.all([
       getAmount(),
       getDetails(month, year),
@@ -90,7 +95,34 @@ const DashboardPage = async () => {
       getCategories().catch(() => []),
       getPriorityNotificationCount(),
       getBudgets(month, year).catch(() => []),
+      getCreditCards().catch(() => []),
     ])
+
+    const creditCardSummaries = await Promise.all(
+      creditCards.slice(0, 4).map(async (card) => {
+        const limit = await getCreditCardLimit(card.id).catch(() => null)
+        return { card, limit }
+      })
+    )
+    const creditUsed = creditCardSummaries.reduce(
+      (sum, item) => sum + (item.limit?.used ?? 0),
+      0
+    )
+    const creditLimit = creditCardSummaries.reduce(
+      (sum, item) => sum + (item.limit?.limit ?? item.card.limit),
+      0
+    )
+    const cardInvoiceAlerts = await buildCreditCardInvoiceAlerts({
+      month,
+      year,
+    })
+    const cardInvoicesTotal = cardInvoiceAlerts.reduce(
+      (sum, item) => sum + item.pendingTotal,
+      0
+    )
+    const invoiceByCardId = new Map(
+      cardInvoiceAlerts.map((item) => [item.cardId, item.pendingTotal])
+    )
 
     const recurringBreakdown = details.recurringPaymentsBreakdown ?? []
     const plannedBreakdown = details.plannedExpensesBreakdown ?? []
@@ -452,6 +484,66 @@ const DashboardPage = async () => {
             previousYear={prevYear}
             variant="home"
           />
+        ) : null}
+
+        {creditCards.length > 0 ? (
+          <section className="rounded-3xl border border-border/70 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
+                  Cartões
+                </h2>
+                <p className="mt-1 text-sm text-muted">
+                  {formatCurrency(creditUsed)} usados de{" "}
+                  {formatCurrency(creditLimit)} em limite
+                  {cardInvoicesTotal > 0
+                    ? ` · ${formatCurrency(cardInvoicesTotal)} em faturas abertas`
+                    : ""}
+                </p>
+              </div>
+              <Link
+                href="/cartoes"
+                className="rounded-xl border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
+              >
+                Ver cartões
+              </Link>
+            </div>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {creditCardSummaries.map(({ card, limit }) => {
+                const pct =
+                  limit && limit.limit > 0
+                    ? Math.min(
+                        100,
+                        Math.round((limit.used / limit.limit) * 100)
+                      )
+                    : 0
+                const invoicePending = invoiceByCardId.get(card.id) ?? 0
+                return (
+                  <Link
+                    key={card.id}
+                    href={`/cartoes/${card.id}`}
+                    aria-label={`Abrir cartão ${card.name}`}
+                    tabIndex={0}
+                    className="block w-full outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                  >
+                    <CreditCardVisual
+                      name={card.name}
+                      brand={card.brand}
+                      lastDigits={card.lastDigits}
+                      closingDay={card.closingDay}
+                      dueDay={card.dueDay}
+                      available={limit?.available ?? null}
+                      usedPct={pct}
+                      pendingInvoice={invoicePending}
+                      size="sm"
+                      className="max-w-none"
+                      interactive
+                    />
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
         ) : null}
 
         <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">

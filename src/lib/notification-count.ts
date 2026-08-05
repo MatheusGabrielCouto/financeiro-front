@@ -7,6 +7,9 @@ import {
   getPlannedExpenses,
   getRecurringPayments,
 } from "@/lib/finance-api"
+import {
+  buildCreditCardInvoiceAlerts,
+} from "@/lib/credit-card-alerts"
 import { buildDueAlerts, countPriorityAlerts } from "@/lib/due-alerts"
 import { getCurrentMonthYear } from "@/lib/format"
 import { ApiError } from "@/lib/api-server"
@@ -90,6 +93,12 @@ export const getPriorityNotificationCount = async () => {
       getPaymentReminders({ status: "OPEN" }).catch(() => []),
     ])
 
+    const cardInvoiceAlerts = await buildCreditCardInvoiceAlerts({
+      month: current.month,
+      year: current.year,
+      today,
+    })
+
     const alerts = buildDueAlerts({
       installments: [...installmentsCurrent, ...installmentsNext],
       recurringPayments,
@@ -117,7 +126,8 @@ export const getPriorityNotificationCount = async () => {
     return (
       countPriorityAlerts(alerts) +
       insights.length +
-      openReminders.length
+      openReminders.length +
+      cardInvoiceAlerts.length
     )
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {

@@ -18,6 +18,7 @@ import {
   getPlannedExpenses,
   getRecurringPayments,
 } from "@/lib/finance-api"
+import { buildCreditCardInvoiceAlerts } from "@/lib/credit-card-alerts"
 import { buildInsightAlerts } from "@/lib/notification-count"
 import type { DueAlert } from "@/lib/types"
 
@@ -82,6 +83,16 @@ const NotificacoesPage = async () => {
       getFuturePurchaseProjections(),
       getPaymentReminders({ status: "OPEN" }).catch(() => []),
     ])
+
+    const cardInvoiceAlerts = await buildCreditCardInvoiceAlerts({
+      month: current.month,
+      year: current.year,
+      today,
+    })
+    const cardInvoicesTotal = cardInvoiceAlerts.reduce(
+      (sum, item) => sum + item.pendingTotal,
+      0
+    )
 
     const installments = [...installmentsCurrent, ...installmentsNext]
     const plannedExpenses = [...plannedCurrent, ...plannedNext]
@@ -188,7 +199,7 @@ const NotificacoesPage = async () => {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
             <article className="rounded-2xl border border-red-200/70 bg-red-50/40 p-4">
               <p className="text-sm text-muted">Atrasados</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-danger">
@@ -210,6 +221,15 @@ const NotificacoesPage = async () => {
                 {formatCurrency(remindersTotal)}
               </p>
             </article>
+            <article className="rounded-2xl border border-slate-300/80 bg-slate-50/90 p-4 dark:border-slate-700 dark:bg-slate-900/50">
+              <p className="text-sm text-muted">Faturas</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
+                {cardInvoiceAlerts.length}
+              </p>
+              <p className="mt-1 text-xs text-muted">
+                {formatCurrency(cardInvoicesTotal)}
+              </p>
+            </article>
             <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
               <p className="text-sm text-muted">Alertas</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
@@ -219,9 +239,13 @@ const NotificacoesPage = async () => {
             <article className="rounded-2xl border border-border/80 bg-surface p-4">
               <p className="text-sm text-muted">Prioridade agora</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
-                {formatCurrency(priorityTotal + remindersTotal)}
+                {formatCurrency(
+                  priorityTotal + remindersTotal + cardInvoicesTotal
+                )}
               </p>
-              <p className="mt-1 text-xs text-muted">vencimentos + lista</p>
+              <p className="mt-1 text-xs text-muted">
+                vencimentos + lista + faturas
+              </p>
             </article>
           </div>
         </section>
@@ -244,6 +268,71 @@ const NotificacoesPage = async () => {
 
         <section className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
           <div className="space-y-4">
+            {cardInvoiceAlerts.length > 0 ? (
+              <section className="rounded-2xl border border-border/80 bg-surface shadow-sm shadow-slate-200/40">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
+                  <div>
+                    <h2 className="text-base font-semibold">
+                      Faturas de cartão
+                    </h2>
+                    <p className="text-sm text-muted">
+                      Parcelas em aberto neste mês
+                    </p>
+                  </div>
+                  <Link
+                    href="/cartoes"
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                  >
+                    Ver cartões
+                  </Link>
+                </div>
+                <ul className="space-y-2 p-3 md:p-4">
+                  {cardInvoiceAlerts.map((item) => {
+                    const styles = urgencyStyles[item.urgency]
+                    return (
+                      <li
+                        key={item.id}
+                        className={`rounded-2xl border bg-background/50 p-4 ${styles.border}`}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="truncate font-semibold">
+                                Fatura · {item.cardName}
+                              </h3>
+                              <span
+                                className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${styles.badge}`}
+                              >
+                                {urgencyLabel(item.urgency)}
+                              </span>
+                              <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                                Cartão
+                              </span>
+                            </div>
+                            <p className="mt-1 text-sm text-muted">
+                              {item.itemCount} parcela(s) · vence em{" "}
+                              {formatDate(item.dueDate)}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-semibold tabular-nums">
+                              {formatCurrency(item.pendingTotal)}
+                            </p>
+                            <Link
+                              href={item.href}
+                              className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                            >
+                              Pagar fatura
+                            </Link>
+                          </div>
+                        </div>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </section>
+            ) : null}
+
             {openReminders.length > 0 ? (
               <section className="rounded-2xl border border-border/80 bg-surface shadow-sm shadow-slate-200/40">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
@@ -318,16 +407,20 @@ const NotificacoesPage = async () => {
               </section>
             ) : null}
 
-            {alerts.length === 0 && openReminders.length === 0 ? (
+            {alerts.length === 0 &&
+            openReminders.length === 0 &&
+            cardInvoiceAlerts.length === 0 ? (
               <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 px-4 py-14 text-center">
                 <p className="font-semibold text-success">Tudo em dia</p>
                 <p className="mt-1 text-sm text-muted">
-                  Nenhum vencimento próximo nem item na lista pra pagar.
+                  Nenhum vencimento próximo, fatura aberta nem item na lista pra
+                  pagar.
                 </p>
               </div>
             ) : alerts.length === 0 ? (
               <div className="rounded-2xl border border-border/80 bg-surface px-4 py-8 text-center text-sm text-muted">
-                Sem vencimentos nos próximos 7 dias — foque na lista pra pagar.
+                Sem vencimentos nos próximos 7 dias — foque nas faturas e na
+                lista pra pagar.
               </div>
             ) : (
               groups.map((group) => {
@@ -413,6 +506,12 @@ const NotificacoesPage = async () => {
                   className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold"
                 >
                   Previstos
+                </Link>
+                <Link
+                  href="/cartoes"
+                  className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold"
+                >
+                  Cartões
                 </Link>
                 <Link
                   href="/recorrentes"

@@ -70,6 +70,36 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
+  if (pathname.startsWith("/cartoes/novo")) {
+    return {
+      title: "Novo cartão",
+      section: "Dívidas",
+      crumbs: [
+        { label: "Cartões", href: "/cartoes" },
+        { label: "Novo" },
+      ],
+    }
+  }
+
+  if (pathname.startsWith("/cartoes/")) {
+    return {
+      title: "Detalhe do cartão",
+      section: "Dívidas",
+      crumbs: [
+        { label: "Cartões", href: "/cartoes" },
+        { label: "Detalhe" },
+      ],
+    }
+  }
+
+  if (pathname.startsWith("/cartoes")) {
+    return {
+      title: "Cartões",
+      section: "Dívidas",
+      crumbs: [{ label: "Cartões" }],
+    }
+  }
+
   if (pathname.startsWith("/planejamento")) {
     return {
       title: "Planejamento",

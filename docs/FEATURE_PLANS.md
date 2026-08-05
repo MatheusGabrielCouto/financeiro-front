@@ -16,7 +16,11 @@ Registro de ideias e planos para novas features do **financeiro-front** (dashboa
 
 | Feature | Status | Arquivo |
 |---------|--------|---------|
-| Backlog de ideias — Dashboard | ideia | [features/2026-08-05-backlog-ideias-dashboard.md](features/2026-08-05-backlog-ideias-dashboard.md) |
+| Backlog de ideias — Dashboard | ideia (maioria feita) | [features/2026-08-05-backlog-ideias-dashboard.md](features/2026-08-05-backlog-ideias-dashboard.md) |
+| Roadmap ambicioso — Dashboard (front + back) | ideia | [features/2026-08-05-roadmap-ambicioso-dashboard.md](features/2026-08-05-roadmap-ambicioso-dashboard.md) |
+| Projeção anual na dashboard | planejado | [features/2026-08-05-projecao-anual-dashboard.md](features/2026-08-05-projecao-anual-dashboard.md) |
+| Cartões de crédito na dashboard | feito | [features/2026-08-05-cartoes-credito-web.md](features/2026-08-05-cartoes-credito-web.md) |
+| Regras de categorização | planejado | [features/2026-08-05-regras-categorizacao.md](features/2026-08-05-regras-categorizacao.md) |
 
 ---
 

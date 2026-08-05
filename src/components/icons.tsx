@@ -208,3 +208,12 @@ export const IconWarning = ({ className }: IconProps) => (
     />
   </svg>
 )
+
+export const IconCreditCard = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4H4V6h16v2Zm0 2v8H4v-8h16ZM6 14h4v2H6v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)

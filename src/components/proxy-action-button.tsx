@@ -14,6 +14,7 @@ type ProxyActionButtonProps = {
   variant?: "primary" | "danger" | "ghost"
   ariaLabel: string
   body?: unknown
+  redirectTo?: string
 }
 
 const variantClass = {
@@ -35,6 +36,7 @@ export const ProxyActionButton = ({
   variant = "ghost",
   ariaLabel,
   body,
+  redirectTo,
 }: ProxyActionButtonProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -69,6 +71,11 @@ export const ProxyActionButton = ({
       }
 
       setIsConfirmOpen(false)
+      if (redirectTo) {
+        router.push(redirectTo)
+        router.refresh()
+        return
+      }
       router.refresh()
     } catch {
       setError("Erro de conexão")

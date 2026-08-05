@@ -641,6 +641,87 @@ export type DebtPlannerResponse = {
   avalanche: DebtPlannerMethod | null
 }
 
+export type CreditCard = {
+  id: string
+  name: string
+  brand: string | null
+  limit: number
+  closingDay: number
+  dueDay: number
+  lastDigits: string | null
+  userId: string
+  createdAt: string
+  updatedAt?: string
+}
+
+export type CreateCreditCardBody = {
+  name: string
+  brand?: string | null
+  limit: number
+  closingDay: number
+  dueDay: number
+  lastDigits?: string | null
+}
+
+export type CreateCreditCardPurchaseBody = {
+  title: string
+  description?: string | null
+  value: number
+  installmentsCount: number
+}
+
+export type CreditCardInvoiceItem = {
+  id: string
+  value: number
+  status: InstallmentStatus
+  order: number
+  dateTransaction: string
+  debtTitle: string
+}
+
+export type CreditCardInvoice = {
+  total: number
+  installments: CreditCardInvoiceItem[]
+  dueDay: number
+  closingDay: number
+}
+
+export type CreditCardLimit = {
+  limit: number
+  used: number
+  available: number
+}
+
+export type CreditCardRisk = {
+  usagePercentage: number
+  recommendation: string
+}
+
+export type CreditCardStatementPurchase = {
+  debtId: string
+  title: string
+  description: string
+  purchaseDate: string
+  installments: Array<{
+    id: string
+    value: number
+    status: InstallmentStatus
+    order: number
+    dateTransaction: string
+  }>
+  total: number
+}
+
+export type CreditCardStatement = {
+  purchases: CreditCardStatementPurchase[]
+  summary: {
+    total: number
+    totalPaid: number
+    totalPending: number
+  }
+  period: { month: number; year: number } | null
+}
+
 export type ApiErrorBody = {
   message?: string | string[]
   statusCode?: number

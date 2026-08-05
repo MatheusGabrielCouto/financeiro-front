@@ -14,6 +14,7 @@ import {
   getCurrentMonthYear,
 } from "@/lib/format"
 import { getDetails, getInstallments } from "@/lib/finance-api"
+import { buildCreditCardInvoiceAlerts } from "@/lib/credit-card-alerts"
 import {
   buildPayableItems,
   getPayableTone,
@@ -89,6 +90,16 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
 
     const today = new Date()
     today.setHours(0, 0, 0, 0)
+
+    const cardInvoiceAlerts = await buildCreditCardInvoiceAlerts({
+      month,
+      year,
+      today,
+    })
+    const cardInvoicesTotal = cardInvoiceAlerts.reduce(
+      (sum, item) => sum + item.pendingTotal,
+      0
+    )
 
     const allItems = buildPayableItems({
       month,
@@ -242,6 +253,89 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
           </div>
         </section>
 
+        {cardInvoiceAlerts.length > 0 &&
+        (status === "todas" || status === "pendentes") &&
+        (tipo === "todos" || tipo === "parcelas") ? (
+          <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/40">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-5 py-4 md:px-6">
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
+                  Faturas de cartão
+                </h2>
+                <p className="mt-0.5 text-sm text-muted">
+                  {cardInvoiceAlerts.length} fatura(s) ·{" "}
+                  {formatCurrency(cardInvoicesTotal)} em aberto
+                </p>
+              </div>
+              <Link
+                href="/cartoes"
+                className="rounded-xl border border-border px-3 py-2 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
+              >
+                Ver cartões
+              </Link>
+            </div>
+            <ul className="space-y-2.5 p-3 md:p-4">
+              {cardInvoiceAlerts.map((item) => (
+                <li
+                  key={item.id}
+                  className={`flex gap-3 rounded-2xl border bg-background/40 p-3.5 md:p-4 ${
+                    item.urgency === "overdue"
+                      ? "border-red-200/80 dark:border-red-900/50"
+                      : "border-border/70"
+                  }`}
+                >
+                  <span
+                    className={`mt-1 h-12 w-1 shrink-0 rounded-full ${
+                      item.urgency === "overdue"
+                        ? "bg-danger"
+                        : item.urgency === "today"
+                          ? "bg-amber-400"
+                          : "bg-accent"
+                    }`}
+                    aria-hidden
+                  />
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate font-semibold">
+                          Fatura · {item.cardName}
+                        </p>
+                        <span className="rounded-md bg-teal-50 px-2 py-0.5 text-[11px] font-medium text-accent dark:bg-teal-950/40">
+                          Cartão
+                        </span>
+                        {item.urgency === "overdue" ? (
+                          <span className="rounded-md bg-red-50 px-2 py-0.5 text-[11px] font-medium text-danger dark:bg-red-950/40">
+                            Atrasada
+                          </span>
+                        ) : item.urgency === "today" ? (
+                          <span className="rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-warning dark:bg-amber-950/40">
+                            Vence hoje
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="mt-1 text-sm text-muted">
+                        {item.itemCount} parcela(s) · vence em{" "}
+                        {formatDate(item.dueDate)}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold tabular-nums">
+                        {formatCurrency(item.pendingTotal)}
+                      </p>
+                      <Link
+                        href={item.href}
+                        className="rounded-xl bg-accent px-3 py-2 text-xs font-semibold text-white transition hover:bg-accent-hover"
+                      >
+                        Abrir fatura
+                      </Link>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/40">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-5 py-4 md:px-6">
             <div>
@@ -310,19 +404,31 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
             {allItems.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-border px-4 py-14 text-center">
                 <p className="font-[family-name:var(--font-display)] text-lg font-semibold">
-                  Nada para pagar neste período
+                  {cardInvoiceAlerts.length > 0
+                    ? "Sem parcelas fora do cartão"
+                    : "Nada para pagar neste período"}
                 </p>
                 <p className="mx-auto mt-1 max-w-md text-sm text-muted">
-                  Não há parcelas, contas fixas nem gastos previstos em{" "}
-                  {monthLabel}.
+                  {cardInvoiceAlerts.length > 0
+                    ? `Há ${cardInvoiceAlerts.length} fatura(s) de cartão acima. Dívidas sem cartão, contas fixas e previstos aparecem aqui.`
+                    : `Não há parcelas, contas fixas nem gastos previstos em ${monthLabel}.`}
                 </p>
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
-                  <Link
-                    href="/dividas/nova"
-                    className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
-                  >
-                    Nova dívida
-                  </Link>
+                  {cardInvoiceAlerts.length > 0 ? (
+                    <Link
+                      href="/cartoes"
+                      className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
+                    >
+                      Ir para cartões
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/dividas/nova"
+                      className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
+                    >
+                      Nova dívida
+                    </Link>
+                  )}
                   <Link
                     href="/recorrentes"
                     className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
