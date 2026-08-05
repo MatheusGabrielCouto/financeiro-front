@@ -10,30 +10,39 @@ const PlanejadorPage = async () => {
 
     return (
       <div className="space-y-6">
-        <section className="rounded-2xl border border-border/80 bg-surface px-5 py-5 shadow-sm shadow-slate-200/40 md:px-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-            Estratégia
-          </p>
-          <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight md:text-3xl">
-            Planejador de dívidas
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted">
-            Compare bola de neve e avalanche para escolher a ordem de quitação
-            com base no quanto você consegue pagar por mês.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Link
-              href="/dividas"
-              className="rounded-xl border border-border px-3 py-2 text-sm font-semibold transition hover:bg-slate-50"
-            >
-              Ver dívidas
-            </Link>
-            <Link
-              href="/simulador"
-              className="rounded-xl border border-border px-3 py-2 text-sm font-semibold transition hover:bg-slate-50"
-            >
-              Simulador de parcelas
-            </Link>
+        <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50">
+          <div className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-teal-900 px-5 py-6 text-white md:px-7 md:py-7">
+            <div className="pointer-events-none absolute -right-12 -top-20 h-56 w-56 rounded-full bg-teal-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-0 left-1/4 h-36 w-36 rounded-full bg-emerald-300/10 blur-2xl" />
+
+            <div className="relative flex flex-wrap items-start justify-between gap-5">
+              <div className="max-w-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-200/90">
+                  Estratégia de quitação
+                </p>
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight md:text-4xl">
+                  Planejador
+                </h1>
+                <p className="mt-2 text-sm text-slate-300">
+                  Compare bola de neve e avalanche e escolha a ordem que te faz
+                  sair das dívidas mais rápido — com o valor que cabe no mês.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/dividas"
+                  className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15"
+                >
+                  Ver dívidas
+                </Link>
+                <Link
+                  href="/simulador"
+                  className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15"
+                >
+                  Simulador
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 
