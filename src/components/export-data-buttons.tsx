@@ -7,6 +7,7 @@ import { downloadPdfTable } from "@/lib/pdf"
 type ExportDataButtonsProps = {
   filename: string
   title?: string
+  subtitle?: string
   headers: string[]
   rows: CsvCell[][]
   csvLabel?: string
@@ -22,6 +23,7 @@ const defaultButtonClass =
 export const ExportDataButtons = ({
   filename,
   title,
+  subtitle,
   headers,
   rows,
   csvLabel = "Exportar CSV",
@@ -44,6 +46,7 @@ export const ExportDataButtons = ({
     downloadPdfTable({
       filename,
       title,
+      subtitle,
       headers,
       rows,
     })

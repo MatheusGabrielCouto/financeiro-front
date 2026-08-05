@@ -363,6 +363,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                   <ExportDataButtons
                     filename={reportCsvFilename}
                     title={`Relatório — ${monthLabel}`}
+                    subtitle="Resumo financeiro e detalhamento do mês"
                     headers={reportCsvHeaders}
                     rows={reportCsvRows}
                     csvLabel="CSV"

@@ -392,6 +392,7 @@ export const FechamentoWizard = ({
                 <ExportDataButtons
                   filename={filename}
                   title={`Fechamento — ${monthLabel}`}
+                  subtitle="Resumo do ritual de fechamento do mês"
                   headers={["Seção", "Item", "Valor", "Detalhe"]}
                   rows={exportRows}
                   csvLabel="Resumo CSV"

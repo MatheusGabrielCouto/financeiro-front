@@ -115,6 +115,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 <ExportDataButtons
                   filename={csvFilename}
                   title={`Extrato — ${monthLabel}`}
+                  subtitle="Movimentações do período com saldo atualizado"
                   headers={csvHeaders}
                   rows={csvRows}
                   csvLabel="CSV"
