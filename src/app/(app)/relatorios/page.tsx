@@ -275,15 +275,64 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
     const bestMonth = [...evolution.monthly].sort((a, b) => b.net - a.net)[0]
     const worstMonth = [...evolution.monthly].sort((a, b) => a.net - b.net)[0]
 
+    const openRecurringTotal = recurrings
+      .filter((item) => !item.paidThisMonth)
+      .reduce((sum, item) => sum + item.value, 0)
+    const openDebtsTotal = openDebts.reduce((sum, item) => sum + item.value, 0)
+    const openPlannedTotal = plannedExpenses
+      .filter((item) => item.status === "SCHEDULED")
+      .reduce((sum, item) => sum + item.value, 0)
+    const openCommitmentsTotal =
+      openRecurringTotal + openDebtsTotal + openPlannedTotal
+    const paidExpensesTotal = summary.totalExpenses
+    const surplus = summary.balanceAfterExpenses ?? summary.netExpected
+    const afterPaidOnly = totalIncome - paidExpensesTotal
+
+    const previousPaid = previousDetails?.summary.totalExpenses ?? 0
+    const previousOpenRecurring = previousDetails
+      ? (previousDetails.recurringPaymentsBreakdown ?? [])
+          .filter((item) => !item.paidThisMonth)
+          .reduce((sum, item) => sum + item.value, 0)
+      : 0
+    const previousOpenDebts = previousDetails
+      ? (previousDetails.debtsBreakdown ?? [])
+          .filter((item) => item.status !== "PAY")
+          .reduce((sum, item) => sum + item.value, 0)
+      : 0
+    const previousOpenPlanned = previousDetails
+      ? (previousDetails.plannedExpensesBreakdown ?? [])
+          .filter((item) => item.status === "SCHEDULED")
+          .reduce((sum, item) => sum + item.value, 0)
+      : 0
+    const previousOpenTotal =
+      previousOpenRecurring + previousOpenDebts + previousOpenPlanned
+
     const reportCsvHeaders = ["Seção", "Item", "Valor", "Detalhe"]
     const reportCsvRows = [
       ["Resumo", "Receita do mês", totalIncome, monthLabel],
-      ["Resumo", "Compromissos", totalFixedOut, "Contas + parcelas + previstos"],
       [
         "Resumo",
-        "Sobra do mês",
-        summary.balanceAfterExpenses ?? summary.netExpected,
-        "",
+        "Já pago (extrato)",
+        paidExpensesTotal,
+        "Saídas lançadas no mês",
+      ],
+      [
+        "Resumo",
+        "Ainda em aberto",
+        openCommitmentsTotal,
+        "Contas + parcelas + previstos não pagos",
+      ],
+      [
+        "Resumo",
+        "Sobra só com extrato",
+        afterPaidOnly,
+        "Receitas - já pago (ainda sem o aberto)",
+      ],
+      [
+        "Resumo",
+        "Sobra prevista",
+        surplus,
+        "Receitas - já pago - ainda em aberto",
       ],
       [
         "Resumo",
@@ -291,7 +340,6 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
         summary.netStructural ?? summary.netExpected,
         "",
       ],
-      ["Resumo", "Total de despesas", summary.totalExpenses, ""],
       ...categories.map((item) => [
         "Categoria",
         item.title,
@@ -342,18 +390,21 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
       monthLabel,
       summary: {
         income: totalIncome,
-        commitments: totalFixedOut,
-        surplus: summary.balanceAfterExpenses ?? summary.netExpected,
+        paidExpenses: paidExpensesTotal,
+        openCommitments: openCommitmentsTotal,
+        surplus,
         structuralSurplus: summary.netStructural ?? summary.netExpected,
-        expenses: summary.totalExpenses,
+        afterPaidOnly,
       },
       previous:
         previousDetails && previousIncome != null && previousSurplus != null
           ? {
               label: previousLabel,
               income: previousIncome,
-              expenses: previousDetails.summary.totalExpenses,
+              paidExpenses: previousPaid,
+              openCommitments: previousOpenTotal,
               surplus: previousSurplus,
+              afterPaidOnly: previousIncome - previousPaid,
             }
           : null,
       categories: categories.map((item) => ({

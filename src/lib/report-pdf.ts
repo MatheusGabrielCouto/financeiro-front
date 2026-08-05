@@ -5,16 +5,23 @@ export type ReportPdfData = {
   monthLabel: string
   summary: {
     income: number
-    commitments: number
+    /** Already left the account / extrato */
+    paidExpenses: number
+    /** Still scheduled this month */
+    openCommitments: number
+    /** Income - paid - open (API balanceAfterExpenses) */
     surplus: number
     structuralSurplus: number
-    expenses: number
+    /** Income - paid only */
+    afterPaidOnly: number
   }
   previous?: {
     label: string
     income: number
-    expenses: number
+    paidExpenses: number
+    openCommitments: number
     surplus: number
+    afterPaidOnly: number
   } | null
   categories: Array<{ title: string; total: number; share: number }>
   incomes: Array<{ title: string; value: number; detail: string }>
@@ -41,7 +48,6 @@ const C = {
   cardAmber: [255, 251, 235] as Rgb,
   cardTeal: [240, 253, 250] as Rgb,
   cardRed: [254, 242, 242] as Rgb,
-  cardSlate: [248, 250, 252] as Rgb,
 }
 
 const money = (value: number) =>
@@ -50,11 +56,11 @@ const money = (value: number) =>
     currency: "BRL",
   }).format(value)
 
-/** Helvetica does not render unicode minus well — keep ASCII only */
 const deltaLabel = (current: number, previous: number) => {
   if (previous === 0) return current === 0 ? "0%" : "novo"
   const pct = ((current - previous) / Math.abs(previous)) * 100
-  const rounded = Math.abs(pct) >= 10 ? Math.abs(pct).toFixed(0) : Math.abs(pct).toFixed(1)
+  const rounded =
+    Math.abs(pct) >= 10 ? Math.abs(pct).toFixed(0) : Math.abs(pct).toFixed(1)
   if (pct > 0) return `+${rounded}%`
   if (pct < 0) return `-${rounded}%`
   return "0%"
@@ -86,8 +92,8 @@ const drawFooter = (doc: jsPDF) => {
     doc.setFont("helvetica", "normal")
     doc.setFontSize(8)
     doc.setTextColor(...C.muted)
-    doc.text("Financeiro - relatório mensal", 16, pageHeight - 8)
-    doc.text(`Página ${page} de ${pages}`, pageWidth - 16, pageHeight - 8, {
+    doc.text("Financeiro - relatorio mensal", 16, pageHeight - 8)
+    doc.text(`Pagina ${page} de ${pages}`, pageWidth - 16, pageHeight - 8, {
       align: "right",
     })
   }
@@ -119,7 +125,7 @@ const drawKpiCards = (
   const gap = 5
   const cols = 2
   const cardW = (pageWidth - marginX * 2 - gap) / cols
-  const cardH = 24
+  const cardH = 26
 
   cards.forEach((card, index) => {
     const col = index % cols
@@ -141,14 +147,14 @@ const drawKpiCards = (
     doc.text(card.label.toUpperCase(), x + 7, y + 7)
 
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(13)
+    doc.setFontSize(12)
     doc.setTextColor(...C.ink)
-    doc.text(card.value, x + 7, y + 15)
+    doc.text(card.value, x + 7, y + 15.5)
 
     doc.setFont("helvetica", "normal")
-    doc.setFontSize(7.5)
+    doc.setFontSize(7.2)
     doc.setTextColor(...C.muted)
-    doc.text(card.hint, x + 7, y + 20.5, { maxWidth: cardW - 12 })
+    doc.text(card.hint, x + 7, y + 21.5, { maxWidth: cardW - 12 })
   })
 
   const rows = Math.ceil(cards.length / cols)
@@ -157,22 +163,16 @@ const drawKpiCards = (
 
 const drawFlowBars = (
   doc: jsPDF,
-  income: number,
-  commitments: number,
+  rows: Array<{ label: string; value: number; color: Rgb }>,
   startY: number,
   pageWidth: number
 ) => {
   const marginX = 16
-  const labelW = 34
-  const valueW = 34
+  const labelW = 42
+  const valueW = 36
   const trackX = marginX + labelW
   const trackW = pageWidth - marginX * 2 - labelW - valueW
-  const max = Math.max(income, commitments, 1)
-
-  const rows = [
-    { label: "Receitas", value: income, color: C.green },
-    { label: "Compromissos", value: commitments, color: C.amber },
-  ]
+  const max = Math.max(...rows.map((row) => row.value), 1)
 
   let y = startY
   rows.forEach((row) => {
@@ -199,6 +199,45 @@ const drawFlowBars = (
   return y + 2
 }
 
+const drawSurplusExplainer = (
+  doc: jsPDF,
+  summary: ReportPdfData["summary"],
+  startY: number,
+  pageWidth: number
+) => {
+  const marginX = 16
+  const width = pageWidth - marginX * 2
+  const height = 36
+  const y = ensureSpace(doc, startY, height + 8)
+
+  doc.setFillColor(255, 251, 235)
+  doc.roundedRect(marginX, y, width, height, 2.5, 2.5, "F")
+  doc.setDrawColor(253, 230, 138)
+  doc.setLineWidth(0.35)
+  doc.roundedRect(marginX, y, width, height, 2.5, 2.5, "S")
+
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(9)
+  doc.setTextColor(...C.amber)
+  doc.text("Por que a sobra nao e so Receitas - Despesas?", marginX + 4, y + 7)
+
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7.8)
+  doc.setTextColor(...C.ink)
+  const lines = [
+    `1) Receitas ${money(summary.income)} - ja pago no extrato ${money(summary.paidExpenses)} = ${money(summary.afterPaidOnly)}.`,
+    `2) Ainda falta pagar neste mes: ${money(summary.openCommitments)} (contas, parcelas e previstos em aberto).`,
+    `3) Sobra prevista ${money(summary.surplus)} = depois de descontar o que ja saiu E o que ainda esta em aberto.`,
+  ]
+  let textY = y + 14
+  lines.forEach((line) => {
+    doc.text(line, marginX + 4, textY, { maxWidth: width - 8 })
+    textY += 6
+  })
+
+  return y + height + 8
+}
+
 const drawCategoryBars = (
   doc: jsPDF,
   categories: ReportPdfData["categories"],
@@ -207,7 +246,7 @@ const drawCategoryBars = (
 ) => {
   if (categories.length === 0) return startY
 
-  let y = drawSectionTitle(doc, "Gastos por categoria", startY)
+  let y = drawSectionTitle(doc, "Gastos por categoria (extrato)", startY)
   const top = [...categories].sort((a, b) => b.total - a.total).slice(0, 8)
   const max = Math.max(...top.map((item) => item.total), 1)
   const marginX = 16
@@ -250,8 +289,18 @@ const drawCompare = (
   previous: NonNullable<ReportPdfData["previous"]>,
   startY: number
 ) => {
-  let y = ensureSpace(doc, startY, 48)
+  let y = ensureSpace(doc, startY, 62)
   y = drawSectionTitle(doc, `Comparativo vs ${previous.label}`, y)
+
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(8)
+  doc.setTextColor(...C.muted)
+  doc.text(
+    "Compara os mesmos conceitos: pago, em aberto e sobra prevista.",
+    16,
+    y
+  )
+  y += 5
 
   const rows = [
     {
@@ -260,12 +309,17 @@ const drawCompare = (
       previous: previous.income,
     },
     {
-      label: "Despesas",
-      current: current.expenses,
-      previous: previous.expenses,
+      label: "Ja pago (extrato)",
+      current: current.paidExpenses,
+      previous: previous.paidExpenses,
     },
     {
-      label: "Sobra",
+      label: "Ainda em aberto",
+      current: current.openCommitments,
+      previous: previous.openCommitments,
+    },
+    {
+      label: "Sobra prevista",
       current: current.surplus,
       previous: previous.surplus,
     },
@@ -274,7 +328,7 @@ const drawCompare = (
   autoTable(doc, {
     startY: y,
     margin: { left: 16, right: 16 },
-    head: [["Indicador", "Este mês", previous.label, "Variação"]],
+    head: [["Indicador", "Este mes", previous.label, "Variacao"]],
     body: rows.map((row) => [
       row.label,
       money(row.current),
@@ -298,9 +352,9 @@ const drawCompare = (
     },
     alternateRowStyles: { fillColor: C.soft },
     columnStyles: {
-      1: { halign: "right", fontStyle: "bold" },
-      2: { halign: "right" },
-      3: { halign: "right", fontStyle: "bold" },
+      1: {halign: "right", fontStyle: "bold" },
+      2: {halign: "right" },
+      3: {halign: "right", fontStyle: "bold" },
     },
     didParseCell: (data) => {
       if (data.section !== "body" || data.column.index !== 3) return
@@ -356,7 +410,7 @@ const drawItemsTable = (
     columnStyles: {
       0: { cellWidth: 88, fontStyle: "bold" },
       1: { cellWidth: 36 },
-      2: { halign: "right", fontStyle: "bold", cellWidth: 40 },
+      2: {halign: "right", fontStyle: "bold", cellWidth: 40 },
     },
     didParseCell: (data) => {
       if (data.section !== "body" || data.column.index !== 1) return
@@ -399,13 +453,13 @@ export const downloadReportPdf = ({
 
   doc.setTextColor(...C.white)
   doc.setFontSize(18)
-  doc.text(`Relatório - ${data.monthLabel}`, 16, 25)
+  doc.text(`Relatorio - ${data.monthLabel}`, 16, 25)
 
   doc.setFont("helvetica", "normal")
   doc.setFontSize(9.5)
   doc.setTextColor(203, 213, 225)
   doc.text(
-    "Receitas, compromissos, categorias e detalhamento do mês.",
+    "Separando o que ja saiu do extrato do que ainda esta em aberto.",
     16,
     34,
     { maxWidth: pageWidth - 32 }
@@ -427,42 +481,53 @@ export const downloadReportPdf = ({
       {
         label: "Receitas",
         value: money(data.summary.income),
-        hint: "Entradas do mês",
+        hint: "Entradas do mes",
         accent: C.green,
         bg: C.cardGreen,
       },
       {
-        label: "Compromissos",
-        value: money(data.summary.commitments),
-        hint: "Fixas + parcelas + previstos",
+        label: "Ja pago",
+        value: money(data.summary.paidExpenses),
+        hint: "Saiu no extrato",
         accent: C.amber,
         bg: C.cardAmber,
       },
       {
-        label: "Sobra do mês",
-        value: money(data.summary.surplus),
-        hint: surplusPositive ? "Mês no azul" : "Atenção ao fluxo",
-        accent: surplusPositive ? C.teal : C.red,
-        bg: surplusPositive ? C.cardTeal : C.cardRed,
+        label: "Ainda em aberto",
+        value: money(data.summary.openCommitments),
+        hint: "Contas, parcelas e previstos",
+        accent: C.red,
+        bg: C.cardRed,
       },
       {
-        label: "Despesas totais",
-        value: money(data.summary.expenses),
-        hint: `Estrutural ${money(data.summary.structuralSurplus)}`,
-        accent: C.muted,
-        bg: C.cardSlate,
+        label: "Sobra prevista",
+        value: money(data.summary.surplus),
+        hint: surplusPositive
+          ? `So extrato daria ${money(data.summary.afterPaidOnly)}`
+          : "Depois de descontar o aberto",
+        accent: surplusPositive ? C.teal : C.red,
+        bg: surplusPositive ? C.cardTeal : C.cardRed,
       },
     ],
     y,
     pageWidth
   )
 
-  y = ensureSpace(doc, y, 40)
-  y = drawSectionTitle(doc, "Receita vs compromissos", y)
+  y = drawSurplusExplainer(doc, data.summary, y, pageWidth)
+
+  y = ensureSpace(doc, y, 48)
+  y = drawSectionTitle(doc, "Composicao do mes", y)
   y = drawFlowBars(
     doc,
-    data.summary.income,
-    data.summary.commitments,
+    [
+      { label: "Receitas", value: data.summary.income, color: C.green },
+      { label: "Ja pago", value: data.summary.paidExpenses, color: C.amber },
+      {
+        label: "Em aberto",
+        value: data.summary.openCommitments,
+        color: C.red,
+      },
+    ],
     y,
     pageWidth
   )
@@ -479,28 +544,28 @@ export const downloadReportPdf = ({
     "Receitas fixas",
     data.incomes,
     y,
-    "Nenhuma receita fixa neste mês."
+    "Nenhuma receita fixa neste mes."
   )
   y = drawItemsTable(
     doc,
     "Contas fixas",
     data.recurrings,
     y,
-    "Nenhuma conta fixa neste mês."
+    "Nenhuma conta fixa neste mes."
   )
   y = drawItemsTable(
     doc,
     "Parcelas",
     data.debts,
     y,
-    "Nenhuma parcela neste mês."
+    "Nenhuma parcela neste mes."
   )
   drawItemsTable(
     doc,
     "Gastos previstos",
     data.planned,
     y,
-    "Nenhum gasto previsto neste mês."
+    "Nenhum gasto previsto neste mes."
   )
 
   drawFooter(doc)
