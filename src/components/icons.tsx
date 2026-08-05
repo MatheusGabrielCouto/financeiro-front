@@ -1,0 +1,210 @@
+type IconProps = {
+  className?: string
+}
+
+export const IconOverview = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-11h7V4h-7v5Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconDebts = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 2 3 7v2h18V7l-9-5Zm-7 9v7H4v2h16v-2h-1v-7H5Zm2 7v-5h2v5H7Zm4 0v-5h2v5h-2Zm4 0v-5h2v5h-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconInstallments = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7Zm12 8H5v10h14V10Zm-8 2h2v2h2v2h-2v2h-2v-2H9v-2h2v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconMenu = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 7h16v2H4V7Zm0 4h16v2H4v-2Zm0 4h16v2H4v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconClose = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6 6.4 5Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconLogout = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M10 17v2H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5v2H6v10h4Zm3.3-8.7L16.6 11H9v2h7.6l-3.3 2.7 1.4 1.4L20.4 12l-5.7-5.1-1.4 1.4Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconPlus = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z" fill="currentColor" />
+  </svg>
+)
+
+export const IconTransactions = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M7 7h14v2H7V7Zm0 4h10v2H7v-2Zm0 4h14v2H7v-2ZM3 7h2v2H3V7Zm0 4h2v2H3v-2Zm0 4h2v2H3v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconRecurring = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M17 1v4h4v2h-6V1h2Zm-1.5 7.5A6.5 6.5 0 1 1 9 5.05V7.1a4.5 4.5 0 1 0 4.9 4.9h2.05A6.52 6.52 0 0 1 15.5 8.5ZM7 23v-4H3v-2h6v6H7Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconCategory = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M3 5h8v8H3V5Zm10 0h8v5h-8V5ZM3 15h5v4H3v-4Zm7 0h11v4H10v-4Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconBudget = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm1 2v12h14V6H5Zm2 2h4v2H7V8Zm0 4h10v2H7v-2Zm0 4h7v2H7v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconReports = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M5 3h14v2H5V3Zm1 4h2v14H6V7Zm5 4h2v10h-2V11Zm5-2h2v12h-2V9Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconPiggy = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M19 9c0-1.7-1.3-3-3-3h-1.1A4.99 4.99 0 0 0 10 3C7.2 3 5 5.2 5 8c0 .5.1 1 .2 1.5C3.3 10.4 2 12.1 2 14c0 2.2 1.8 4 4 4h1v2h2v-2h6v2h2v-2h1c2.2 0 4-1.8 4-4 0-1.4-.8-2.7-2-3.4V9Zm-2 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2ZM10 5c1.1 0 2.1.6 2.6 1.5H10c-.6 0-1 .4-1 1v.3C7.7 7.5 7 6.3 7 5c0-.6.1-1.1.3-1.6.8.9 1.7 1.6 2.7 1.6Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconInsights = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M11 2h2v4h-2V2Zm7.1 2.5 1.4 1.4-2.8 2.8-1.4-1.4 2.8-2.8ZM4.5 5.9 5.9 4.5l2.8 2.8-1.4 1.4-2.8-2.8ZM12 8a6 6 0 1 1 0 12 6 6 0 0 1 0-12Zm-1 3h2v5h-2v-5Zm0 6h2v2h-2v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconBell = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm8-6v-5a8 8 0 1 0-16 0v5l-2 2v1h20v-1l-2-2Zm-2 1H6v-6a6 6 0 1 1 12 0v6Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconUser = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-4.2 0-8 2.1-8 5v1h16v-1c0-2.9-3.8-5-8-5Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconSimulate = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M7 2h10v2H7V2Zm-2 4h14a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a1 1 0 0 1 1-1Zm1 2v12h12V8H6Zm3 3h2v2H9v-2Zm4 0h2v2h-2v-2Zm-4 4h2v2H9v-2Zm4 0h5v2h-5v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconChevron = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M8.5 5.5 15 12l-6.5 6.5"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+export const IconSidebar = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Zm4-1v16h10a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H8Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconInfo = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 4.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM10.75 11h1.5v6.5h-1.5V11Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconCheck = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M9.55 17.6 4.4 12.45l1.4-1.4 3.75 3.75 8.65-8.65 1.4 1.4L9.55 17.6Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconTrash = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M9 3h6l1 2h5v2H3V5h5l1-2Zm1 6h2v9h-2V9Zm4 0h2v9h-2V9ZM7 9h2v9H7V9Zm-1 12h12l1-11H5l1 11Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconWarning = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 3.2 2.4 20.2a1 1 0 0 0 .88 1.48h17.44a1 1 0 0 0 .88-1.48L12 3.2Zm0 4.6 6.7 11.4H5.3L12 7.8Zm-1 4.2h2v4h-2v-4Zm0 5.5h2v1.8h-2v-1.8Z"
+      fill="currentColor"
+    />
+  </svg>
+)

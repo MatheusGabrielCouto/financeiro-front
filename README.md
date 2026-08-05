@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Financeiro Front
 
-## Getting Started
+Dashboard web (MVP) para acompanhamento de dívidas, consumindo a API do `financeiro-back`.
 
-First, run the development server:
+## Stack
+
+- Next.js (App Router) + TypeScript + Tailwind CSS
+- Autenticação via cookies `httpOnly` (access + refresh), sem tokens no `localStorage`
+- Proxy autenticado em `/api/proxy/*`
+
+## Pré-requisitos
+
+1. PostgreSQL rodando (via Docker no back)
+2. API NestJS em `http://localhost:3333`
+
+## Subir o backend
 
 ```bash
-npm run dev
-# or
+cd ../financeiro-back
+docker compose up -d
+yarn install
+# configure .env com DATABASE_URL, JWT_PRIVATE_KEY, JWT_PUBLIC_KEY
+npx prisma migrate dev
+yarn prisma:seed
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Subir o frontend
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cd ../financeiro-front
+cp .env.example .env.local
+yarn install
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Abra [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+## Variáveis de ambiente
 
-To learn more about Next.js, take a look at the following resources:
+| Variável | Descrição |
+|----------|-----------|
+| `API_URL` | URL base da API Nest (apenas servidor). Padrão: `http://localhost:3333` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Escopo do MVP
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Login / cadastro / logout
+- Resumo do mês (saldo + parcelas)
+- Listagem, criação (manual ou recorrência), detalhe e exclusão de dívidas
+- Parcelas do mês com ação de pagar
+- Extrato com lançamentos (entrada/saída/pagamento)
+- Entradas e pagamentos recorrentes
+- Categorias e orçamento mensal por categoria
+- Relatórios (gastos por categoria/mês e evolução)
 
-## Deploy on Vercel
+## Segurança
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Tokens ficam só em cookies `httpOnly` + `SameSite=Lax` (+ `Secure` em produção)
+- O browser não chama o Nest diretamente; as mutações passam pelo proxy Next
+- Middleware redireciona rotas privadas sem sessão para `/login`
