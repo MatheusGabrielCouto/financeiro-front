@@ -14,7 +14,13 @@ import {
   getCurrentMonthYear,
 } from "@/lib/format"
 import { getDetails, getInstallments } from "@/lib/finance-api"
-import { buildPayableItems, type PayableItem } from "@/lib/payable-items"
+import {
+  buildPayableItems,
+  getPayableTone,
+  payableKindLabel,
+  type CalendarDueTone,
+  type PayableItem,
+} from "@/lib/payable-items"
 
 type ParcelasPageProps = {
   searchParams: Promise<{
@@ -38,6 +44,24 @@ const buildHref = (
   if (status !== "todas") params.set("status", status)
   if (tipo !== "todos") params.set("tipo", tipo)
   return `/parcelas?${params.toString()}`
+}
+
+const toneBar: Record<CalendarDueTone, string> = {
+  paid: "bg-emerald-500",
+  overdue: "bg-danger",
+  today: "bg-amber-400",
+  week: "bg-accent",
+  later: "bg-slate-300",
+}
+
+const kindBadgeClass = (kind: PayableItem["kind"]) => {
+  if (kind === "recurring") {
+    return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+  }
+  if (kind === "planned") {
+    return "bg-amber-50 text-warning dark:bg-amber-950/40"
+  }
+  return "bg-teal-50 text-accent dark:bg-teal-950/40"
 }
 
 const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
@@ -87,7 +111,10 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
     const paidItems = allItems.filter((item) => item.status === "PAY")
     const overdueItems = pendingItems.filter((item) => item.isOverdue)
 
-    const scheduledTotal = pendingItems.reduce((sum, item) => sum + item.value, 0)
+    const scheduledTotal = pendingItems.reduce(
+      (sum, item) => sum + item.value,
+      0
+    )
     const paidTotal = paidItems.reduce((sum, item) => sum + item.value, 0)
     const monthTotal = scheduledTotal + paidTotal
     const progress =
@@ -108,116 +135,127 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
       { id: "previstos", label: "Previstos" },
     ]
 
-    const kindLabel = (kind: PayableItem["kind"]) => {
-      if (kind === "recurring") return "Conta fixa"
-      if (kind === "planned") return "Gasto previsto"
-      return "Parcela"
-    }
-
-    const kindBadgeClass = (kind: PayableItem["kind"]) => {
-      if (kind === "recurring") return "bg-slate-100 text-slate-600"
-      if (kind === "planned") return "bg-amber-50 text-warning"
-      return "bg-teal-50 text-accent"
-    }
-
     return (
       <div className="space-y-6">
-        <section className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-                {isCurrentMonth ? "Este mês" : "Período"}
-              </p>
-              <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight md:text-3xl">
-                A pagar em {monthLabel}
-              </h1>
-              <p className="mt-1 text-sm text-muted">
-                Parcelas, contas fixas e gastos previstos do período.
-              </p>
+        <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50">
+          <div className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-teal-900 px-5 py-6 text-white md:px-7 md:py-7">
+            <div className="pointer-events-none absolute -right-12 -top-20 h-56 w-56 rounded-full bg-teal-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-0 left-1/4 h-36 w-36 rounded-full bg-emerald-300/10 blur-2xl" />
+
+            <div className="relative flex flex-wrap items-start justify-between gap-5">
+              <div className="max-w-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-200/90">
+                  {isCurrentMonth ? "Este mês" : "Período"}
+                </p>
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight md:text-4xl">
+                  {monthLabel}
+                </h1>
+                <p className="mt-2 text-sm text-slate-300">
+                  Parcelas, contas fixas e previstos — pague direto daqui ou
+                  acompanhe no calendário.
+                </p>
+              </div>
+              <div className="flex flex-col items-stretch gap-3 sm:items-end">
+                <Suspense
+                  fallback={
+                    <div className="rounded-xl bg-white/10 px-4 py-3 text-sm text-slate-200">
+                      Carregando...
+                    </div>
+                  }
+                >
+                  <div className="[&_button]:border-white/15 [&_button]:bg-white/10 [&_button]:text-white [&_button:hover]:bg-white/15 [&_div]:border-white/15 [&_div]:bg-white/5 [&_select]:text-white [&_span]:bg-teal-400/20 [&_span]:text-teal-100">
+                    <MonthYearFilter
+                      month={month}
+                      year={year}
+                      basePath="/parcelas"
+                    />
+                  </div>
+                </Suspense>
+                <Link
+                  href={`/calendario?month=${month}&year=${year}`}
+                  className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-white/15"
+                >
+                  Ver calendário
+                </Link>
+              </div>
             </div>
 
-            <Suspense
-              fallback={<div className="text-sm text-muted">Carregando...</div>}
-            >
-              <MonthYearFilter month={month} year={year} basePath="/parcelas" />
-            </Suspense>
-          </div>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
-              <p className="text-sm text-muted">Ainda falta</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
-                {formatCurrency(scheduledTotal)}
-              </p>
-              <p className="mt-1 text-xs text-muted">
-                {pendingItems.length} pendência(s)
-              </p>
-            </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
-              <p className="text-sm text-muted">Já pago</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
-                {formatCurrency(paidTotal)}
-              </p>
-              <p className="mt-1 text-xs text-muted">
-                {paidItems.length} quitada(s)
-              </p>
-            </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
-              <p className="text-sm text-muted">Total do período</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
-                {formatCurrency(monthTotal)}
-              </p>
-              <p className="mt-1 text-xs text-muted">
-                {allItems.length} item(ns)
-              </p>
-            </article>
-            <article
-              className={`rounded-2xl border p-4 ${
-                overdueItems.length > 0
-                  ? "border-red-200/70 bg-red-50/40"
-                  : "border-teal-200/70 bg-teal-50/40"
-              }`}
-            >
-              <p className="text-sm text-muted">Atrasadas</p>
-              <p
-                className={`mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold ${
-                  overdueItems.length > 0 ? "text-danger" : "text-accent"
-                }`}
-              >
-                {overdueItems.length}
-              </p>
-              <p className="mt-1 text-xs text-muted">
-                {progress}% do mês quitado
-              </p>
-            </article>
-          </div>
-
-          <div className="mt-5">
-            <div className="mb-1.5 flex items-center justify-between text-xs text-muted">
-              <span>Progresso do mês</span>
-              <span>{progress}%</span>
+            <div className="relative mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <article className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="text-xs text-slate-300">Ainda falta</p>
+                <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums text-amber-200">
+                  {formatCurrency(scheduledTotal)}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {pendingItems.length} pendência(s)
+                </p>
+              </article>
+              <article className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="text-xs text-slate-300">Já pago</p>
+                <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums text-emerald-300">
+                  {formatCurrency(paidTotal)}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {paidItems.length} quitada(s)
+                </p>
+              </article>
+              <article className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="text-xs text-slate-300">Total do período</p>
+                <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums">
+                  {formatCurrency(monthTotal)}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {allItems.length} item(ns)
+                </p>
+              </article>
+              <article className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="text-xs text-slate-300">Atrasadas</p>
+                <p
+                  className={`mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tabular-nums ${
+                    overdueItems.length > 0 ? "text-red-300" : "text-teal-200"
+                  }`}
+                >
+                  {overdueItems.length}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {overdueItems.length === 0
+                    ? "Em dia"
+                    : "Pedem atenção agora"}
+                </p>
+              </article>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-              <div
-                className="h-full rounded-full bg-accent transition-all"
-                style={{ width: `${Math.min(progress, 100)}%` }}
-              />
+
+            <div className="relative mt-5">
+              <div className="mb-2 flex items-center justify-between text-xs text-slate-300">
+                <span>Progresso do mês</span>
+                <span className="font-semibold tabular-nums text-white">
+                  {progress}%
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-teal-300 to-emerald-400 transition-all"
+                  style={{ width: `${Math.min(progress, 100)}%` }}
+                />
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-border/80 bg-surface shadow-sm shadow-slate-200/40">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
+        <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/40">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-5 py-4 md:px-6">
             <div>
-              <h2 className="text-base font-semibold">Agenda de pagamentos</h2>
-              <p className="text-sm text-muted">
+              <h2 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
+                Agenda
+              </h2>
+              <p className="mt-0.5 text-sm text-muted">
                 {filtered.length} de {allItems.length} item(ns)
               </p>
             </div>
 
             <div className="flex flex-wrap gap-2">
               <div
-                className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+                className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                 role="group"
                 aria-label="Filtrar por situação"
               >
@@ -227,6 +265,7 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                     <Link
                       key={filter.id}
                       href={buildHref(month, year, filter.id, tipo)}
+                      scroll={false}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                         isActive
                           ? "bg-surface text-foreground shadow-sm"
@@ -241,7 +280,7 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
               </div>
 
               <div
-                className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+                className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                 role="group"
                 aria-label="Filtrar por tipo"
               >
@@ -251,6 +290,7 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                     <Link
                       key={filter.id}
                       href={buildHref(month, year, status, filter.id)}
+                      scroll={false}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                         isActive
                           ? "bg-surface text-foreground shadow-sm"
@@ -268,131 +308,156 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
 
           <div className="p-3 md:p-4">
             {allItems.length === 0 ? (
-              <div className="rounded-xl bg-background px-4 py-14 text-center">
-                <p className="font-semibold">Nada para pagar neste período</p>
-                <p className="mt-1 text-sm text-muted">
+              <div className="rounded-2xl border border-dashed border-border px-4 py-14 text-center">
+                <p className="font-[family-name:var(--font-display)] text-lg font-semibold">
+                  Nada para pagar neste período
+                </p>
+                <p className="mx-auto mt-1 max-w-md text-sm text-muted">
                   Não há parcelas, contas fixas nem gastos previstos em{" "}
                   {monthLabel}.
                 </p>
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
                   <Link
                     href="/dividas/nova"
-                    className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white"
+                    className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
                   >
                     Nova dívida
                   </Link>
                   <Link
                     href="/recorrentes"
-                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
+                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Contas fixas
                   </Link>
                   <Link
                     href="/gastos-previstos"
-                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
+                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Gastos previstos
                   </Link>
                 </div>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="rounded-xl bg-background px-4 py-12 text-center">
+              <div className="rounded-2xl border border-dashed border-border px-4 py-12 text-center">
                 <p className="font-semibold">Nenhum item neste filtro</p>
                 <p className="mt-1 text-sm text-muted">
                   Ajuste a situação ou o tipo para ver os pagamentos.
                 </p>
+                <Link
+                  href={buildHref(month, year, "todas", "todos")}
+                  scroll={false}
+                  className="mt-4 inline-flex rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
+                >
+                  Limpar filtros
+                </Link>
               </div>
             ) : (
-              <ul className="space-y-3">
-                {filtered.map((item) => (
-                  <li
-                    key={item.id}
-                    className={`rounded-2xl border bg-background/50 p-4 md:p-5 ${
-                      item.isOverdue
-                        ? "border-red-200/80"
-                        : "border-border/80"
-                    }`}
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="truncate text-base font-semibold">
-                            {item.title}
-                          </p>
-                          <span
-                            className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${kindBadgeClass(item.kind)}`}
-                          >
-                            {kindLabel(item.kind)}
-                          </span>
-                          {item.isOverdue ? (
-                            <span className="inline-flex items-center gap-1.5">
-                              <span className="rounded-md bg-red-50 px-2 py-0.5 text-[11px] font-medium text-danger">
-                                Atrasada
-                              </span>
-                              {item.kind === "installment" ? (
-                                <OverdueInterestHint
-                                  value={item.value}
-                                  dueDate={item.dueDate}
-                                  interestRate={item.interestRate}
-                                  interestRateType={item.interestRateType}
-                                  status={item.status}
-                                />
-                              ) : null}
+              <ul className="space-y-2.5">
+                {filtered.map((item) => {
+                  const tone = getPayableTone(item, today)
+                  return (
+                    <li
+                      key={item.id}
+                      className={`flex gap-3 rounded-2xl border bg-background/40 p-3.5 transition md:p-4 ${
+                        item.isOverdue
+                          ? "border-red-200/80 dark:border-red-900/50"
+                          : "border-border/70"
+                      }`}
+                    >
+                      <span
+                        className={`mt-1 h-12 w-1 shrink-0 rounded-full ${toneBar[tone]}`}
+                        aria-hidden
+                      />
+
+                      <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="truncate text-base font-semibold">
+                              {item.title}
+                            </p>
+                            <span
+                              className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${kindBadgeClass(item.kind)}`}
+                            >
+                              {payableKindLabel(item.kind)}
                             </span>
+                            {item.isOverdue ? (
+                              <span className="inline-flex items-center gap-1.5">
+                                <span className="rounded-md bg-red-50 px-2 py-0.5 text-[11px] font-medium text-danger dark:bg-red-950/40">
+                                  Atrasada
+                                </span>
+                                {item.kind === "installment" ? (
+                                  <OverdueInterestHint
+                                    value={item.value}
+                                    dueDate={item.dueDate}
+                                    interestRate={item.interestRate}
+                                    interestRateType={item.interestRateType}
+                                    status={item.status}
+                                  />
+                                ) : null}
+                              </span>
+                            ) : tone === "today" ? (
+                              <span className="rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-warning dark:bg-amber-950/40">
+                                Vence hoje
+                              </span>
+                            ) : null}
+                          </div>
+                          <p className="mt-1 text-sm text-muted">
+                            {item.subtitle}
+                          </p>
+                          <p className="mt-0.5 text-sm text-muted">
+                            Vence em {formatDate(item.dueDate)}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-3">
+                          <div className="text-right">
+                            <p className="font-semibold tabular-nums">
+                              {formatCurrency(item.value)}
+                            </p>
+                            <div className="mt-1 flex justify-end">
+                              <StatusBadge status={item.status} />
+                            </div>
+                          </div>
+
+                          {item.status === "SCHEDULE" &&
+                          item.kind === "installment" &&
+                          item.installmentId ? (
+                            <PayInstallmentButton
+                              installmentId={item.installmentId}
+                              debtTitle={item.title}
+                            />
+                          ) : null}
+
+                          {item.status === "SCHEDULE" &&
+                          item.kind === "recurring" &&
+                          item.recurringId ? (
+                            <ProxyActionButton
+                              path={`/recurring-payment/${item.recurringId}/pay`}
+                              method="POST"
+                              label="Pagar"
+                              loadingLabel="Pagando..."
+                              variant="primary"
+                              ariaLabel={`Pagar conta fixa ${item.title}`}
+                            />
+                          ) : null}
+
+                          {item.status === "SCHEDULE" &&
+                          item.kind === "planned" &&
+                          item.plannedId ? (
+                            <ProxyActionButton
+                              path={`/planned-expense/${item.plannedId}/pay`}
+                              method="POST"
+                              label="Pagar"
+                              loadingLabel="Pagando..."
+                              variant="primary"
+                              ariaLabel={`Pagar gasto previsto ${item.title}`}
+                            />
                           ) : null}
                         </div>
-                        <p className="mt-1 text-sm text-muted">{item.subtitle}</p>
-                        <p className="mt-0.5 text-sm text-muted">
-                          Vence em {formatDate(item.dueDate)}
-                        </p>
                       </div>
-
-                      <div className="flex flex-wrap items-center gap-3">
-                        <div className="text-right">
-                          <p className="font-semibold tabular-nums">
-                            {formatCurrency(item.value)}
-                          </p>
-                          <div className="mt-1 flex justify-end">
-                            <StatusBadge status={item.status} />
-                          </div>
-                        </div>
-
-                        {item.status === "SCHEDULE" && item.kind === "installment" && item.installmentId ? (
-                          <PayInstallmentButton
-                            installmentId={item.installmentId}
-                            debtTitle={item.title}
-                          />
-                        ) : null}
-
-                        {item.status === "SCHEDULE" &&
-                        item.kind === "recurring" &&
-                        item.recurringId ? (
-                          <ProxyActionButton
-                            path={`/recurring-payment/${item.recurringId}/pay`}
-                            method="POST"
-                            label="Pagar"
-                            loadingLabel="Pagando..."
-                            variant="primary"
-                            ariaLabel={`Pagar conta fixa ${item.title}`}
-                          />
-                        ) : null}
-
-                        {item.status === "SCHEDULE" &&
-                        item.kind === "planned" &&
-                        item.plannedId ? (
-                          <ProxyActionButton
-                            path={`/planned-expense/${item.plannedId}/pay`}
-                            method="POST"
-                            label="Pagar"
-                            loadingLabel="Pagando..."
-                            variant="primary"
-                            ariaLabel={`Pagar gasto previsto ${item.title}`}
-                          />
-                        ) : null}
-                      </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </div>
