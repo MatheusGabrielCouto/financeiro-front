@@ -61,17 +61,20 @@ const filterTree = (
   query: string
 ): Category[] => {
   const walk = (items: Category[]): Category[] => {
-    return items
-      .map((item) => {
-        const children = item.children ? walk(item.children) : []
-        const selfMatch = matchesTipo(item, tipo) && matchesQuery(item, query)
-        if (!selfMatch && children.length === 0) return null
-        return {
-          ...item,
-          children,
-        }
+    const result: Category[] = []
+
+    for (const item of items) {
+      const children = item.children ? walk(item.children) : []
+      const selfMatch = matchesTipo(item, tipo) && matchesQuery(item, query)
+      if (!selfMatch && children.length === 0) continue
+
+      result.push({
+        ...item,
+        children,
       })
-      .filter((item): item is Category => item != null)
+    }
+
+    return result
   }
 
   return walk(categories)
