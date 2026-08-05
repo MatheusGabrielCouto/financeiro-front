@@ -5,6 +5,7 @@ import { IconMenu, IconSidebar } from "@/components/icons"
 import { HeaderBreadcrumb } from "@/components/header-breadcrumb"
 import { HeaderNotifications } from "@/components/header-notifications"
 import { ProfileMenu } from "@/components/profile-menu"
+import { ThemeToggle } from "@/components/theme-toggle"
 import type { PageMeta } from "@/lib/page-meta"
 import type { User } from "@/lib/types"
 
@@ -64,6 +65,7 @@ export const AppHeader = ({
         />
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <ThemeToggle />
           <HeaderNotifications count={notificationCount} />
           <ProfileMenu user={user} />
         </div>

@@ -4,6 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { KeyboardEvent, useEffect, useState } from "react"
 import { AppHeader } from "@/components/app-header"
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts"
+import { QuickTransactionLauncher } from "@/components/quick-transaction-launcher"
 import {
   IconBell,
   IconBudget,
@@ -22,11 +24,12 @@ import {
   IconTransactions,
 } from "@/components/icons"
 import { getPageMeta } from "@/lib/page-meta"
-import type { User } from "@/lib/types"
+import type { Category, User } from "@/lib/types"
 
 type AppShellProps = {
   user: User | null
   notificationCount?: number
+  categories?: Category[]
   children: React.ReactNode
 }
 
@@ -54,7 +57,8 @@ const navSections: NavSection[] = [
       { href: "/extrato", label: "Extrato", icon: IconTransactions },
       { href: "/relatorios", label: "Relatórios", icon: IconReports },
       { href: "/insights", label: "Insights", icon: IconInsights },
-      { href: "/notificacoes", label: "Notificações", icon: IconBell },
+      { href: "/notificacoes", label: "Atenção", icon: IconBell },
+      { href: "/fechamento", label: "Fechamento", icon: IconReports },
     ],
   },
   {
@@ -63,6 +67,7 @@ const navSections: NavSection[] = [
     items: [
       { href: "/dividas", label: "Todas as dívidas", icon: IconDebts },
       { href: "/parcelas", label: "A pagar este mês", icon: IconInstallments },
+      { href: "/calendario", label: "Calendário", icon: IconInstallments },
       { href: "/planejador", label: "Planejador", icon: IconDebts },
       { href: "/simulador", label: "Simulador", icon: IconSimulate },
     ],
@@ -93,6 +98,7 @@ const isItemActive = (pathname: string, href: string) =>
 export const AppShell = ({
   user,
   notificationCount = 0,
+  categories = [],
   children,
 }: AppShellProps) => {
   const pathname = usePathname()
@@ -418,6 +424,14 @@ export const AppShell = ({
           {children}
         </main>
       </div>
+
+      <KeyboardShortcuts />
+      {user ? (
+        <QuickTransactionLauncher
+          categories={categories}
+          variant="shortcut"
+        />
+      ) : null}
     </div>
   )
 }

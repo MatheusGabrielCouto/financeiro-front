@@ -14,6 +14,7 @@ import {
   getCurrentMonthYear,
 } from "@/lib/format"
 import { getDetails, getInstallments } from "@/lib/finance-api"
+import { buildPayableItems, type PayableItem } from "@/lib/payable-items"
 
 type ParcelasPageProps = {
   searchParams: Promise<{
@@ -22,22 +23,6 @@ type ParcelasPageProps = {
     status?: string
     tipo?: string
   }>
-}
-
-type PayableItem = {
-  id: string
-  title: string
-  subtitle: string
-  value: number
-  dueDate: Date
-  status: "PAY" | "SCHEDULE"
-  kind: "installment" | "recurring" | "planned"
-  installmentId?: string
-  recurringId?: string
-  plannedId?: string
-  isOverdue: boolean
-  interestRate?: number
-  interestRateType?: "MONTHLY" | "DAILY"
 }
 
 const buildHref = (
@@ -80,78 +65,14 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
 
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const daysInMonth = new Date(year, month, 0).getDate()
 
-    const installmentItems: PayableItem[] = installments.map((item) => {
-      const dueDate = new Date(item.dateTransaction)
-      dueDate.setHours(0, 0, 0, 0)
-
-      return {
-        id: `installment-${item.id}`,
-        title: item.debt.title,
-        subtitle: `Parcela ${item.order}/${item.totalInstallments}`,
-        value: item.value,
-        dueDate,
-        status: item.status,
-        kind: "installment",
-        installmentId: item.id,
-        isOverdue: item.status === "SCHEDULE" && dueDate < today,
-        interestRate: item.debt.interestRate,
-        interestRateType: item.debt.interestRateType,
-      }
+    const allItems = buildPayableItems({
+      month,
+      year,
+      installments,
+      details,
+      today,
     })
-
-    const recurringItems: PayableItem[] = (
-      details.recurringPaymentsBreakdown ?? []
-    ).map((item) => {
-      const dueDate = new Date(year, month - 1, Math.min(item.dayOfMonth, daysInMonth))
-      dueDate.setHours(0, 0, 0, 0)
-      const itemStatus = item.paidThisMonth ? "PAY" : "SCHEDULE"
-
-      return {
-        id: `recurring-${item.id}`,
-        title: item.title,
-        subtitle: `Conta fixa · dia ${item.dayOfMonth}`,
-        value: item.value,
-        dueDate,
-        status: itemStatus,
-        kind: "recurring",
-        recurringId: item.id,
-        isOverdue: itemStatus === "SCHEDULE" && dueDate < today,
-      }
-    })
-
-    const plannedItems: PayableItem[] = (
-      details.plannedExpensesBreakdown ?? []
-    ).map((item) => {
-      const dueDate = new Date(item.dueDate)
-      dueDate.setHours(0, 0, 0, 0)
-      const itemStatus = item.status === "PAID" ? "PAY" : "SCHEDULE"
-      const categoryLabel = item.category?.title
-        ? ` · ${item.category.title}`
-        : ""
-
-      return {
-        id: `planned-${item.id}`,
-        title: item.title,
-        subtitle: `Gasto previsto${categoryLabel}`,
-        value: item.value,
-        dueDate,
-        status: itemStatus,
-        kind: "planned",
-        plannedId: item.id,
-        isOverdue: itemStatus === "SCHEDULE" && dueDate < today,
-      }
-    })
-
-    const allItems = [...installmentItems, ...recurringItems, ...plannedItems].sort(
-      (a, b) => {
-        if (a.status !== b.status) {
-          return a.status === "SCHEDULE" ? -1 : 1
-        }
-        return a.dueDate.getTime() - b.dueDate.getTime()
-      }
-    )
 
     const filtered = allItems.filter((item) => {
       if (status === "pendentes" && item.status !== "SCHEDULE") return false

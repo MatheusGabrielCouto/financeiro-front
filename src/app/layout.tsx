@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { DM_Sans, Plus_Jakarta_Sans } from "next/font/google"
+import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme"
 import "./globals.css"
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -21,8 +22,14 @@ const RootLayout = ({ children }: LayoutProps<"/">) => {
   return (
     <html
       lang="pt-BR"
+      suppressHydrationWarning
       className={`${plusJakarta.variable} ${dmSans.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }}
+        />
+      </head>
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   )

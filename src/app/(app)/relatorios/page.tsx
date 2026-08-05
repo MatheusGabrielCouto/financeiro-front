@@ -2,6 +2,8 @@ import Link from "next/link"
 import { Suspense, type ReactNode } from "react"
 import { redirect } from "next/navigation"
 import { ColumnChart, SimpleBars } from "@/components/simple-bars"
+import { ExportCsvButton } from "@/components/export-csv-button"
+import { MonthCompareCard } from "@/components/month-compare-card"
 import { MonthYearFilter } from "@/components/month-year-filter"
 import { MonthsFilter } from "@/components/months-filter"
 import { ApiError } from "@/lib/api-server"
@@ -221,9 +223,13 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
   }
 
   try {
-    const [details, byCategoryTrend, byMonthTrend, evolution] =
+    const prevMonth = month === 1 ? 12 : month - 1
+    const prevYear = month === 1 ? year - 1 : year
+
+    const [details, previousDetails, byCategoryTrend, byMonthTrend, evolution] =
       await Promise.all([
         getDetails(month, year),
+        getDetails(prevMonth, prevYear).catch(() => null),
         getExpensesByCategory(months),
         getExpensesByMonth(months),
         getEvolution(months),
@@ -269,6 +275,58 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
     const bestMonth = [...evolution.monthly].sort((a, b) => b.net - a.net)[0]
     const worstMonth = [...evolution.monthly].sort((a, b) => a.net - b.net)[0]
 
+    const reportCsvHeaders = ["Seção", "Item", "Valor", "Detalhe"]
+    const reportCsvRows = [
+      ["Resumo", "Receita do mês", totalIncome, monthLabel],
+      ["Resumo", "Compromissos", totalFixedOut, "Contas + parcelas + previstos"],
+      [
+        "Resumo",
+        "Sobra do mês",
+        summary.balanceAfterExpenses ?? summary.netExpected,
+        "",
+      ],
+      [
+        "Resumo",
+        "Sobra estrutural",
+        summary.netStructural ?? summary.netExpected,
+        "",
+      ],
+      ["Resumo", "Total de despesas", summary.totalExpenses, ""],
+      ...categories.map((item) => [
+        "Categoria",
+        item.title,
+        item.total,
+        categoryTotal > 0
+          ? `${((item.total / categoryTotal) * 100).toFixed(1)}%`
+          : "0%",
+      ]),
+      ...incomes.map((item) => [
+        "Receita fixa",
+        item.title,
+        item.value,
+        `Dia ${item.dayOfMonth}`,
+      ]),
+      ...recurrings.map((item) => [
+        "Conta fixa",
+        item.title,
+        item.value,
+        item.paidThisMonth ? "Paga" : "Em aberto",
+      ]),
+      ...debts.map((item) => [
+        "Parcela",
+        item.debtTitle,
+        item.value,
+        item.status === "PAY" ? "Paga" : "Em aberto",
+      ]),
+      ...plannedExpenses.map((item) => [
+        "Previsto",
+        item.title,
+        item.value,
+        item.status,
+      ]),
+    ]
+    const reportCsvFilename = `relatorio-${year}-${String(month).padStart(2, "0")}.csv`
+
     return (
       <div className="space-y-6">
         <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50">
@@ -294,11 +352,21 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                   </div>
                 }
               >
-                <div className="[&_button]:border-white/15 [&_button]:bg-white/10 [&_button]:text-white [&_button:hover]:bg-white/15 [&_div]:border-white/15 [&_div]:bg-white/5 [&_select]:text-white [&_span]:bg-teal-400/20 [&_span]:text-teal-100">
-                  <MonthYearFilter
-                    month={month}
-                    year={year}
-                    basePath="/relatorios"
+                <div className="flex flex-col items-stretch gap-3 sm:items-end">
+                  <div className="[&_button]:border-white/15 [&_button]:bg-white/10 [&_button]:text-white [&_button:hover]:bg-white/15 [&_div]:border-white/15 [&_div]:bg-white/5 [&_select]:text-white [&_span]:bg-teal-400/20 [&_span]:text-teal-100">
+                    <MonthYearFilter
+                      month={month}
+                      year={year}
+                      basePath="/relatorios"
+                    />
+                  </div>
+                  <ExportCsvButton
+                    filename={reportCsvFilename}
+                    headers={reportCsvHeaders}
+                    rows={reportCsvRows}
+                    label="Exportar CSV"
+                    ariaLabel={`Exportar relatório de ${monthLabel} em CSV`}
+                    className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
               </Suspense>
@@ -353,6 +421,18 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
             </div>
           </div>
         </section>
+
+        {previousDetails ? (
+          <MonthCompareCard
+            current={details}
+            previous={previousDetails}
+            currentMonth={month}
+            currentYear={year}
+            previousMonth={prevMonth}
+            previousYear={prevYear}
+            variant="reports"
+          />
+        ) : null}
 
         <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
           <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">

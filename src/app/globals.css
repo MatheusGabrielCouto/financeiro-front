@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #f4f7f6;
   --foreground: #0f172a;
@@ -17,6 +19,25 @@
   --sidebar-active: #f0fdfa;
   --sidebar-muted: #64748b;
   --sidebar-border: #e2e8f0;
+}
+
+html.dark {
+  --background: #0b1220;
+  --foreground: #e2e8f0;
+  --surface: #111827;
+  --muted: #94a3b8;
+  --border: #1f2937;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-soft: #134e4a;
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --success: #34d399;
+  --sidebar: #0f172a;
+  --sidebar-hover: #1e293b;
+  --sidebar-active: #134e4a;
+  --sidebar-muted: #94a3b8;
+  --sidebar-border: #1f2937;
 }
 
 @theme inline {

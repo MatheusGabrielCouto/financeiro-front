@@ -4,16 +4,18 @@ import {
   IconBell,
   IconDebts,
   IconInstallments,
-  IconPlus,
   IconTransactions,
   IconPiggy,
   IconInsights,
   IconReports,
   IconSimulate,
 } from "@/components/icons"
+import { BudgetSpotlight } from "@/components/budget-spotlight"
+import { MonthCompareCard } from "@/components/month-compare-card"
 import { PayInstallmentButton } from "@/components/pay-installment-button"
 import { OverdueInterestHint } from "@/components/overdue-interest-hint"
 import { ProxyActionButton } from "@/components/proxy-action-button"
+import { QuickTransactionLauncher } from "@/components/quick-transaction-launcher"
 import { StatusBadge } from "@/components/status-badge"
 import { ApiError } from "@/lib/api-server"
 import {
@@ -28,12 +30,15 @@ import {
 } from "@/lib/format"
 import {
   getAmount,
+  getBudgets,
+  getCategories,
   getDetails,
   getEmergencyReserve,
   getFuturePurchaseProjections,
   getPlannedDebtWorkbook,
   getRecurringIncomes,
 } from "@/lib/finance-api"
+import { getPriorityNotificationCount } from "@/lib/notification-count"
 
 type UpcomingItem = {
   id: string
@@ -60,15 +65,32 @@ const DashboardPage = async () => {
       redirect("/api/onboarding/complete?from=/")
     }
 
-    const [amount, details, user, projections, reserve, plannedWorkbook] =
-      await Promise.all([
-        getAmount(),
-        getDetails(month, year),
-        getStoredUser(),
-        getFuturePurchaseProjections().catch(() => []),
-        getEmergencyReserve(6).catch(() => null),
-        getPlannedDebtWorkbook(year).catch(() => null),
-      ])
+    const prevMonth = month === 1 ? 12 : month - 1
+    const prevYear = month === 1 ? year - 1 : year
+
+    const [
+      amount,
+      details,
+      previousDetails,
+      user,
+      projections,
+      reserve,
+      plannedWorkbook,
+      categories,
+      attentionCount,
+      budgets,
+    ] = await Promise.all([
+      getAmount(),
+      getDetails(month, year),
+      getDetails(prevMonth, prevYear).catch(() => null),
+      getStoredUser(),
+      getFuturePurchaseProjections().catch(() => []),
+      getEmergencyReserve(6).catch(() => null),
+      getPlannedDebtWorkbook(year).catch(() => null),
+      getCategories().catch(() => []),
+      getPriorityNotificationCount(),
+      getBudgets(month, year).catch(() => []),
+    ])
 
     const recurringBreakdown = details.recurringPaymentsBreakdown ?? []
     const plannedBreakdown = details.plannedExpensesBreakdown ?? []
@@ -262,19 +284,16 @@ const DashboardPage = async () => {
               </div>
 
               <div className="flex flex-wrap gap-2">
+                <QuickTransactionLauncher
+                  categories={categories}
+                  variant="hero"
+                />
                 <Link
                   href="/parcelas"
-                  className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-50"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
                 >
                   <IconInstallments className="h-4 w-4" />
                   Pagar parcelas
-                </Link>
-                <Link
-                  href="/dividas/nova"
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
-                >
-                  <IconPlus className="h-4 w-4" />
-                  Nova dívida
                 </Link>
               </div>
             </div>
@@ -348,6 +367,30 @@ const DashboardPage = async () => {
           </div>
         </section>
 
+        {attentionCount > 0 ? (
+          <section className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 md:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-warning">
+                  {attentionCount === 1
+                    ? "1 item pedindo atenção"
+                    : `${attentionCount} itens pedindo atenção`}
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  Vencimentos, lista pra pagar e alertas de fluxo numa só inbox.
+                </p>
+              </div>
+              <Link
+                href="/notificacoes"
+                className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
+                aria-label="Ver inbox de atenção"
+              >
+                Ver atenção
+              </Link>
+            </div>
+          </section>
+        ) : null}
+
         <section
           className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
           aria-label="Indicadores do mês"
@@ -399,7 +442,19 @@ const DashboardPage = async () => {
           ))}
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-2">
+        {previousDetails ? (
+          <MonthCompareCard
+            current={details}
+            previous={previousDetails}
+            currentMonth={month}
+            currentYear={year}
+            previousMonth={prevMonth}
+            previousYear={prevYear}
+            variant="home"
+          />
+        ) : null}
+
+        <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
           <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -481,7 +536,9 @@ const DashboardPage = async () => {
             ) : null}
           </article>
 
-          <article className="rounded-2xl border border-teal-200/70 bg-teal-50/30 p-5 shadow-sm shadow-slate-200/40">
+          <BudgetSpotlight budgets={budgets} />
+
+          <article className="rounded-2xl border border-teal-200/70 bg-teal-50/30 p-5 shadow-sm shadow-slate-200/40 lg:col-span-2 xl:col-span-1">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-base font-semibold">Planejamento</h2>
@@ -749,7 +806,7 @@ const DashboardPage = async () => {
                   },
                   {
                     href: "/notificacoes",
-                    label: "Notificações",
+                    label: "Atenção",
                     hint: "Vencimentos próximos",
                     icon: IconBell,
                   },

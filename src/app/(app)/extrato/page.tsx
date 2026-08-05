@@ -1,8 +1,10 @@
 import { Suspense } from "react"
 import { redirect } from "next/navigation"
 import { CreateTransactionForm } from "@/components/create-transaction-form"
-import { EditTransactionRow } from "@/components/edit-transaction-row"
+import { ExportCsvButton } from "@/components/export-csv-button"
+import { ExtratoMovements } from "@/components/extrato-movements"
 import { MonthYearFilter } from "@/components/month-year-filter"
+import { QuickTransactionLauncher } from "@/components/quick-transaction-launcher"
 import { ApiError } from "@/lib/api-server"
 import {
   formatCurrency,
@@ -20,21 +22,10 @@ type ExtratoPageProps = {
   searchParams: Promise<{ month?: string; year?: string; tipo?: string }>
 }
 
-const groupByDay = (transactions: Transaction[]) => {
-  const groups = new Map<string, Transaction[]>()
-
-  for (const transaction of transactions) {
-    const key = new Date(transaction.createdAt).toLocaleDateString("pt-BR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-    const current = groups.get(key) ?? []
-    current.push(transaction)
-    groups.set(key, current)
-  }
-
-  return Array.from(groups.entries())
+const typeLabel = (type: Transaction["type"]) => {
+  if (type === "CREDIT") return "Entrada"
+  if (type === "PAY") return "Pagamento"
+  return "Saída"
 }
 
 const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
@@ -74,7 +65,23 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
       .reduce((sum, item) => sum + item.value, 0)
     const net = income - outflow
     const monthLabel = formatMonthLabel(month, year)
-    const groups = groupByDay(filtered)
+    const csvHeaders = [
+      "Data",
+      "Tipo",
+      "Descrição",
+      "Valor",
+      "Categorias",
+      "Recorrente",
+    ]
+    const csvRows = filtered.map((item) => [
+      new Date(item.createdAt).toISOString(),
+      typeLabel(item.type),
+      item.message,
+      item.type === "CREDIT" ? item.value : -item.value,
+      item.categories.map((category) => category.title).join(" | "),
+      item.isRecurring ? "sim" : "não",
+    ])
+    const csvFilename = `extrato-${year}-${String(month).padStart(2, "0")}.csv`
 
     const filterHref = (nextTipo: string) => {
       const query = new URLSearchParams({
@@ -100,9 +107,21 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 Acompanhe entradas, saídas e o impacto no saldo.
               </p>
             </div>
-            <Suspense fallback={<div className="text-sm text-muted">Carregando...</div>}>
-              <MonthYearFilter month={month} year={year} basePath="/extrato" />
-            </Suspense>
+            <div className="flex flex-col items-stretch gap-3 sm:items-end">
+              <Suspense fallback={<div className="text-sm text-muted">Carregando...</div>}>
+                <MonthYearFilter month={month} year={year} basePath="/extrato" />
+              </Suspense>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <ExportCsvButton
+                  filename={csvFilename}
+                  headers={csvHeaders}
+                  rows={csvRows}
+                  label="Exportar CSV"
+                  ariaLabel={`Exportar extrato de ${monthLabel} em CSV`}
+                />
+                <QuickTransactionLauncher categories={categories} variant="toolbar" />
+              </div>
+            </div>
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -193,59 +212,22 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
               </div>
             </div>
 
-            <div className="p-3 md:p-4">
-              {filtered.length === 0 ? (
-                <div className="rounded-xl bg-background px-4 py-12 text-center">
-                  <p className="font-semibold">Nenhum lançamento encontrado</p>
-                  <p className="mt-1 text-sm text-muted">
-                    {sorted.length === 0
-                      ? "Registre a primeira movimentação deste mês ao lado."
-                      : "Tente outro filtro ou período."}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-5">
-                  {groups.map(([day, items]) => {
-                    const dayTotal = items.reduce((sum, item) => {
-                      return item.type === "CREDIT"
-                        ? sum + item.value
-                        : sum - item.value
-                    }, 0)
-
-                    return (
-                      <div key={day}>
-                        <div className="mb-2 flex items-center justify-between px-1">
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
-                            {day}
-                          </p>
-                          <p
-                            className={`text-xs font-semibold ${
-                              dayTotal >= 0 ? "text-success" : "text-danger"
-                            }`}
-                          >
-                            {dayTotal >= 0 ? "+" : "−"}
-                            {formatCurrency(Math.abs(dayTotal))}
-                          </p>
-                        </div>
-                        <ul className="space-y-2">
-                          {items.map((transaction) => (
-                            <EditTransactionRow
-                              key={transaction.id}
-                              transaction={transaction}
-                              categories={categories}
-                            />
-                          ))}
-                        </ul>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
+            <Suspense
+              fallback={
+                <div className="p-6 text-sm text-muted">Carregando movimentos...</div>
+              }
+            >
+              <ExtratoMovements
+                transactions={filtered}
+                categories={categories}
+              />
+            </Suspense>
           </div>
 
           <CreateTransactionForm categories={categories} />
         </section>
+
+        <QuickTransactionLauncher categories={categories} variant="fab" />
       </div>
     )
   } catch (error) {

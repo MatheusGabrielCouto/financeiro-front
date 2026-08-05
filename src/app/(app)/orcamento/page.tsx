@@ -6,48 +6,17 @@ import { ProxyActionButton } from "@/components/proxy-action-button"
 import { UpsertBudgetForm } from "@/components/upsert-budget-form"
 import { ApiError } from "@/lib/api-server"
 import {
+  budgetStatusMeta,
+  getBudgetBarWidth,
+  getBudgetOverage,
+  getBudgetStatus,
+} from "@/lib/budget-status"
+import {
   formatCurrency,
   formatMonthLabel,
   getCurrentMonthYear,
 } from "@/lib/format"
 import { getBudgets, getCategories } from "@/lib/finance-api"
-import type { BudgetItem } from "@/lib/types"
-
-type OrcamentoPageProps = {
-  searchParams: Promise<{ month?: string; year?: string; status?: string }>
-}
-
-type BudgetStatus = "ok" | "warning" | "over"
-
-const getBudgetStatus = (budget: BudgetItem): BudgetStatus => {
-  if (budget.percentageUsed >= 100) return "over"
-  if (budget.percentageUsed >= 80) return "warning"
-  return "ok"
-}
-
-const statusMeta: Record<
-  BudgetStatus,
-  { label: string; badge: string; bar: string; border: string }
-> = {
-  ok: {
-    label: "Dentro do limite",
-    badge: "bg-emerald-50 text-success",
-    bar: "bg-accent",
-    border: "border-border/80",
-  },
-  warning: {
-    label: "Perto do limite",
-    badge: "bg-amber-50 text-warning",
-    bar: "bg-amber-400",
-    border: "border-amber-200/80",
-  },
-  over: {
-    label: "Estourado",
-    badge: "bg-red-50 text-danger",
-    bar: "bg-danger",
-    border: "border-red-200/80",
-  },
-}
 
 const buildHref = (month: number, year: number, status: string) => {
   const params = new URLSearchParams({
@@ -56,6 +25,10 @@ const buildHref = (month: number, year: number, status: string) => {
   })
   if (status !== "todos") params.set("status", status)
   return `/orcamento?${params.toString()}`
+}
+
+type OrcamentoPageProps = {
+  searchParams: Promise<{ month?: string; year?: string; status?: string }>
 }
 
 const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
@@ -272,7 +245,8 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
                 </div>
               ) : (
                 filtered.map((budget) => {
-                  const meta = statusMeta[budget.status]
+                  const meta = budgetStatusMeta[budget.status]
+                  const overage = getBudgetOverage(budget)
                   return (
                     <article
                       key={budget.id}
@@ -299,20 +273,14 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
                         <div className="flex items-center gap-3">
                           <div className="text-right">
                             <p
-                              className={`text-lg font-semibold tabular-nums ${
-                                budget.status === "over"
-                                  ? "text-danger"
-                                  : budget.status === "warning"
-                                    ? "text-warning"
-                                    : "text-accent"
-                              }`}
+                              className={`text-lg font-semibold tabular-nums ${meta.value}`}
                             >
                               {budget.percentageUsed.toFixed(0)}%
                             </p>
                             <p className="text-xs text-muted">
-                              {budget.remaining >= 0
-                                ? `Sobra ${formatCurrency(budget.remaining)}`
-                                : `Passou ${formatCurrency(Math.abs(budget.remaining))}`}
+                              {overage > 0
+                                ? `Passou ${formatCurrency(overage)}`
+                                : `Sobra ${formatCurrency(budget.remaining)}`}
                             </p>
                           </div>
                           <ProxyActionButton
@@ -332,7 +300,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
                           <div
                             className={`h-full rounded-full ${meta.bar}`}
                             style={{
-                              width: `${Math.min(budget.percentageUsed, 100)}%`,
+                              width: `${getBudgetBarWidth(budget)}%`,
                             }}
                           />
                         </div>

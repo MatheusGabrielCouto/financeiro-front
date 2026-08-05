@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { ProfileForm } from "@/components/profile-form"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { ApiError } from "@/lib/api-server"
 import { buildDueAlerts, countPriorityAlerts } from "@/lib/due-alerts"
 import { formatCurrency, getCurrentMonthYear } from "@/lib/format"
@@ -63,6 +64,33 @@ const PerfilPage = async () => {
           <ProfileForm key={`${user.name}-${user.email}`} user={user} />
 
           <div className="space-y-4">
+            <div className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
+              <h2 className="text-base font-semibold">Aparência</h2>
+              <p className="mt-1 text-sm text-muted">
+                Tema da dashboard. Preferência salva neste navegador.
+              </p>
+              <div className="mt-4">
+                <ThemeToggle variant="panel" />
+              </div>
+              <div className="mt-5 rounded-xl border border-border/70 bg-slate-50 px-3 py-3 text-xs text-muted dark:bg-slate-900/50">
+                <p className="font-semibold text-foreground">Atalhos</p>
+                <ul className="mt-2 space-y-1">
+                  <li>
+                    <kbd className="rounded border border-border bg-surface px-1.5 py-0.5 font-mono text-[11px]">
+                      N
+                    </kbd>{" "}
+                    novo lançamento (saída)
+                  </li>
+                  <li>
+                    <kbd className="rounded border border-border bg-surface px-1.5 py-0.5 font-mono text-[11px]">
+                      /
+                    </kbd>{" "}
+                    buscar no extrato
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             <div className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
               <h2 className="text-base font-semibold">Central de alertas</h2>
               <p className="mt-1 text-sm text-muted">

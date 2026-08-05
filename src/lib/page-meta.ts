@@ -59,6 +59,17 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
+  if (pathname.startsWith("/calendario")) {
+    return {
+      title: "Calendário",
+      section: "Dívidas",
+      crumbs: [
+        { label: "Dívidas", href: "/dividas" },
+        { label: "Calendário" },
+      ],
+    }
+  }
+
   if (pathname.startsWith("/planejamento")) {
     return {
       title: "Planejamento",
@@ -131,9 +142,17 @@ export const getPageMeta = (pathname: string): PageMeta => {
 
   if (pathname.startsWith("/notificacoes")) {
     return {
-      title: "Notificações",
+      title: "Atenção",
       section: "Visão geral",
-      crumbs: [{ label: "Notificações" }],
+      crumbs: [{ label: "Atenção" }],
+    }
+  }
+
+  if (pathname.startsWith("/fechamento")) {
+    return {
+      title: "Fechamento",
+      section: "Visão geral",
+      crumbs: [{ label: "Fechamento" }],
     }
   }
 

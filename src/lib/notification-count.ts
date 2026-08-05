@@ -3,6 +3,7 @@ import {
   getDetails,
   getFuturePurchaseProjections,
   getInstallments,
+  getPaymentReminders,
   getPlannedExpenses,
   getRecurringPayments,
 } from "@/lib/finance-api"
@@ -76,6 +77,7 @@ export const getPriorityNotificationCount = async () => {
       amount,
       details,
       projections,
+      openReminders,
     ] = await Promise.all([
       getInstallments(current.month, current.year),
       getInstallments(nextMonth, nextYear),
@@ -85,6 +87,7 @@ export const getPriorityNotificationCount = async () => {
       getAmount(),
       getDetails(current.month, current.year),
       getFuturePurchaseProjections(),
+      getPaymentReminders({ status: "OPEN" }).catch(() => []),
     ])
 
     const alerts = buildDueAlerts({
@@ -111,7 +114,11 @@ export const getPriorityNotificationCount = async () => {
       caixinhaAlerts,
     })
 
-    return countPriorityAlerts(alerts) + insights.length
+    return (
+      countPriorityAlerts(alerts) +
+      insights.length +
+      openReminders.length
+    )
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       return 0
