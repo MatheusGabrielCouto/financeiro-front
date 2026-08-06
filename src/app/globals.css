@@ -108,6 +108,21 @@ html {
   }
 }
 
+@keyframes dashboard-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-enter {
+  animation: dashboard-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .auth-enter {
   animation: auth-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -151,4 +166,14 @@ html {
 
 .scrollbar-thin::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-enter,
+  .auth-orb,
+  .auth-orb-delayed,
+  .onboarding-step,
+  .dashboard-enter {
+    animation: none;
+  }
 }

@@ -209,6 +209,24 @@ export const IconWarning = ({ className }: IconProps) => (
   </svg>
 )
 
+export const IconTrendUp = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M3 16.3 9.5 9.8l4 4L21 5.5V9h2V2h-7v2h3.5l-6 6-4-4L2 12.9 3 16.3Zm-1 4.7h20v2H2v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconTrendDown = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M3 7.7 9.5 14.2l4-4L21 18.5V15h2v7h-7v-2h3.5l-6-6-4 4L2 11.1 3 7.7ZM2 21h20v-2H2v2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
 export const IconCreditCard = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path

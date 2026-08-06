@@ -53,7 +53,7 @@ export const BudgetSpotlight = ({
       </div>
 
       {budgets.length === 0 ? (
-        <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center">
+        <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
           <p className="text-sm font-medium">Nenhum limite definido</p>
           <Link
             href="/orcamento"

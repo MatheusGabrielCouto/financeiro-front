@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import {
   IconBell,
+  IconCheck,
   IconDebts,
   IconInstallments,
   IconTransactions,
@@ -9,6 +10,9 @@ import {
   IconInsights,
   IconReports,
   IconSimulate,
+  IconTrendDown,
+  IconTrendUp,
+  IconWarning,
 } from "@/components/icons"
 import { BudgetSpotlight } from "@/components/budget-spotlight"
 import { CreditCardVisual } from "@/components/credit-card-visual"
@@ -56,248 +60,350 @@ type UpcomingItem = {
   interestRateType?: "MONTHLY" | "DAILY"
 }
 
-const DashboardPage = async () => {
+const loadDashboardData = async () => {
   const { month, year } = getCurrentMonthYear()
 
-  try {
-    const onboardingDone = await isOnboardingDone()
-    if (!onboardingDone) {
-      const incomes = await getRecurringIncomes()
-      if (incomes.length === 0) {
-        redirect("/onboarding")
-      }
-      redirect("/api/onboarding/complete?from=/")
+  const onboardingDone = await isOnboardingDone()
+  if (!onboardingDone) {
+    const incomes = await getRecurringIncomes()
+    if (incomes.length === 0) {
+      redirect("/onboarding")
     }
+    redirect("/api/onboarding/complete?from=/")
+  }
 
-    const prevMonth = month === 1 ? 12 : month - 1
-    const prevYear = month === 1 ? year - 1 : year
+  const prevMonth = month === 1 ? 12 : month - 1
+  const prevYear = month === 1 ? year - 1 : year
 
-    const [
-      amount,
-      details,
-      previousDetails,
-      user,
-      projections,
-      reserve,
-      plannedWorkbook,
-      categories,
-      attentionCount,
-      budgets,
-      creditCards,
-    ] = await Promise.all([
-      getAmount(),
-      getDetails(month, year),
-      getDetails(prevMonth, prevYear).catch(() => null),
-      getStoredUser(),
-      getFuturePurchaseProjections().catch(() => []),
-      getEmergencyReserve(6).catch(() => null),
-      getPlannedDebtWorkbook(year).catch(() => null),
-      getCategories().catch(() => []),
-      getPriorityNotificationCount(),
-      getBudgets(month, year).catch(() => []),
-      getCreditCards().catch(() => []),
-    ])
+  const [
+    amount,
+    details,
+    previousDetails,
+    user,
+    projections,
+    reserve,
+    plannedWorkbook,
+    categories,
+    attentionCount,
+    budgets,
+    creditCards,
+  ] = await Promise.all([
+    getAmount(),
+    getDetails(month, year),
+    getDetails(prevMonth, prevYear).catch(() => null),
+    getStoredUser(),
+    getFuturePurchaseProjections().catch(() => []),
+    getEmergencyReserve(6).catch(() => null),
+    getPlannedDebtWorkbook(year).catch(() => null),
+    getCategories().catch(() => []),
+    getPriorityNotificationCount(),
+    getBudgets(month, year).catch(() => []),
+    getCreditCards().catch(() => []),
+  ])
 
-    const creditCardSummaries = await Promise.all(
-      creditCards.slice(0, 4).map(async (card) => {
-        const limit = await getCreditCardLimit(card.id).catch(() => null)
-        return { card, limit }
-      })
-    )
-    const creditUsed = creditCardSummaries.reduce(
-      (sum, item) => sum + (item.limit?.used ?? 0),
-      0
-    )
-    const creditLimit = creditCardSummaries.reduce(
-      (sum, item) => sum + (item.limit?.limit ?? item.card.limit),
-      0
-    )
-    const cardInvoiceAlerts = await buildCreditCardInvoiceAlerts({
-      month,
-      year,
+  const creditCardSummaries = await Promise.all(
+    creditCards.slice(0, 4).map(async (card) => {
+      const limit = await getCreditCardLimit(card.id).catch(() => null)
+      return { card, limit }
     })
-    const cardInvoicesTotal = cardInvoiceAlerts.reduce(
-      (sum, item) => sum + item.pendingTotal,
-      0
-    )
-    const invoiceByCardId = new Map(
-      cardInvoiceAlerts.map((item) => [item.cardId, item.pendingTotal])
-    )
+  )
+  const creditUsed = creditCardSummaries.reduce(
+    (sum, item) => sum + (item.limit?.used ?? 0),
+    0
+  )
+  const creditLimit = creditCardSummaries.reduce(
+    (sum, item) => sum + (item.limit?.limit ?? item.card.limit),
+    0
+  )
+  const cardInvoiceAlerts = await buildCreditCardInvoiceAlerts({
+    month,
+    year,
+  })
+  const cardInvoicesTotal = cardInvoiceAlerts.reduce(
+    (sum, item) => sum + item.pendingTotal,
+    0
+  )
+  const invoiceByCardId = new Map(
+    cardInvoiceAlerts.map((item) => [item.cardId, item.pendingTotal])
+  )
 
-    const recurringBreakdown = details.recurringPaymentsBreakdown ?? []
-    const plannedBreakdown = details.plannedExpensesBreakdown ?? []
-    const paidInstallments = details.debtsBreakdown.filter(
-      (item) => item.status === "PAY"
-    )
-    const pendingInstallments = details.debtsBreakdown.filter(
-      (item) => item.status === "SCHEDULE"
-    )
-    const paidRecurring = recurringBreakdown.filter((item) => item.paidThisMonth)
-    const pendingRecurring = recurringBreakdown.filter(
-      (item) => !item.paidThisMonth
-    )
-    const paidPlanned = plannedBreakdown.filter((item) => item.status === "PAID")
-    const pendingPlanned = plannedBreakdown.filter(
-      (item) => item.status === "SCHEDULED"
-    )
+  const recurringBreakdown = details.recurringPaymentsBreakdown ?? []
+  const plannedBreakdown = details.plannedExpensesBreakdown ?? []
+  const paidInstallments = details.debtsBreakdown.filter(
+    (item) => item.status === "PAY"
+  )
+  const pendingInstallments = details.debtsBreakdown.filter(
+    (item) => item.status === "SCHEDULE"
+  )
+  const paidRecurring = recurringBreakdown.filter((item) => item.paidThisMonth)
+  const pendingRecurring = recurringBreakdown.filter(
+    (item) => !item.paidThisMonth
+  )
+  const paidPlanned = plannedBreakdown.filter((item) => item.status === "PAID")
+  const pendingPlanned = plannedBreakdown.filter(
+    (item) => item.status === "SCHEDULED"
+  )
 
-    const paidInstallmentsTotal = paidInstallments.reduce(
-      (sum, item) => sum + item.value,
-      0
-    )
-    const pendingInstallmentsTotal = pendingInstallments.reduce(
-      (sum, item) => sum + item.value,
-      0
-    )
-    const paidRecurringTotal = paidRecurring.reduce(
-      (sum, item) => sum + item.value,
-      0
-    )
-    const pendingRecurringTotal = pendingRecurring.reduce(
-      (sum, item) => sum + item.value,
-      0
-    )
-    const paidPlannedTotal = paidPlanned.reduce(
-      (sum, item) => sum + item.value,
-      0
-    )
-    const pendingPlannedTotal = pendingPlanned.reduce(
-      (sum, item) => sum + item.value,
-      0
-    )
+  const paidInstallmentsTotal = paidInstallments.reduce(
+    (sum, item) => sum + item.value,
+    0
+  )
+  const pendingInstallmentsTotal = pendingInstallments.reduce(
+    (sum, item) => sum + item.value,
+    0
+  )
+  const paidRecurringTotal = paidRecurring.reduce(
+    (sum, item) => sum + item.value,
+    0
+  )
+  const pendingRecurringTotal = pendingRecurring.reduce(
+    (sum, item) => sum + item.value,
+    0
+  )
+  const paidPlannedTotal = paidPlanned.reduce(
+    (sum, item) => sum + item.value,
+    0
+  )
+  const pendingPlannedTotal = pendingPlanned.reduce(
+    (sum, item) => sum + item.value,
+    0
+  )
 
-    const paidCommitments =
-      paidInstallmentsTotal + paidRecurringTotal + paidPlannedTotal
-    const scheduledTotal =
-      pendingInstallmentsTotal + pendingRecurringTotal + pendingPlannedTotal
-    const commitmentTotal =
-      details.summary.debts +
-      details.summary.recurringPayments +
-      (details.summary.plannedExpensesOpen ?? 0)
-    const monthIncome =
-      details.summary.totalIncome ??
-      details.summary.recurringIncome + (details.summary.outrasEntradas ?? 0)
-    const monthOutflow = details.summary.totalExpenses
-    const otherExpenses =
-      details.summary.otherExpenses ??
-      Math.max(0, monthOutflow - paidCommitments)
-    const monthSurplus =
-      details.summary.balanceAfterExpenses ?? details.summary.netExpected
-    const hasCommitments = commitmentTotal > 0 || scheduledTotal > 0
-    const progress = hasCommitments
-      ? Math.round((paidCommitments / Math.max(commitmentTotal, 1)) * 100)
-      : monthIncome > 0
-        ? Math.min(100, Math.round((monthOutflow / monthIncome) * 100))
-        : monthOutflow > 0
-          ? 100
-          : 0
-    const pendingCount =
-      pendingInstallments.length +
-      pendingRecurring.length +
-      pendingPlanned.length
+  const paidCommitments =
+    paidInstallmentsTotal + paidRecurringTotal + paidPlannedTotal
+  const scheduledTotal =
+    pendingInstallmentsTotal + pendingRecurringTotal + pendingPlannedTotal
+  const commitmentTotal =
+    details.summary.debts +
+    details.summary.recurringPayments +
+    (details.summary.plannedExpensesOpen ?? 0)
+  const monthIncome =
+    details.summary.totalIncome ??
+    details.summary.recurringIncome + (details.summary.outrasEntradas ?? 0)
+  const monthOutflow = details.summary.totalExpenses
+  const otherExpenses =
+    details.summary.otherExpenses ??
+    Math.max(0, monthOutflow - paidCommitments)
+  const monthSurplus =
+    details.summary.balanceAfterExpenses ?? details.summary.netExpected
+  const hasCommitments = commitmentTotal > 0 || scheduledTotal > 0
+  const progress = hasCommitments
+    ? Math.round((paidCommitments / Math.max(commitmentTotal, 1)) * 100)
+    : monthIncome > 0
+      ? Math.min(100, Math.round((monthOutflow / monthIncome) * 100))
+      : monthOutflow > 0
+        ? 100
+        : 0
+  const pendingCount =
+    pendingInstallments.length +
+    pendingRecurring.length +
+    pendingPlanned.length
 
-    const upcomingItems: UpcomingItem[] = [
-      ...pendingInstallments.map((item) => ({
-        id: `installment-${item.id}`,
-        entityId: item.id,
-        title: item.debtTitle,
-        value: item.value,
-        dueDate: new Date(item.date),
-        kind: "installment" as const,
-        status: "SCHEDULE" as const,
-        interestRate: item.interestRate,
-        interestRateType: item.interestRateType,
-      })),
-      ...pendingRecurring.map((item) => {
-        const safeDay = Math.min(
-          item.dayOfMonth,
-          new Date(year, month, 0).getDate()
-        )
-        return {
-          id: `recurring-${item.id}`,
-          entityId: item.id,
-          title: item.title,
-          value: item.value,
-          dueDate: new Date(year, month - 1, safeDay),
-          kind: "recurring" as const,
-          status: "SCHEDULE" as const,
-        }
-      }),
-      ...pendingPlanned.map((item) => ({
-        id: `planned-${item.id}`,
+  const upcomingItems: UpcomingItem[] = [
+    ...pendingInstallments.map((item) => ({
+      id: `installment-${item.id}`,
+      entityId: item.id,
+      title: item.debtTitle,
+      value: item.value,
+      dueDate: new Date(item.date),
+      kind: "installment" as const,
+      status: "SCHEDULE" as const,
+      interestRate: item.interestRate,
+      interestRateType: item.interestRateType,
+    })),
+    ...pendingRecurring.map((item) => {
+      const safeDay = Math.min(
+        item.dayOfMonth,
+        new Date(year, month, 0).getDate()
+      )
+      return {
+        id: `recurring-${item.id}`,
         entityId: item.id,
         title: item.title,
         value: item.value,
-        dueDate: new Date(item.dueDate),
-        kind: "planned" as const,
+        dueDate: new Date(year, month - 1, safeDay),
+        kind: "recurring" as const,
         status: "SCHEDULE" as const,
-      })),
-    ].sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
+      }
+    }),
+    ...pendingPlanned.map((item) => ({
+      id: `planned-${item.id}`,
+      entityId: item.id,
+      title: item.title,
+      value: item.value,
+      dueDate: new Date(item.dueDate),
+      kind: "planned" as const,
+      status: "SCHEDULE" as const,
+    })),
+  ].sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
 
-    const firstName = user?.name?.split(" ")[0] ?? "olá"
-    const monthLabel = formatMonthLabel(month, year)
-    const netPositive = monthSurplus >= 0
-    const balanceCoversPending = amount.amount >= scheduledTotal
+  const firstName = user?.name?.split(" ")[0] ?? "olá"
+  const monthLabel = formatMonthLabel(month, year)
+  const netPositive = monthSurplus >= 0
+  const balanceCoversPending = amount.amount >= scheduledTotal
 
-    const flowRows = [
-      {
-        label: "Receitas fixas",
-        value: details.summary.recurringIncome,
-        tone: "income" as const,
-      },
-      {
-        label: "Outras entradas",
-        value: details.summary.outrasEntradas ?? 0,
-        tone: "income" as const,
-      },
-      {
-        label: "Contas fixas",
-        value: details.summary.recurringPayments,
-        tone: "expense" as const,
-      },
-      {
-        label: "Parcelas do mês",
-        value: details.summary.debts,
-        tone: "expense" as const,
-      },
-      {
-        label: "Gastos previstos",
-        value: details.summary.plannedExpensesOpen ?? 0,
-        tone: "expense" as const,
-      },
-      {
-        label: "Lançamentos (extrato)",
-        value: otherExpenses,
-        tone: "expense" as const,
-      },
-    ].filter((row) => row.value > 0)
-    const flowMax = Math.max(
-      ...flowRows.map((row) => row.value),
-      Math.abs(monthSurplus),
-      1
-    )
+  const flowRows = [
+    {
+      label: "Receitas fixas",
+      value: details.summary.recurringIncome,
+      tone: "income" as const,
+    },
+    {
+      label: "Outras entradas",
+      value: details.summary.outrasEntradas ?? 0,
+      tone: "income" as const,
+    },
+    {
+      label: "Contas fixas",
+      value: details.summary.recurringPayments,
+      tone: "expense" as const,
+    },
+    {
+      label: "Parcelas do mês",
+      value: details.summary.debts,
+      tone: "expense" as const,
+    },
+    {
+      label: "Gastos previstos",
+      value: details.summary.plannedExpensesOpen ?? 0,
+      tone: "expense" as const,
+    },
+    {
+      label: "Lançamentos (extrato)",
+      value: otherExpenses,
+      tone: "expense" as const,
+    },
+  ].filter((row) => row.value > 0)
+  const flowMax = Math.max(
+    ...flowRows.map((row) => row.value),
+    Math.abs(monthSurplus),
+    1
+  )
 
-    const totalSaved = projections.reduce((sum, item) => sum + item.valueAdded, 0)
-    const totalGoals = projections.reduce((sum, item) => sum + item.value, 0)
-    const goalsProgress =
-      totalGoals > 0 ? Math.min(100, Math.round((totalSaved / totalGoals) * 100)) : 0
-    const topGoals = [...projections]
-      .sort((a, b) => {
-        const progressA = a.value > 0 ? a.valueAdded / a.value : 0
-        const progressB = b.value > 0 ? b.valueAdded / b.value : 0
-        return progressB - progressA
-      })
-      .slice(0, 3)
+  const totalSaved = projections.reduce((sum, item) => sum + item.valueAdded, 0)
+  const totalGoals = projections.reduce((sum, item) => sum + item.value, 0)
+  const goalsProgress =
+    totalGoals > 0 ? Math.min(100, Math.round((totalSaved / totalGoals) * 100)) : 0
+  const topGoals = [...projections]
+    .sort((a, b) => {
+      const progressA = a.value > 0 ? a.valueAdded / a.value : 0
+      const progressB = b.value > 0 ? b.valueAdded / b.value : 0
+      return progressB - progressA
+    })
+    .slice(0, 3)
 
-    const plannedLines = plannedWorkbook?.lines ?? []
-    const plannedPreview = plannedLines.slice(0, 4)
-    const plannedMonthTotal =
-      plannedWorkbook?.monthTotals?.[month - 1] ?? 0
-    const plannedSurplus = plannedWorkbook?.surplus?.[month - 1] ?? null
+  const plannedLines = plannedWorkbook?.lines ?? []
+  const plannedPreview = plannedLines.slice(0, 4)
+  const plannedMonthTotal =
+    plannedWorkbook?.monthTotals?.[month - 1] ?? 0
+  const plannedSurplus = plannedWorkbook?.surplus?.[month - 1] ?? null
 
-    return (
+  return {
+    month,
+    year,
+    prevMonth,
+    prevYear,
+    amount,
+    details,
+    previousDetails,
+    projections,
+    reserve,
+    categories,
+    attentionCount,
+    budgets,
+    creditCards,
+    creditCardSummaries,
+    creditUsed,
+    creditLimit,
+    cardInvoicesTotal,
+    invoiceByCardId,
+    paidCommitments,
+    scheduledTotal,
+    monthIncome,
+    monthOutflow,
+    monthSurplus,
+    hasCommitments,
+    progress,
+    pendingCount,
+    upcomingItems,
+    firstName,
+    monthLabel,
+    netPositive,
+    balanceCoversPending,
+    flowRows,
+    flowMax,
+    totalSaved,
+    totalGoals,
+    goalsProgress,
+    topGoals,
+    plannedLines,
+    plannedPreview,
+    plannedMonthTotal,
+    plannedSurplus,
+  }
+}
+
+const DashboardPage = async () => {
+  let data: Awaited<ReturnType<typeof loadDashboardData>>
+  try {
+    data = await loadDashboardData()
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      redirect("/login")
+    }
+    throw error
+  }
+
+  const {
+    month,
+    year,
+    prevMonth,
+    prevYear,
+    amount,
+    details,
+    previousDetails,
+    projections,
+    reserve,
+    categories,
+    attentionCount,
+    budgets,
+    creditCards,
+    creditCardSummaries,
+    creditUsed,
+    creditLimit,
+    cardInvoicesTotal,
+    invoiceByCardId,
+    paidCommitments,
+    scheduledTotal,
+    monthIncome,
+    monthOutflow,
+    monthSurplus,
+    hasCommitments,
+    progress,
+    pendingCount,
+    upcomingItems,
+    firstName,
+    monthLabel,
+    netPositive,
+    balanceCoversPending,
+    flowRows,
+    flowMax,
+    totalSaved,
+    totalGoals,
+    goalsProgress,
+    topGoals,
+    plannedLines,
+    plannedPreview,
+    plannedMonthTotal,
+    plannedSurplus,
+  } = data
+
+  return (
       <div className="space-y-6">
-        <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50">
+        <section
+          className="dashboard-enter overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50"
+          style={{ animationDelay: "0ms" }}
+        >
           <div className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-teal-900 px-5 py-6 text-white md:px-7 md:py-7">
             <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-teal-400/20 blur-3xl" />
             <div className="pointer-events-none absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-emerald-300/10 blur-2xl" />
@@ -400,7 +506,10 @@ const DashboardPage = async () => {
         </section>
 
         {attentionCount > 0 ? (
-          <section className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 md:p-5">
+          <section
+            className="dashboard-enter rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30 md:p-5"
+            style={{ animationDelay: "60ms" }}
+          >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-warning">
@@ -424,23 +533,30 @@ const DashboardPage = async () => {
         ) : null}
 
         <section
-          className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+          className="dashboard-enter grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
           aria-label="Indicadores do mês"
+          style={{ animationDelay: "100ms" }}
         >
           {[
             {
               label: "A pagar",
               value: formatCurrency(scheduledTotal),
               hint: `${pendingCount} compromisso(s)`,
-              className: "border-amber-200/70 bg-amber-50/50",
+              className:
+                "border-amber-200/70 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/30",
               valueClass: "text-warning",
+              icon: IconInstallments,
+              iconClass: "bg-amber-100 text-warning dark:bg-amber-900/40",
             },
             {
               label: "Saídas do mês",
               value: formatCurrency(monthOutflow),
               hint: "Lançamentos no extrato",
-              className: "border-emerald-200/70 bg-emerald-50/40",
+              className:
+                "border-emerald-200/70 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/30",
               valueClass: "text-success",
+              icon: IconTrendDown,
+              iconClass: "bg-emerald-100 text-success dark:bg-emerald-900/40",
             },
             {
               label: "Entradas do mês",
@@ -448,22 +564,36 @@ const DashboardPage = async () => {
               hint: "Fixas + outras entradas",
               className: "border-border/80 bg-surface",
               valueClass: "text-foreground",
+              icon: IconTrendUp,
+              iconClass:
+                "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
             },
             {
               label: "Sobra do mês",
               value: formatCurrency(monthSurplus),
               hint: netPositive ? "Mês sob controle" : "Atenção ao fluxo",
               className: netPositive
-                ? "border-teal-200/70 bg-teal-50/40"
-                : "border-red-200/70 bg-red-50/40",
+                ? "border-teal-200/70 bg-teal-50/40 dark:border-teal-900/40 dark:bg-teal-950/30"
+                : "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/30",
               valueClass: netPositive ? "text-accent" : "text-danger",
+              icon: netPositive ? IconCheck : IconWarning,
+              iconClass: netPositive
+                ? "bg-teal-100 text-accent dark:bg-teal-900/40"
+                : "bg-red-100 text-danger dark:bg-red-900/40",
             },
           ].map((card) => (
             <article
               key={card.label}
               className={`rounded-2xl border p-4 shadow-sm shadow-slate-200/30 md:p-5 ${card.className}`}
             >
-              <p className="text-sm font-medium text-muted">{card.label}</p>
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-medium text-muted">{card.label}</p>
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${card.iconClass}`}
+                >
+                  <card.icon className="h-4 w-4" />
+                </span>
+              </div>
               <p
                 className={`mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight ${card.valueClass}`}
               >
@@ -487,7 +617,10 @@ const DashboardPage = async () => {
         ) : null}
 
         {creditCards.length > 0 ? (
-          <section className="rounded-3xl border border-border/70 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
+          <section
+            className="dashboard-enter rounded-3xl border border-border/70 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6"
+            style={{ animationDelay: "140ms" }}
+          >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
@@ -503,7 +636,7 @@ const DashboardPage = async () => {
               </div>
               <Link
                 href="/cartoes"
-                className="rounded-xl border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
+                className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Ver cartões
               </Link>
@@ -546,7 +679,10 @@ const DashboardPage = async () => {
           </section>
         ) : null}
 
-        <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <section
+          className="dashboard-enter grid gap-4 lg:grid-cols-2 xl:grid-cols-3"
+          style={{ animationDelay: "180ms" }}
+        >
           <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -557,14 +693,14 @@ const DashboardPage = async () => {
               </div>
               <Link
                 href="/caixinhas"
-                className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50"
+                className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Ver todas
               </Link>
             </div>
 
             {projections.length === 0 ? (
-              <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center">
+              <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
                 <p className="text-sm font-medium">Nenhuma meta ainda</p>
                 <Link
                   href="/caixinhas"
@@ -630,15 +766,12 @@ const DashboardPage = async () => {
 
           <BudgetSpotlight budgets={budgets} />
 
-          <article className="rounded-2xl border border-teal-200/70 bg-teal-50/30 p-5 shadow-sm shadow-slate-200/40 lg:col-span-2 xl:col-span-1">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-base font-semibold">Planejamento</h2>
-                <p className="mt-1 text-sm text-muted">
-                  Planilha de dívidas futuras do mês
-                </p>
-              </div>
-              <IconReports className="h-5 w-5 text-accent" />
+          <article className="rounded-2xl border border-teal-200/70 bg-teal-50/30 p-5 shadow-sm shadow-slate-200/40 dark:border-teal-900/40 dark:bg-teal-950/20 lg:col-span-2 xl:col-span-1">
+            <div>
+              <h2 className="text-base font-semibold">Planejamento</h2>
+              <p className="mt-1 text-sm text-muted">
+                Planilha de dívidas futuras do mês
+              </p>
             </div>
 
             {plannedLines.length > 0 ? (
@@ -665,7 +798,7 @@ const DashboardPage = async () => {
                     return (
                       <li
                         key={item.id}
-                        className="flex items-center justify-between gap-3 rounded-xl border border-border/70 bg-white/70 px-3 py-2 text-sm"
+                        className="flex items-center justify-between gap-3 rounded-xl border border-border/70 bg-white/70 px-3 py-2 text-sm dark:bg-slate-900/50"
                       >
                         <span className="truncate font-medium">{item.title}</span>
                         <span className="shrink-0 tabular-nums text-muted">
@@ -677,7 +810,7 @@ const DashboardPage = async () => {
                 </ul>
               </>
             ) : (
-              <div className="mt-4 rounded-xl bg-white/70 px-4 py-6 text-center">
+              <div className="mt-4 rounded-xl bg-white/70 px-4 py-6 text-center dark:bg-slate-900/50">
                 <p className="text-sm font-medium">Nada planejado neste ano</p>
                 <p className="mt-1 text-xs text-muted">
                   Abra a grade anual e preencha como no Excel.
@@ -694,7 +827,10 @@ const DashboardPage = async () => {
           </article>
         </section>
 
-        <section className="grid gap-4 xl:grid-cols-[1.45fr_0.9fr]">
+        <section
+          className="dashboard-enter grid gap-4 xl:grid-cols-[1.45fr_0.9fr]"
+          style={{ animationDelay: "220ms" }}
+        >
           <div className="rounded-2xl border border-border/80 bg-surface shadow-sm shadow-slate-200/40">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
               <div>
@@ -706,7 +842,7 @@ const DashboardPage = async () => {
               <div className="flex flex-wrap gap-2">
                 <Link
                   href="/recorrentes"
-                  className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50"
+                  className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                 >
                   Contas fixas
                 </Link>
@@ -747,10 +883,10 @@ const DashboardPage = async () => {
                           <span
                             className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                               item.kind === "recurring"
-                                ? "bg-slate-100 text-slate-600"
+                                ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
                                 : item.kind === "planned"
-                                  ? "bg-amber-50 text-warning"
-                                  : "bg-teal-50 text-accent"
+                                  ? "bg-amber-50 text-warning dark:bg-amber-950/40"
+                                  : "bg-teal-50 text-accent dark:bg-teal-950/40"
                             }`}
                           >
                             {item.kind === "recurring"
@@ -858,7 +994,7 @@ const DashboardPage = async () => {
 
             <div className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
               <h2 className="text-base font-semibold">Ações rápidas</h2>
-              <div className="mt-3 grid gap-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {[
                   {
                     href: `/planejamento?year=${year}`,
@@ -929,13 +1065,7 @@ const DashboardPage = async () => {
           </aside>
         </section>
       </div>
-    )
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {
-      redirect("/login")
-    }
-    throw error
-  }
+  )
 }
 
 export default DashboardPage
