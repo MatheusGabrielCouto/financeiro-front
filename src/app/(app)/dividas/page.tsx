@@ -1,10 +1,17 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { DeleteDebtButton } from "@/components/delete-debt-button"
+import { ExportDataButtons } from "@/components/export-data-buttons"
 import { IconPlus } from "@/components/icons"
 import { ApiError } from "@/lib/api-server"
+import type { CsvCell } from "@/lib/csv"
+import type { DebtOverviewPdfData } from "@/lib/debt-overview-pdf"
 import { formatCurrency, formatDate } from "@/lib/format"
-import { getDebts } from "@/lib/finance-api"
+import {
+  getDebts,
+  getPlannedExpenses,
+  getRecurringPayments,
+} from "@/lib/finance-api"
 import type { Debt } from "@/lib/types"
 
 type DividasPageProps = {
@@ -27,10 +34,20 @@ const getDebtTotals = (debt: Debt) => {
         new Date(b.dateTransaction).getTime()
     )[0]
   const paidCount = debt.installments.filter((item) => item.status === "PAY").length
+  const remainingCount = debt.installments.length - paidCount
   const progress = total > 0 ? Math.round((paidTotal / total) * 100) : 100
   const isSettled = remaining <= 0
 
-  return { remaining, paidTotal, total, next, paidCount, progress, isSettled }
+  return {
+    remaining,
+    paidTotal,
+    total,
+    next,
+    paidCount,
+    remainingCount,
+    progress,
+    isSettled,
+  }
 }
 
 const DividasPage = async ({ searchParams }: DividasPageProps) => {
@@ -38,7 +55,11 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
   const status = params.status ?? "todas"
 
   try {
-    const debts = await getDebts()
+    const [debts, recurringPayments, plannedExpenses] = await Promise.all([
+      getDebts(),
+      getRecurringPayments(),
+      getPlannedExpenses({ status: "SCHEDULED" }),
+    ])
     const enriched = debts.map((debt) => ({
       debt,
       ...getDebtTotals(debt),
@@ -60,6 +81,76 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
       return `/dividas?status=${nextStatus}`
     }
 
+    const activeDebts = enriched.filter((item) => !item.isSettled)
+    const fixedMonthly = recurringPayments.reduce(
+      (sum, item) => sum + item.value,
+      0
+    )
+    const plannedRemaining = plannedExpenses.reduce(
+      (sum, item) => sum + item.value,
+      0
+    )
+    const consolidatedTotal = totalRemaining + fixedMonthly + plannedRemaining
+
+    const overviewCsvHeaders = ["Seção", "Item", "Categoria", "Detalhe", "Valor"]
+    const overviewCsvRows: CsvCell[][] = [
+      ["Resumo", "Dívidas em aberto", "", "", totalRemaining],
+      ["Resumo", "Gastos fixos (mensal)", "", "", fixedMonthly],
+      ["Resumo", "Gastos previstos em aberto", "", "", plannedRemaining],
+      ["Resumo", "Total consolidado", "", "", consolidatedTotal],
+      ...activeDebts.map(({ debt, remainingCount, next, remaining }) => [
+        "Dívidas",
+        debt.title,
+        debt.category?.title ?? "Sem categoria",
+        `${remainingCount} parcela(s) restante(s)` +
+          (next ? ` · próxima em ${formatDate(next.dateTransaction)}` : ""),
+        remaining,
+      ]),
+      ...recurringPayments.map((item) => [
+        "Gastos fixos",
+        item.title,
+        item.category?.title ?? "Sem categoria",
+        `Todo dia ${item.dayOfMonth}`,
+        item.value,
+      ]),
+      ...plannedExpenses.map((item) => [
+        "Gastos previstos",
+        item.title,
+        item.category?.title ?? "Sem categoria",
+        `Vence em ${formatDate(item.dueDate)}`,
+        item.value,
+      ]),
+    ]
+
+    const debtOverviewData: DebtOverviewPdfData = {
+      summary: {
+        debtRemaining: totalRemaining,
+        fixedMonthly,
+        plannedRemaining,
+        total: consolidatedTotal,
+      },
+      debts: activeDebts.map(({ debt, remainingCount, next, remaining }) => ({
+        title: debt.title,
+        category: debt.category?.title ?? "Sem categoria",
+        remainingInstallments: remainingCount,
+        totalInstallments: debt.installments.length,
+        remainingValue: remaining,
+        nextDueDate: next?.dateTransaction ?? null,
+      })),
+      fixed: recurringPayments.map((item) => ({
+        title: item.title,
+        category: item.category?.title ?? "Sem categoria",
+        value: item.value,
+        dayOfMonth: item.dayOfMonth,
+      })),
+      planned: plannedExpenses.map((item) => ({
+        title: item.title,
+        category: item.category?.title ?? "Sem categoria",
+        value: item.value,
+        dueDate: item.dueDate,
+      })),
+    }
+
     return (
       <div className="space-y-6">
         <section className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
@@ -75,14 +166,28 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                 Acompanhe o que falta pagar e o andamento de cada dívida.
               </p>
             </div>
-            <Link
-              href="/dividas/nova"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-hover"
-            >
-              <IconPlus className="h-4 w-4" />
-              Nova dívida
-            </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <ExportDataButtons
+                filename="dividas-consolidado"
+                headers={overviewCsvHeaders}
+                rows={overviewCsvRows}
+                debtOverviewData={debtOverviewData}
+                csvLabel="CSV"
+                pdfLabel="Relatório PDF"
+              />
+              <Link
+                href="/dividas/nova"
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-hover"
+              >
+                <IconPlus className="h-4 w-4" />
+                Nova dívida
+              </Link>
+            </div>
           </div>
+
+          <p className="mt-4 text-xs text-muted">
+            O relatório consolidado reúne dívidas ativas, gastos fixos e gastos previstos em aberto — tudo o que você ainda deve.
+          </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
@@ -183,6 +288,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                     total,
                     next,
                     paidCount,
+                    remainingCount,
                     progress,
                     isSettled,
                   }) => (
@@ -244,6 +350,11 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                           <p className="text-xs text-muted">Progresso</p>
                           <p className="mt-0.5 font-semibold">
                             {paidCount}/{debt.installments.length} parcelas · {progress}%
+                          </p>
+                          <p className="text-xs text-muted">
+                            {isSettled
+                              ? "Nenhuma parcela restante"
+                              : `${remainingCount} parcela(s) restante(s)`}
                           </p>
                         </div>
                         <div>

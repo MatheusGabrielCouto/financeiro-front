@@ -7,6 +7,10 @@ import {
   downloadReportPdf,
   type ReportPdfData,
 } from "@/lib/report-pdf"
+import {
+  downloadDebtOverviewPdf,
+  type DebtOverviewPdfData,
+} from "@/lib/debt-overview-pdf"
 
 type ExportDataButtonsProps = {
   filename: string
@@ -21,6 +25,8 @@ type ExportDataButtonsProps = {
   onExported?: () => void
   /** When set, PDF uses the rich monthly report layout */
   reportData?: ReportPdfData
+  /** When set, PDF uses the consolidated debts/fixed/planned layout */
+  debtOverviewData?: DebtOverviewPdfData
 }
 
 const defaultButtonClass =
@@ -38,8 +44,10 @@ export const ExportDataButtons = ({
   className = defaultButtonClass,
   onExported,
   reportData,
+  debtOverviewData,
 }: ExportDataButtonsProps) => {
-  const isDisabled = disabled || (rows.length === 0 && !reportData)
+  const isDisabled =
+    disabled || (rows.length === 0 && !reportData && !debtOverviewData)
 
   const handleCsv = () => {
     if (disabled || rows.length === 0) return
@@ -52,6 +60,8 @@ export const ExportDataButtons = ({
     if (isDisabled) return
     if (reportData) {
       downloadReportPdf({ filename, data: reportData })
+    } else if (debtOverviewData) {
+      downloadDebtOverviewPdf({ filename, data: debtOverviewData })
     } else {
       downloadPdfTable({
         filename,
