@@ -45,6 +45,9 @@ import type {
   CreditCardStatement,
   CreateCreditCardBody,
   CreateCreditCardPurchaseBody,
+  CreateInstallmentBody,
+  UpdateInstallmentBody,
+  Installment,
 } from "@/lib/types"
 
 export const getAmount = () => apiFetch<AmountResponse>("/amount")
@@ -70,6 +73,15 @@ export const getInstallments = (month: number, year: number) =>
 
 export const payInstallment = (id: string) =>
   apiFetch<void>(`/installment/${id}`, { method: "PATCH" })
+
+export const createInstallment = (body: CreateInstallmentBody) =>
+  apiFetch<Installment>("/installment", { method: "POST", body })
+
+export const updateInstallment = (id: string, body: UpdateInstallmentBody) =>
+  apiFetch<Installment>(`/installment/${id}`, { method: "PUT", body })
+
+export const deleteInstallment = (id: string) =>
+  apiFetch<{ success: true }>(`/installment/${id}`, { method: "DELETE" })
 
 export const getTransactions = (month: number, year: number, message?: string) => {
   const params = new URLSearchParams({

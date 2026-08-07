@@ -33,6 +33,17 @@ export type Installment = {
   debtId: string
 }
 
+export type CreateInstallmentBody = {
+  debtId: string
+  value: number
+  date: string
+}
+
+export type UpdateInstallmentBody = {
+  value?: number
+  date?: string
+}
+
 export type InterestRateType = "MONTHLY" | "DAILY"
 
 export type Debt = {

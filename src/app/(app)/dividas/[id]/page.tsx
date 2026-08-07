@@ -2,8 +2,7 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { DeleteDebtButton } from "@/components/delete-debt-button"
 import { EditDebtForm } from "@/components/edit-debt-form"
-import { OverdueInterestHint } from "@/components/overdue-interest-hint"
-import { StatusBadge } from "@/components/status-badge"
+import { ManageDebtInstallments } from "@/components/manage-debt-installments"
 import { ApiError } from "@/lib/api-server"
 import { formatCurrency, formatDate } from "@/lib/format"
 import { formatInterestRateLabel } from "@/lib/overdue-interest"
@@ -161,55 +160,12 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-border/80 bg-surface shadow-sm shadow-slate-200/40">
-          <div className="border-b border-border px-5 py-4">
-            <h2 className="text-base font-semibold">Parcelas</h2>
-            <p className="text-sm text-muted">
-              Histórico e vencimentos deste compromisso
-            </p>
-          </div>
-
-          <div className="overflow-x-auto p-2 md:p-3">
-            <table className="min-w-full text-left text-sm">
-              <thead className="text-muted">
-                <tr>
-                  <th className="px-3 py-2.5 font-medium">#</th>
-                  <th className="px-3 py-2.5 font-medium">Vencimento</th>
-                  <th className="px-3 py-2.5 font-medium">Valor</th>
-                  <th className="px-3 py-2.5 font-medium">Situação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {debt.installments.map((installment) => (
-                  <tr
-                    key={installment.id}
-                    className="border-t border-border"
-                  >
-                    <td className="px-3 py-3 font-medium">{installment.order}</td>
-                    <td className="px-3 py-3 text-muted">
-                      {formatDate(installment.dateTransaction)}
-                    </td>
-                    <td className="px-3 py-3 font-semibold tabular-nums">
-                      <span className="inline-flex items-center gap-1.5">
-                        {formatCurrency(installment.value)}
-                        <OverdueInterestHint
-                          value={installment.value}
-                          dueDate={installment.dateTransaction}
-                          interestRate={debt.interestRate}
-                          interestRateType={debt.interestRateType}
-                          status={installment.status}
-                        />
-                      </span>
-                    </td>
-                    <td className="px-3 py-3">
-                      <StatusBadge status={installment.status} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+        <ManageDebtInstallments
+          debtId={debt.id}
+          installments={debt.installments}
+          interestRate={debt.interestRate}
+          interestRateType={debt.interestRateType}
+        />
       </div>
     )
   } catch (error) {
