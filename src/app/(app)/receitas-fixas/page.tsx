@@ -154,48 +154,46 @@ const ReceitasFixasPage = async () => {
                       key={income.id}
                       className="rounded-2xl border border-border/80 bg-background/50 p-4 md:p-5"
                     >
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="truncate text-base font-semibold">
-                              {income.title}
-                            </h3>
-                            <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-success">
-                              Receita fixa
-                            </span>
-                          </div>
-                          <p className="mt-1 text-sm text-muted">
-                            Todo dia {income.dayOfMonth}
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="truncate text-base font-semibold">
+                            {income.title}
+                          </h3>
+                          <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-success">
+                            Receita fixa
+                          </span>
+                        </div>
+                        <p className="mt-1 text-sm text-muted">
+                          Todo dia {income.dayOfMonth}
+                        </p>
+                        <p className="mt-1 text-xs text-muted">
+                          {receivedThisMonth
+                            ? `Recebida este mês${
+                                income.lastProcessedAt
+                                  ? ` em ${formatDate(income.lastProcessedAt)}`
+                                  : ""
+                              }`
+                            : "Pendente neste mês — toque em Recebi quando cair"}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-4">
+                        <div className="flex min-w-0 flex-wrap items-center gap-2">
+                          <p className="text-lg font-semibold tabular-nums text-success">
+                            +{formatCurrency(income.value)}
                           </p>
-                          <p className="mt-1 text-xs text-muted">
-                            {receivedThisMonth
-                              ? `Recebida este mês${
-                                  income.lastProcessedAt
-                                    ? ` em ${formatDate(income.lastProcessedAt)}`
-                                    : ""
-                                }`
-                              : "Pendente neste mês — toque em Recebi quando cair"}
-                          </p>
+                          <span
+                            className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
+                              receivedThisMonth
+                                ? "bg-emerald-50 text-success"
+                                : "bg-amber-50 text-warning"
+                            }`}
+                          >
+                            {receivedThisMonth ? "Recebida" : "Pendente"}
+                          </span>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-3">
-                          <div className="text-right">
-                            <p className="font-semibold tabular-nums text-success">
-                              +{formatCurrency(income.value)}
-                            </p>
-                            <div className="mt-1 flex justify-end">
-                              <span
-                                className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
-                                  receivedThisMonth
-                                    ? "bg-emerald-50 text-success"
-                                    : "bg-amber-50 text-warning"
-                                }`}
-                              >
-                                {receivedThisMonth ? "Recebida" : "Pendente"}
-                              </span>
-                            </div>
-                          </div>
-
+                        <div className="flex shrink-0 items-center gap-2">
                           {!receivedThisMonth ? (
                             <ProxyActionButton
                               path={`/recurring-income/${income.id}/receive`}
