@@ -3,14 +3,47 @@ import { redirect } from "next/navigation"
 import { CreateRecurringIncomeForm } from "@/components/recurring-forms"
 import { ProxyActionButton } from "@/components/proxy-action-button"
 import { ApiError } from "@/lib/api-server"
-import { formatCurrency } from "@/lib/format"
+import {
+  formatCurrency,
+  formatDate,
+  formatMonthLabel,
+  getCurrentMonthYear,
+} from "@/lib/format"
 import { getRecurringIncomes } from "@/lib/finance-api"
+
+const wasReceivedThisMonth = (lastProcessedAt: string | null) => {
+  if (!lastProcessedAt) return false
+  const date = new Date(lastProcessedAt)
+  const now = new Date()
+  return (
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  )
+}
 
 const ReceitasFixasPage = async () => {
   try {
     const incomes = await getRecurringIncomes()
+    const { month, year } = getCurrentMonthYear()
+    const monthLabel = formatMonthLabel(month, year)
     const incomeTotal = incomes.reduce((sum, item) => sum + item.value, 0)
-    const sorted = [...incomes].sort((a, b) => a.dayOfMonth - b.dayOfMonth)
+    const pending = incomes.filter(
+      (item) => !wasReceivedThisMonth(item.lastProcessedAt)
+    )
+    const received = incomes.filter((item) =>
+      wasReceivedThisMonth(item.lastProcessedAt)
+    )
+    const pendingTotal = pending.reduce((sum, item) => sum + item.value, 0)
+    const receivedTotal = received.reduce((sum, item) => sum + item.value, 0)
+    const progress =
+      incomeTotal > 0 ? Math.round((receivedTotal / incomeTotal) * 100) : 100
+
+    const sorted = [...incomes].sort((a, b) => {
+      const aReceived = wasReceivedThisMonth(a.lastProcessedAt)
+      const bReceived = wasReceivedThisMonth(b.lastProcessedAt)
+      if (aReceived !== bReceived) return aReceived ? 1 : -1
+      return a.dayOfMonth - b.dayOfMonth
+    })
 
     return (
       <div className="space-y-6">
@@ -26,8 +59,10 @@ const ReceitasFixasPage = async () => {
               <p className="mt-2 text-sm text-muted">
                 Cadastre aqui o{" "}
                 <span className="font-medium text-foreground">salário</span> e
-                outras entradas que se repetem todo mês. Isso alimenta a previsão
-                de sobra no Início e nos relatórios.
+                outras entradas que se repetem todo mês. O valor só entra na
+                conta quando você tocar em{" "}
+                <span className="font-medium text-foreground">Recebi</span> —
+                útil se cair adiantado ou atrasar alguns dias.
               </p>
             </div>
             <Link
@@ -38,23 +73,54 @@ const ReceitasFixasPage = async () => {
             </Link>
           </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
-              <p className="text-sm text-muted">Total de receitas fixas</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
-                {formatCurrency(incomeTotal)}
-              </p>
-              <p className="mt-1 text-xs text-muted">por mês</p>
-            </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
-              <p className="text-sm text-muted">Fontes cadastradas</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
-                {incomes.length}
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+              <p className="text-sm text-muted">A receber em {monthLabel}</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
+                {formatCurrency(pendingTotal)}
               </p>
               <p className="mt-1 text-xs text-muted">
-                salário, benefícios e afins
+                {pending.length} fonte(s)
               </p>
             </article>
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+              <p className="text-sm text-muted">Já recebidas no mês</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
+                {formatCurrency(receivedTotal)}
+              </p>
+              <p className="mt-1 text-xs text-muted">
+                {received.length} confirmada(s)
+              </p>
+            </article>
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+              <p className="text-sm text-muted">Total mensal previsto</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
+                {formatCurrency(incomeTotal)}
+              </p>
+              <p className="mt-1 text-xs text-muted">
+                {incomes.length} cadastrada(s)
+              </p>
+            </article>
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+              <p className="text-sm text-muted">Progresso do mês</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
+                {progress}%
+              </p>
+              <p className="mt-1 text-xs text-muted">das receitas fixas</p>
+            </article>
+          </div>
+
+          <div className="mt-5">
+            <div className="mb-1.5 flex items-center justify-between text-xs text-muted">
+              <span>Confirmação das receitas fixas</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+              <div
+                className="h-full rounded-full bg-emerald-500"
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
           </div>
         </section>
 
@@ -63,56 +129,97 @@ const ReceitasFixasPage = async () => {
             <div className="border-b border-border px-5 py-4">
               <h2 className="text-base font-semibold">Suas entradas fixas</h2>
               <p className="text-sm text-muted">
-                Valores creditados automaticamente conforme o dia cadastrado.
+                Confirme o recebimento do mês com um clique ou exclua o que não
+                usa mais.
               </p>
             </div>
 
             <div className="space-y-3 p-3 md:p-4">
               {sorted.length === 0 ? (
                 <div className="rounded-xl bg-background px-4 py-14 text-center">
-                  <p className="font-semibold">Nenhuma receita fixa cadastrada</p>
+                  <p className="font-semibold">
+                    Nenhuma receita fixa cadastrada
+                  </p>
                   <p className="mt-1 text-sm text-muted">
                     Comece pelo salário para o app projetar sua sobra do mês.
                   </p>
                 </div>
               ) : (
-                sorted.map((income) => (
-                  <article
-                    key={income.id}
-                    className="rounded-2xl border border-border/80 bg-background/50 p-4 md:p-5"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="truncate text-base font-semibold">
-                            {income.title}
-                          </h3>
-                          <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-success">
-                            Receita fixa
-                          </span>
+                sorted.map((income) => {
+                  const receivedThisMonth = wasReceivedThisMonth(
+                    income.lastProcessedAt
+                  )
+                  return (
+                    <article
+                      key={income.id}
+                      className="rounded-2xl border border-border/80 bg-background/50 p-4 md:p-5"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="truncate text-base font-semibold">
+                              {income.title}
+                            </h3>
+                            <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-success">
+                              Receita fixa
+                            </span>
+                          </div>
+                          <p className="mt-1 text-sm text-muted">
+                            Todo dia {income.dayOfMonth}
+                          </p>
+                          <p className="mt-1 text-xs text-muted">
+                            {receivedThisMonth
+                              ? `Recebida este mês${
+                                  income.lastProcessedAt
+                                    ? ` em ${formatDate(income.lastProcessedAt)}`
+                                    : ""
+                                }`
+                              : "Pendente neste mês — toque em Recebi quando cair"}
+                          </p>
                         </div>
-                        <p className="mt-1 text-sm text-muted">
-                          Todo dia {income.dayOfMonth}
-                        </p>
-                      </div>
 
-                      <div className="flex flex-wrap items-center gap-3">
-                        <p className="font-semibold tabular-nums text-success">
-                          +{formatCurrency(income.value)}
-                        </p>
-                        <ProxyActionButton
-                          path={`/recurring-income/${income.id}`}
-                          method="DELETE"
-                          label="Excluir"
-                          variant="danger"
-                          confirmTitle="Excluir receita fixa"
-                          confirmMessage={`Você está prestes a excluir "${income.title}". Esta ação não pode ser desfeita.`}
-                          ariaLabel={`Excluir receita fixa ${income.title}`}
-                        />
+                        <div className="flex flex-wrap items-center gap-3">
+                          <div className="text-right">
+                            <p className="font-semibold tabular-nums text-success">
+                              +{formatCurrency(income.value)}
+                            </p>
+                            <div className="mt-1 flex justify-end">
+                              <span
+                                className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
+                                  receivedThisMonth
+                                    ? "bg-emerald-50 text-success"
+                                    : "bg-amber-50 text-warning"
+                                }`}
+                              >
+                                {receivedThisMonth ? "Recebida" : "Pendente"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {!receivedThisMonth ? (
+                            <ProxyActionButton
+                              path={`/recurring-income/${income.id}/receive`}
+                              method="POST"
+                              label="Recebi"
+                              loadingLabel="Confirmando..."
+                              variant="primary"
+                              ariaLabel={`Confirmar recebimento de ${income.title}`}
+                            />
+                          ) : null}
+                          <ProxyActionButton
+                            path={`/recurring-income/${income.id}`}
+                            method="DELETE"
+                            label="Excluir"
+                            variant="danger"
+                            confirmTitle="Excluir receita fixa"
+                            confirmMessage={`Você está prestes a excluir "${income.title}". Esta ação não pode ser desfeita.`}
+                            ariaLabel={`Excluir receita fixa ${income.title}`}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                ))
+                    </article>
+                  )
+                })
               )}
             </div>
           </div>
@@ -129,7 +236,9 @@ const ReceitasFixasPage = async () => {
             </div>
 
             <div className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5">
-              <p className="text-sm font-semibold text-warning">Contas ficam à parte</p>
+              <p className="text-sm font-semibold text-warning">
+                Contas ficam à parte
+              </p>
               <p className="mt-1 text-sm text-muted">
                 Aluguel, internet e outras despesas recorrentes são cadastradas
                 em Contas fixas.

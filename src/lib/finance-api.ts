@@ -118,6 +118,11 @@ export const createRecurringIncome = (body: CreateRecurringIncomeBody) =>
 export const deleteRecurringIncome = (id: string) =>
   apiFetch<void>(`/recurring-income/${id}`, { method: "DELETE" })
 
+export const receiveRecurringIncome = (id: string) =>
+  apiFetch<{ success: true }>(`/recurring-income/${id}/receive`, {
+    method: "POST",
+  })
+
 export const getCategories = () => apiFetch<Category[]>("/category")
 
 export const createCategory = (body: CreateCategoryBody) =>
