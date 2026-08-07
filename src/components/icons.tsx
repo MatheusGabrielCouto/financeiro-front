@@ -29,6 +29,24 @@ export const IconInstallments = ({ className }: IconProps) => (
   </svg>
 )
 
+export const IconRoutine = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7Zm12 8H5v10h14V10Zm-3.1 2.5 1.4 1.4-5.3 5.3-3.3-3.3 1.4-1.4 1.9 1.9 3.9-3.9Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconFlame = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 2c.7 2.6-.6 4-1.8 5.4C9 8.6 8 10 8 12a4 4 0 0 0 8 0c0-1.2-.5-2.1-1-2.8.6.5 2 2.1 2 4.8a6 6 0 1 1-12 0c0-3.6 1.8-5.6 3.3-7.2C9.6 5.3 11 3.8 12 2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
 export const IconMenu = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path

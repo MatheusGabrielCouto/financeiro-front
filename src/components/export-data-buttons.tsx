@@ -11,6 +11,10 @@ import {
   downloadDebtOverviewPdf,
   type DebtOverviewPdfData,
 } from "@/lib/debt-overview-pdf"
+import {
+  downloadRoutineReportPdf,
+  type RoutineReportPdfData,
+} from "@/lib/routine-report-pdf"
 
 type ExportDataButtonsProps = {
   filename: string
@@ -27,6 +31,8 @@ type ExportDataButtonsProps = {
   reportData?: ReportPdfData
   /** When set, PDF uses the consolidated debts/fixed/planned layout */
   debtOverviewData?: DebtOverviewPdfData
+  /** When set, PDF uses the monthly routines/habits adherence layout */
+  routineReportData?: RoutineReportPdfData
 }
 
 const defaultButtonClass =
@@ -45,9 +51,11 @@ export const ExportDataButtons = ({
   onExported,
   reportData,
   debtOverviewData,
+  routineReportData,
 }: ExportDataButtonsProps) => {
   const isDisabled =
-    disabled || (rows.length === 0 && !reportData && !debtOverviewData)
+    disabled ||
+    (rows.length === 0 && !reportData && !debtOverviewData && !routineReportData)
 
   const handleCsv = () => {
     if (disabled || rows.length === 0) return
@@ -62,6 +70,8 @@ export const ExportDataButtons = ({
       downloadReportPdf({ filename, data: reportData })
     } else if (debtOverviewData) {
       downloadDebtOverviewPdf({ filename, data: debtOverviewData })
+    } else if (routineReportData) {
+      downloadRoutineReportPdf({ filename, data: routineReportData })
     } else {
       downloadPdfTable({
         filename,

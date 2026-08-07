@@ -20,6 +20,7 @@ import {
   IconPiggy,
   IconRecurring,
   IconReports,
+  IconRoutine,
   IconSidebar,
   IconSimulate,
   IconTransactions,
@@ -61,6 +62,11 @@ const navSections: NavSection[] = [
       { href: "/notificacoes", label: "Atenção", icon: IconBell },
       { href: "/fechamento", label: "Fechamento", icon: IconReports },
     ],
+  },
+  {
+    id: "habits",
+    title: "Hábitos",
+    items: [{ href: "/rotinas", label: "Rotinas", icon: IconRoutine }],
   },
   {
     id: "debts",

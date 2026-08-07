@@ -198,6 +198,65 @@ export type CreatePaymentReminderBody = {
   categoryId?: string | null
 }
 
+export type Routine = {
+  id: string
+  title: string
+  notes: string
+  color: string
+  weekdays: number[]
+  archivedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type RoutineToday = Routine & {
+  date: string
+  checkedToday: boolean
+}
+
+export type RoutineOverviewItem = {
+  id: string
+  title: string
+  color: string
+  weekdays: number[]
+  expectedDays: number
+  completedDays: number
+  adherencePct: number
+  currentStreak: number
+  bestStreak: number
+}
+
+export type RoutineDailySeriesItem = {
+  date: string
+  expected: number
+  completed: number
+}
+
+export type RoutineOverviewResponse = {
+  month: number
+  year: number
+  activeRoutines: number
+  overallAdherencePct: number
+  perfectDays: number
+  bestCurrentStreak: number
+  routines: RoutineOverviewItem[]
+  dailySeries: RoutineDailySeriesItem[]
+}
+
+export type CreateRoutineBody = {
+  title: string
+  notes?: string
+  color?: string
+  weekdays?: number[]
+}
+
+export type UpdateRoutineBody = {
+  title?: string
+  notes?: string
+  color?: string
+  weekdays?: number[]
+}
+
 export type CaixinhaBreakdownItem = {
   id: string
   type: "deposit" | "withdrawal"

@@ -18,6 +18,14 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
+  if (pathname.startsWith("/rotinas")) {
+    return {
+      title: "Rotinas",
+      section: "Hábitos",
+      crumbs: [{ label: "Rotinas" }],
+    }
+  }
+
   if (pathname.startsWith("/dividas/nova")) {
     return {
       title: "Nova dívida",

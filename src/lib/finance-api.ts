@@ -35,6 +35,11 @@ import type {
   PaymentReminder,
   PaymentReminderStatus,
   CreatePaymentReminderBody,
+  Routine,
+  RoutineToday,
+  RoutineOverviewResponse,
+  CreateRoutineBody,
+  UpdateRoutineBody,
   CreatePlannedDebtLineBody,
   CreatePlannedExpenseBody,
   UpdatePlannedDebtLineBody,
@@ -351,6 +356,45 @@ export const paymentReminderToPlannedExpense = (id: string) =>
 
 export const deletePaymentReminder = (id: string) =>
   apiFetch<{ success: true }>(`/payment-reminder/${id}`, { method: "DELETE" })
+
+export const getRoutines = (params?: { includeArchived?: boolean }) => {
+  const query = params?.includeArchived ? "?includeArchived=true" : ""
+  return apiFetch<Routine[]>(`/routine${query}`)
+}
+
+export const getTodayRoutines = () => apiFetch<RoutineToday[]>("/routine/today")
+
+export const getRoutineOverview = (month: number, year: number) =>
+  apiFetch<RoutineOverviewResponse>(
+    `/routine/overview?month=${month}&year=${year}`
+  )
+
+export const createRoutine = (body: CreateRoutineBody) =>
+  apiFetch<Routine>("/routine", { method: "POST", body })
+
+export const updateRoutine = (id: string, body: UpdateRoutineBody) =>
+  apiFetch<Routine>(`/routine/${id}`, { method: "PATCH", body })
+
+export const archiveRoutine = (id: string) =>
+  apiFetch<Routine>(`/routine/${id}/archive`, { method: "POST" })
+
+export const restoreRoutine = (id: string) =>
+  apiFetch<Routine>(`/routine/${id}/restore`, { method: "POST" })
+
+export const deleteRoutine = (id: string) =>
+  apiFetch<{ success: true }>(`/routine/${id}`, { method: "DELETE" })
+
+export const checkInRoutine = (id: string, date?: string) =>
+  apiFetch<{ success: true; date: string }>(`/routine/${id}/check-in`, {
+    method: "POST",
+    body: date ? { date } : undefined,
+  })
+
+export const uncheckRoutine = (id: string, date?: string) =>
+  apiFetch<{ success: true; date: string }>(
+    `/routine/${id}/check-in${date ? `?date=${date}` : ""}`,
+    { method: "DELETE" }
+  )
 
 export const getCreditCards = () => apiFetch<CreditCard[]>("/credit-card")
 
