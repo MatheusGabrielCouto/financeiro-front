@@ -47,6 +47,24 @@ export const IconFlame = ({ className }: IconProps) => (
   </svg>
 )
 
+export const IconMore = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconEdit = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 20h4.24L18.36 9.88l-4.24-4.24L4 15.76V20Zm2-3.17 8.12-8.12 1.17 1.17L7.17 18H6v-1.17ZM19.7 6.54a1 1 0 0 0 0-1.42l-2.83-2.83a1 1 0 0 0-1.42 0l-1.75 1.75 4.24 4.24 1.76-1.74Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
 export const IconMenu = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path

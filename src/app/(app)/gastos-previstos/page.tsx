@@ -3,14 +3,13 @@ import { Suspense } from "react"
 import { redirect } from "next/navigation"
 import { CreatePlannedExpenseForm } from "@/components/planned-expense-form"
 import { MonthYearFilter } from "@/components/month-year-filter"
-import { ProxyActionButton } from "@/components/proxy-action-button"
+import { PlannedExpenseRow } from "@/components/planned-expense-row"
 import { ApiError } from "@/lib/api-server"
-import { formatCurrency, formatDate, getCurrentMonthYear } from "@/lib/format"
+import { formatCurrency, getCurrentMonthYear } from "@/lib/format"
 import {
   getCategories,
   getPlannedExpenses,
 } from "@/lib/finance-api"
-import type { PlannedExpense } from "@/lib/types"
 
 type GastosPrevistosPageProps = {
   searchParams: Promise<{
@@ -18,18 +17,6 @@ type GastosPrevistosPageProps = {
     year?: string
     status?: string
   }>
-}
-
-const statusLabel = (status: PlannedExpense["status"]) => {
-  if (status === "PAID") return "Pago"
-  if (status === "CANCELLED") return "Cancelado"
-  return "Previsto"
-}
-
-const statusClass = (status: PlannedExpense["status"]) => {
-  if (status === "PAID") return "bg-emerald-50 text-success"
-  if (status === "CANCELLED") return "bg-slate-100 text-muted"
-  return "bg-amber-50 text-warning"
 }
 
 const GastosPrevistosPage = async ({
@@ -183,79 +170,11 @@ const GastosPrevistosPage = async ({
             ) : (
               <ul className="mt-5 space-y-3">
                 {items.map((item) => (
-                  <li
+                  <PlannedExpenseRow
                     key={item.id}
-                    className="rounded-2xl border border-border/70 bg-background/70 px-4 py-3"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-semibold">{item.title}</p>
-                          <span
-                            className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${statusClass(
-                              item.status
-                            )}`}
-                          >
-                            {statusLabel(item.status)}
-                          </span>
-                        </div>
-                        <p className="mt-1 text-sm text-muted">
-                          {formatDate(item.dueDate)}
-                          {item.category
-                            ? ` · ${item.category.title}`
-                            : ""}
-                          {item.notes ? ` · ${item.notes}` : ""}
-                        </p>
-                      </div>
-                      <p className="text-base font-semibold tabular-nums text-danger">
-                        {formatCurrency(item.value)}
-                      </p>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {item.status === "SCHEDULED" ? (
-                        <>
-                          <ProxyActionButton
-                            path={`/planned-expense/${item.id}/pay`}
-                            method="POST"
-                            label="Pagar agora"
-                            loadingLabel="Pagando..."
-                            variant="primary"
-                            ariaLabel={`Pagar gasto previsto ${item.title}`}
-                          />
-                          <ProxyActionButton
-                            path={`/planned-expense/${item.id}`}
-                            method="PATCH"
-                            label="Cancelar"
-                            loadingLabel="Cancelando..."
-                            variant="ghost"
-                            body={{ status: "CANCELLED" }}
-                            ariaLabel={`Cancelar gasto previsto ${item.title}`}
-                          />
-                          <ProxyActionButton
-                            path={`/planned-expense/${item.id}`}
-                            method="DELETE"
-                            label="Excluir"
-                            variant="danger"
-                            confirmTitle="Excluir gasto previsto"
-                            confirmMessage={`Você está prestes a excluir "${item.title}". Esta ação não pode ser desfeita.`}
-                            ariaLabel={`Excluir gasto previsto ${item.title}`}
-                          />
-                        </>
-                      ) : null}
-                      {item.status === "CANCELLED" ? (
-                        <ProxyActionButton
-                          path={`/planned-expense/${item.id}`}
-                          method="DELETE"
-                          label="Excluir"
-                          variant="danger"
-                          confirmTitle="Excluir gasto previsto"
-                          confirmMessage={`Você está prestes a excluir "${item.title}". Esta ação não pode ser desfeita.`}
-                          ariaLabel={`Excluir gasto previsto ${item.title}`}
-                        />
-                      ) : null}
-                    </div>
-                  </li>
+                    item={item}
+                    categories={categories}
+                  />
                 ))}
               </ul>
             )}

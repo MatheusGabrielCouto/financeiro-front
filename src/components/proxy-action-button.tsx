@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useCallback, useState } from "react"
+import { useCallback, useState, type ComponentType } from "react"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 
 type ProxyActionButtonProps = {
@@ -15,6 +15,11 @@ type ProxyActionButtonProps = {
   ariaLabel: string
   body?: unknown
   redirectTo?: string
+  /** Render as a full-width row (icon + label) for use inside a dropdown menu instead of a standalone pill button */
+  asMenuItem?: boolean
+  icon?: ComponentType<{ className?: string }>
+  /** Called after the action completes successfully (e.g. to close a wrapping dropdown menu) */
+  onSuccess?: () => void
 }
 
 const variantClass = {
@@ -24,6 +29,12 @@ const variantClass = {
     "border-border text-danger hover:bg-red-50",
   ghost:
     "border-border text-foreground hover:bg-background",
+}
+
+const menuVariantClass = {
+  primary: "text-accent hover:bg-accent-soft",
+  danger: "text-danger hover:bg-red-50",
+  ghost: "text-foreground hover:bg-slate-50",
 }
 
 export const ProxyActionButton = ({
@@ -37,6 +48,9 @@ export const ProxyActionButton = ({
   ariaLabel,
   body,
   redirectTo,
+  asMenuItem = false,
+  icon: Icon,
+  onSuccess,
 }: ProxyActionButtonProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -71,6 +85,7 @@ export const ProxyActionButton = ({
       }
 
       setIsConfirmOpen(false)
+      onSuccess?.()
       if (redirectTo) {
         router.push(redirectTo)
         router.refresh()
@@ -95,18 +110,27 @@ export const ProxyActionButton = ({
   }
 
   return (
-    <div className="space-y-1">
+    <div className={asMenuItem ? "" : "space-y-1"}>
       <button
         type="button"
+        role={asMenuItem ? "menuitem" : undefined}
         onClick={handleClick}
         disabled={isLoading}
-        className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition disabled:opacity-60 ${variantClass[variant]}`}
+        className={
+          asMenuItem
+            ? `flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm transition disabled:opacity-60 ${menuVariantClass[variant]}`
+            : `rounded-lg border px-3 py-1.5 text-xs font-semibold transition disabled:opacity-60 ${variantClass[variant]}`
+        }
         aria-label={ariaLabel}
       >
+        {Icon ? <Icon className="h-4 w-4 shrink-0" /> : null}
         {isLoading ? loadingLabel : label}
       </button>
       {error ? (
-        <p className="max-w-[14rem] text-xs text-danger" role="alert">
+        <p
+          className={`text-xs text-danger ${asMenuItem ? "px-2.5 pb-1" : "max-w-[14rem]"}`}
+          role="alert"
+        >
           {error}
         </p>
       ) : null}
