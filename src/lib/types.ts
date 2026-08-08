@@ -257,6 +257,56 @@ export type UpdateRoutineBody = {
   weekdays?: number[]
 }
 
+export type JournalEntry = {
+  id: string
+  content: string
+  mood: number | null
+  date: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type UpsertJournalEntryBody = {
+  content: string
+  mood?: number | null
+}
+
+export type PersonalGoal = {
+  id: string
+  title: string
+  unit: string
+  target: number
+  current: number
+  progressPct: number
+  archivedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type PersonalGoalEntry = {
+  id: string
+  amount: number
+  date: string
+  createdAt: string
+}
+
+export type CreatePersonalGoalBody = {
+  title: string
+  unit: string
+  target: number
+}
+
+export type UpdatePersonalGoalBody = {
+  title?: string
+  unit?: string
+  target?: number
+}
+
+export type AddPersonalGoalEntryBody = {
+  amount: number
+  date?: string
+}
+
 export type CaixinhaBreakdownItem = {
   id: string
   type: "deposit" | "withdrawal"

@@ -271,3 +271,21 @@ export const IconCreditCard = ({ className }: IconProps) => (
     />
   </svg>
 )
+
+export const IconJournal = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h13v-2H6a1 1 0 0 1 0-2h13V4a2 2 0 0 0-2-2H6Zm2 4h8v2H8V6Zm0 4h8v2H8v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconTarget = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8V2Zm0 4a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V6Zm0 4a2 2 0 1 0 2 2h-2v-2Zm7-6-2 2 2 2 3-1V5l-3 1Z"
+      fill="currentColor"
+    />
+  </svg>
+)

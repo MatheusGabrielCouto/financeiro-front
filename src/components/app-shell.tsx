@@ -16,6 +16,7 @@ import {
   IconDebts,
   IconInsights,
   IconInstallments,
+  IconJournal,
   IconOverview,
   IconPiggy,
   IconRecurring,
@@ -23,6 +24,7 @@ import {
   IconRoutine,
   IconSidebar,
   IconSimulate,
+  IconTarget,
   IconTransactions,
 } from "@/components/icons"
 import { getPageMeta } from "@/lib/page-meta"
@@ -64,9 +66,13 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    id: "habits",
-    title: "Hábitos",
-    items: [{ href: "/rotinas", label: "Rotinas", icon: IconRoutine }],
+    id: "personal",
+    title: "Vida pessoal",
+    items: [
+      { href: "/rotinas", label: "Rotinas", icon: IconRoutine },
+      { href: "/diario", label: "Diário", icon: IconJournal },
+      { href: "/metas-pessoais", label: "Metas", icon: IconTarget },
+    ],
   },
   {
     id: "debts",

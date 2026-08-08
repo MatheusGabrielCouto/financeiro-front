@@ -15,6 +15,10 @@ import {
   downloadRoutineReportPdf,
   type RoutineReportPdfData,
 } from "@/lib/routine-report-pdf"
+import {
+  downloadJournalReportPdf,
+  type JournalReportPdfData,
+} from "@/lib/journal-report-pdf"
 
 type ExportDataButtonsProps = {
   filename: string
@@ -33,6 +37,8 @@ type ExportDataButtonsProps = {
   debtOverviewData?: DebtOverviewPdfData
   /** When set, PDF uses the monthly routines/habits adherence layout */
   routineReportData?: RoutineReportPdfData
+  /** When set, PDF renders each journal entry with its rich-text formatting preserved */
+  journalReportData?: JournalReportPdfData
 }
 
 const defaultButtonClass =
@@ -52,10 +58,15 @@ export const ExportDataButtons = ({
   reportData,
   debtOverviewData,
   routineReportData,
+  journalReportData,
 }: ExportDataButtonsProps) => {
   const isDisabled =
     disabled ||
-    (rows.length === 0 && !reportData && !debtOverviewData && !routineReportData)
+    (rows.length === 0 &&
+      !reportData &&
+      !debtOverviewData &&
+      !routineReportData &&
+      !journalReportData)
 
   const handleCsv = () => {
     if (disabled || rows.length === 0) return
@@ -72,6 +83,8 @@ export const ExportDataButtons = ({
       downloadDebtOverviewPdf({ filename, data: debtOverviewData })
     } else if (routineReportData) {
       downloadRoutineReportPdf({ filename, data: routineReportData })
+    } else if (journalReportData) {
+      downloadJournalReportPdf({ filename, data: journalReportData })
     } else {
       downloadPdfTable({
         filename,

@@ -21,8 +21,24 @@ export const getPageMeta = (pathname: string): PageMeta => {
   if (pathname.startsWith("/rotinas")) {
     return {
       title: "Rotinas",
-      section: "Hábitos",
+      section: "Vida pessoal",
       crumbs: [{ label: "Rotinas" }],
+    }
+  }
+
+  if (pathname.startsWith("/diario")) {
+    return {
+      title: "Diário",
+      section: "Vida pessoal",
+      crumbs: [{ label: "Diário" }],
+    }
+  }
+
+  if (pathname.startsWith("/metas-pessoais")) {
+    return {
+      title: "Metas pessoais",
+      section: "Vida pessoal",
+      crumbs: [{ label: "Metas" }],
     }
   }
 

@@ -168,6 +168,85 @@ html {
   background: transparent;
 }
 
+.prose-journal {
+  overflow-wrap: anywhere;
+}
+
+[contenteditable][data-placeholder]:empty:before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.prose-journal p,
+.prose-journal div {
+  margin: 0 0 0.5em;
+}
+
+.prose-journal p:last-child,
+.prose-journal div:last-child {
+  margin-bottom: 0;
+}
+
+.prose-journal h1,
+.prose-journal h2,
+.prose-journal h3,
+.prose-journal h4,
+.prose-journal h5,
+.prose-journal h6 {
+  margin: 1em 0 0.5em;
+  font-weight: 600;
+  font-family: var(--font-display), sans-serif;
+}
+
+.prose-journal h1 {
+  font-size: 1.25rem;
+}
+
+.prose-journal h2 {
+  font-size: 1.125rem;
+}
+
+.prose-journal h3,
+.prose-journal h4,
+.prose-journal h5,
+.prose-journal h6 {
+  font-size: 1rem;
+}
+
+.prose-journal ul,
+.prose-journal ol {
+  margin: 0 0 0.75em;
+  padding-left: 1.25em;
+}
+
+.prose-journal ul {
+  list-style-type: disc;
+}
+
+.prose-journal ol {
+  list-style-type: decimal;
+}
+
+.prose-journal li + li {
+  margin-top: 0.25em;
+}
+
+.prose-journal blockquote {
+  margin: 0 0 0.75em;
+  padding-left: 0.75em;
+  border-left: 2px solid var(--border);
+  color: var(--muted);
+}
+
+.prose-journal code {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 0.25em;
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .auth-enter,
   .auth-orb,

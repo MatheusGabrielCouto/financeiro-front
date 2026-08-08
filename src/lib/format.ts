@@ -19,6 +19,12 @@ export const maskCurrencyInput = (raw: string) => {
 export const formatDate = (value: string | Date) =>
   new Intl.DateTimeFormat("pt-BR").format(new Date(value))
 
+/** Formats a `YYYY-MM-DD` date key without shifting timezone (unlike `new Date(key)`). */
+export const formatDateKey = (dateKey: string) => {
+  const [year, month, day] = dateKey.split("-")
+  return `${day}/${month}/${year}`
+}
+
 export const formatMonthLabel = (month: number, year: number) => {
   const date = new Date(year, month - 1, 1)
   return new Intl.DateTimeFormat("pt-BR", {

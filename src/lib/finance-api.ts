@@ -40,6 +40,13 @@ import type {
   RoutineOverviewResponse,
   CreateRoutineBody,
   UpdateRoutineBody,
+  JournalEntry,
+  UpsertJournalEntryBody,
+  PersonalGoal,
+  PersonalGoalEntry,
+  CreatePersonalGoalBody,
+  UpdatePersonalGoalBody,
+  AddPersonalGoalEntryBody,
   CreatePlannedDebtLineBody,
   CreatePlannedExpenseBody,
   UpdatePlannedDebtLineBody,
@@ -395,6 +402,52 @@ export const uncheckRoutine = (id: string, date?: string) =>
     `/routine/${id}/check-in${date ? `?date=${date}` : ""}`,
     { method: "DELETE" }
   )
+
+export const getJournalEntries = (
+  month: number,
+  year: number,
+  search?: string
+) =>
+  apiFetch<JournalEntry[]>(
+    `/journal?month=${month}&year=${year}${
+      search ? `&search=${encodeURIComponent(search)}` : ""
+    }`
+  )
+
+export const getJournalEntry = (date: string) =>
+  apiFetch<JournalEntry | null>(`/journal/${date}`)
+
+export const upsertJournalEntry = (date: string, body: UpsertJournalEntryBody) =>
+  apiFetch<JournalEntry>(`/journal/${date}`, { method: "PUT", body })
+
+export const deleteJournalEntry = (date: string) =>
+  apiFetch<{ success: true }>(`/journal/${date}`, { method: "DELETE" })
+
+export const getPersonalGoals = (params?: { includeArchived?: boolean }) => {
+  const query = params?.includeArchived ? "?includeArchived=true" : ""
+  return apiFetch<PersonalGoal[]>(`/personal-goal${query}`)
+}
+
+export const getPersonalGoalEntries = (id: string) =>
+  apiFetch<PersonalGoalEntry[]>(`/personal-goal/${id}/entries`)
+
+export const createPersonalGoal = (body: CreatePersonalGoalBody) =>
+  apiFetch<PersonalGoal>("/personal-goal", { method: "POST", body })
+
+export const updatePersonalGoal = (id: string, body: UpdatePersonalGoalBody) =>
+  apiFetch<PersonalGoal>(`/personal-goal/${id}`, { method: "PATCH", body })
+
+export const archivePersonalGoal = (id: string) =>
+  apiFetch<PersonalGoal>(`/personal-goal/${id}/archive`, { method: "POST" })
+
+export const restorePersonalGoal = (id: string) =>
+  apiFetch<PersonalGoal>(`/personal-goal/${id}/restore`, { method: "POST" })
+
+export const deletePersonalGoal = (id: string) =>
+  apiFetch<{ success: true }>(`/personal-goal/${id}`, { method: "DELETE" })
+
+export const addPersonalGoalEntry = (id: string, body: AddPersonalGoalEntryBody) =>
+  apiFetch<PersonalGoal>(`/personal-goal/${id}/entry`, { method: "POST", body })
 
 export const getCreditCards = () => apiFetch<CreditCard[]>("/credit-card")
 
