@@ -100,7 +100,7 @@ export const MonthYearFilter = ({
         <button
           type="button"
           onClick={handlePrevious}
-          className="rounded-l-xl px-3 py-2.5 text-slate-500 transition hover:bg-slate-50 hover:text-foreground"
+          className="rounded-l-xl px-3 py-2.5 text-slate-500 transition hover:bg-slate-50 hover:text-foreground dark:text-slate-400 dark:hover:bg-slate-900/50"
           aria-label="Mês anterior"
         >
           ‹
@@ -145,7 +145,7 @@ export const MonthYearFilter = ({
         <button
           type="button"
           onClick={handleNext}
-          className="rounded-r-xl px-3 py-2.5 text-slate-500 transition hover:bg-slate-50 hover:text-foreground"
+          className="rounded-r-xl px-3 py-2.5 text-slate-500 transition hover:bg-slate-50 hover:text-foreground dark:text-slate-400 dark:hover:bg-slate-900/50"
           aria-label="Próximo mês"
         >
           ›

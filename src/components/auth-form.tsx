@@ -75,7 +75,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         <p className="hidden text-sm font-medium text-accent lg:block">
           {isRegister ? "Criar conta" : "Bem-vindo de volta"}
         </p>
-        <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
           {isRegister ? "Comece a organizar" : "Entrar no Financeiro"}
         </h1>
         <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
@@ -87,12 +87,12 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 rounded-2xl border border-teal-900/8 bg-white/90 p-6 shadow-[0_20px_50px_-28px_rgba(15,118,110,0.35)] backdrop-blur-sm sm:p-7"
+        className="space-y-4 rounded-2xl border border-teal-900/8 bg-white/90 p-6 shadow-[0_20px_50px_-28px_rgba(15,118,110,0.35)] backdrop-blur-sm dark:border-white/10 dark:bg-slate-900/70 sm:p-7"
         aria-label={isRegister ? "Formulário de cadastro" : "Formulário de login"}
       >
         {isRegister ? (
           <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-slate-800">Nome</span>
+            <span className="text-sm font-medium text-slate-800 dark:text-slate-200">Nome</span>
             <input
               type="text"
               name="name"
@@ -108,7 +108,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         ) : null}
 
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-slate-800">E-mail</span>
+          <span className="text-sm font-medium text-slate-800 dark:text-slate-200">E-mail</span>
           <input
             type="email"
             name="email"
@@ -123,7 +123,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         </label>
 
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-slate-800">Senha</span>
+          <span className="text-sm font-medium text-slate-800 dark:text-slate-200">Senha</span>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -152,7 +152,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
 
         {error ? (
           <p
-            className="rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-sm text-danger"
+            className="rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-sm text-danger dark:border-red-900/40 dark:bg-red-950/40"
             role="alert"
           >
             {error}

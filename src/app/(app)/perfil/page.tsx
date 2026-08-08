@@ -101,7 +101,7 @@ const PerfilPage = async () => {
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
                   href="/notificacoes"
-                  className="inline-flex rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+                  className="inline-flex rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                 >
                   Ver notificações
                 </Link>

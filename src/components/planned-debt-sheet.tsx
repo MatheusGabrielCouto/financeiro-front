@@ -102,8 +102,8 @@ const SheetCurrencyCell = ({
       onBlur={() => onCommit(amount)}
       placeholder="—"
       aria-label={ariaLabel}
-      className={`w-full rounded-md border border-transparent bg-transparent px-1.5 py-2 text-right text-[13px] tabular-nums outline-none transition placeholder:text-slate-300 focus:border-accent/40 focus:bg-white focus:shadow-[inset_0_0_0_1px_rgba(15,118,110,0.25)] disabled:opacity-60 ${
-        highlight ? "bg-teal-50/50" : ""
+      className={`w-full rounded-md border border-transparent bg-transparent px-1.5 py-2 text-right text-[13px] tabular-nums outline-none transition placeholder:text-slate-300 focus:border-accent/40 focus:bg-white focus:shadow-[inset_0_0_0_1px_rgba(15,118,110,0.25)] disabled:opacity-60 dark:placeholder:text-slate-600 dark:focus:bg-slate-900 ${
+        highlight ? "bg-teal-50/50 dark:bg-teal-950/30" : ""
       }`}
     />
   )
@@ -516,7 +516,7 @@ export const PlannedDebtSheet = ({
               {formatCurrency(currentMonthSurplus)}
             </p>
           </article>
-          <article className="rounded-xl border border-teal-200/70 bg-teal-50/40 px-3 py-3">
+          <article className="rounded-xl border border-teal-200/70 bg-teal-50/40 px-3 py-3 dark:border-teal-900/40 dark:bg-teal-950/30">
             <p className="text-xs text-muted">Sobra no ano</p>
             <p
               className={`mt-1 font-[family-name:var(--font-display)] text-xl font-semibold tabular-nums ${
@@ -531,7 +531,7 @@ export const PlannedDebtSheet = ({
 
       {error ? (
         <p
-          className="shrink-0 rounded-xl bg-red-50 px-3 py-2 text-sm text-danger"
+          className="shrink-0 rounded-xl bg-red-50 px-3 py-2 text-sm text-danger dark:bg-red-950/40"
           role="alert"
         >
           {error}
@@ -539,7 +539,7 @@ export const PlannedDebtSheet = ({
       ) : null}
       {success ? (
         <p
-          className="shrink-0 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-success"
+          className="shrink-0 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-success dark:bg-emerald-950/40"
           role="status"
         >
           {success}
@@ -557,7 +557,7 @@ export const PlannedDebtSheet = ({
                 onClick={() =>
                   setPendingDelete({ mode: "bulk", ids: selectedIds })
                 }
-                className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-danger transition hover:bg-red-100 disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-danger transition hover:bg-red-100 disabled:opacity-60 dark:border-red-900/40 dark:bg-red-950/40 dark:hover:bg-red-900/40"
                 aria-label={`Excluir ${selectedCount} linhas selecionadas`}
               >
                 <IconTrash className="h-3.5 w-3.5" />
@@ -577,9 +577,9 @@ export const PlannedDebtSheet = ({
           >
             <table className={`w-full ${TABLE_MIN_WIDTH} table-fixed border-collapse text-sm`}>
               <thead className="sticky top-0 z-30">
-                <tr className="bg-[#f8fafc] text-muted">
+                <tr className="bg-[#f8fafc] dark:bg-slate-900 text-muted">
                   <th
-                    className={`border-b border-border bg-[#f8fafc] px-1 py-2.5 ${COL.select}`}
+                    className={`border-b border-border bg-[#f8fafc] dark:bg-slate-900 px-1 py-2.5 ${COL.select}`}
                   >
                     <div className="flex items-center justify-center">
                       <input
@@ -594,11 +594,11 @@ export const PlannedDebtSheet = ({
                     </div>
                   </th>
                   <th
-                    className={`border-b border-border bg-[#f8fafc] px-1 py-2.5 ${COL.index}`}
+                    className={`border-b border-border bg-[#f8fafc] dark:bg-slate-900 px-1 py-2.5 ${COL.index}`}
                     aria-hidden="true"
                   />
                   <th
-                    className={`border-b border-r border-border bg-[#f8fafc] px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide ${COL.title}`}
+                    className={`border-b border-r border-border bg-[#f8fafc] dark:bg-slate-900 px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide ${COL.title}`}
                   >
                     Nome
                   </th>
@@ -607,20 +607,20 @@ export const PlannedDebtSheet = ({
                       key={label}
                       className={`border-b border-border px-1 py-2.5 text-center text-xs font-semibold uppercase tracking-wide ${COL.month} ${
                         index === currentMonthIndex
-                          ? "bg-teal-50 text-accent"
-                          : "bg-[#f8fafc]"
+                          ? "bg-teal-50 text-accent dark:bg-teal-950/40"
+                          : "bg-[#f8fafc] dark:bg-slate-900"
                       }`}
                     >
                       {label}
                     </th>
                   ))}
                   <th
-                    className={`border-b border-border bg-[#f8fafc] px-2 py-2.5 text-right text-xs font-semibold uppercase tracking-wide ${COL.total}`}
+                    className={`border-b border-border bg-[#f8fafc] dark:bg-slate-900 px-2 py-2.5 text-right text-xs font-semibold uppercase tracking-wide ${COL.total}`}
                   >
                     Total
                   </th>
                   <th
-                    className={`border-b border-border bg-[#f8fafc] px-2 py-2.5 text-center text-xs font-semibold uppercase tracking-wide ${COL.actions}`}
+                    className={`border-b border-border bg-[#f8fafc] dark:bg-slate-900 px-2 py-2.5 text-center text-xs font-semibold uppercase tracking-wide ${COL.actions}`}
                   >
                     <span className="sr-only">Ações</span>
                   </th>
@@ -636,12 +636,12 @@ export const PlannedDebtSheet = ({
                     key={line.id}
                     className={`border-b border-border/50 transition ${
                       isLocked
-                        ? "bg-slate-50/80"
+                        ? "bg-slate-50/80 dark:bg-slate-900/50"
                         : isSelected
-                          ? "bg-teal-50/40 hover:bg-slate-50/70"
+                          ? "bg-teal-50/40 hover:bg-slate-50/70 dark:bg-teal-950/30 dark:hover:bg-slate-800/70"
                           : rowIndex % 2 === 1
-                            ? "bg-slate-50/30 hover:bg-slate-50/70"
-                            : "bg-surface hover:bg-slate-50/70"
+                            ? "bg-slate-50/30 hover:bg-slate-50/70 dark:bg-slate-900/30 dark:hover:bg-slate-800/70"
+                            : "bg-surface hover:bg-slate-50/70 dark:hover:bg-slate-800/70"
                     }`}
                   >
                     <td
@@ -671,10 +671,10 @@ export const PlannedDebtSheet = ({
                     >
                       {isLocked ? (
                         <div className="flex items-center gap-2 px-2 py-2">
-                          <span className="truncate text-sm font-medium text-slate-700">
+                          <span className="truncate text-sm font-medium text-slate-700 dark:text-slate-100">
                             {line.title}
                           </span>
-                          <span className="shrink-0 rounded-md bg-slate-200/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                          <span className="shrink-0 rounded-md bg-slate-200/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:bg-slate-700/80 dark:text-slate-300">
                             {line.source === "PLANNED_EXPENSE"
                               ? "Previsto"
                               : "Fixa"}
@@ -687,7 +687,7 @@ export const PlannedDebtSheet = ({
                           onBlur={(event) =>
                             void handleRename(line, event.target.value)
                           }
-                          className="w-full rounded-md border border-transparent bg-transparent px-2 py-2 text-sm font-medium outline-none focus:border-accent/40 focus:bg-white"
+                          className="w-full rounded-md border border-transparent bg-transparent px-2 py-2 text-sm font-medium outline-none focus:border-accent/40 focus:bg-white dark:focus:bg-slate-900"
                           aria-label={`Nome da linha ${line.title}`}
                         />
                       )}
@@ -698,12 +698,12 @@ export const PlannedDebtSheet = ({
                         <td
                           key={`${line.id}-${cell.month}`}
                           className={`px-0.5 py-0.5 ${COL.month} ${
-                            isCurrent ? "bg-teal-50/35" : ""
+                            isCurrent ? "bg-teal-50/35 dark:bg-teal-950/25" : ""
                           }`}
                         >
                           {isLocked ? (
                             <p
-                              className={`px-1.5 py-2 text-right text-[13px] tabular-nums text-slate-600 ${
+                              className={`px-1.5 py-2 text-right text-[13px] tabular-nums text-slate-600 dark:text-slate-300 ${
                                 isCurrent ? "font-medium text-accent" : ""
                               }`}
                             >
@@ -724,7 +724,7 @@ export const PlannedDebtSheet = ({
                       )
                     })}
                     <td
-                      className={`px-2 py-2 text-right text-[13px] font-semibold tabular-nums text-slate-700 ${COL.total}`}
+                      className={`px-2 py-2 text-right text-[13px] font-semibold tabular-nums text-slate-700 dark:text-slate-100 ${COL.total}`}
                     >
                       {formatCurrency(line.total)}
                     </td>
@@ -760,7 +760,7 @@ export const PlannedDebtSheet = ({
                               })
                             }
                             title="Excluir linha"
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted transition hover:border-red-200 hover:bg-red-50 hover:text-danger disabled:opacity-40"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted transition hover:border-red-200 hover:bg-red-50 hover:text-danger disabled:opacity-40 dark:hover:border-red-900/40 dark:hover:bg-red-950/40"
                             aria-label={`Excluir ${line.title}`}
                           >
                             <IconTrash className="h-4 w-4" />
@@ -772,17 +772,17 @@ export const PlannedDebtSheet = ({
                   )
                 })}
 
-                <tr className="border-t border-dashed border-border bg-[#f8fafc]">
+                <tr className="border-t border-dashed border-border bg-[#f8fafc] dark:bg-slate-900">
                   <td
-                    className={`bg-[#f8fafc] px-1 py-2 ${COL.select}`}
+                    className={`bg-[#f8fafc] dark:bg-slate-900 px-1 py-2 ${COL.select}`}
                   />
                   <td
-                    className={`bg-[#f8fafc] px-1 py-2 text-center text-xs tabular-nums text-muted ${COL.index}`}
+                    className={`bg-[#f8fafc] dark:bg-slate-900 px-1 py-2 text-center text-xs tabular-nums text-muted ${COL.index}`}
                   >
                     {workbook.lines.length + 1}
                   </td>
                   <td
-                    className={`border-r border-border bg-[#f8fafc] px-1 py-1 ${COL.title}`}
+                    className={`border-r border-border bg-[#f8fafc] dark:bg-slate-900 px-1 py-1 ${COL.title}`}
                   >
                     <input
                       value={newTitle}
@@ -794,7 +794,7 @@ export const PlannedDebtSheet = ({
                         }
                       }}
                       placeholder="Nova mensalidade..."
-                      className="w-full rounded-md border border-dashed border-border bg-white px-2 py-2 text-sm outline-none focus:border-accent"
+                      className="w-full rounded-md border border-dashed border-border bg-surface px-2 py-2 text-sm outline-none focus:border-accent"
                       aria-label="Nova mensalidade"
                     />
                   </td>
@@ -829,10 +829,10 @@ export const PlannedDebtSheet = ({
           >
             <table className={`w-full ${TABLE_MIN_WIDTH} table-fixed border-collapse text-sm`}>
               <tbody>
-                <tr className="bg-slate-100/95 font-semibold">
+                <tr className="bg-slate-100/95 font-semibold dark:bg-slate-800/95">
                   <td
                     colSpan={3}
-                    className={`border-r border-border bg-slate-100 px-3 py-2.5 ${COL.label}`}
+                    className={`border-r border-border bg-slate-100 px-3 py-2.5 dark:bg-slate-800 ${COL.label}`}
                   >
                     Total Mensal
                   </td>
@@ -841,31 +841,31 @@ export const PlannedDebtSheet = ({
                       key={`total-${index}`}
                       className={`px-1 py-2.5 text-right text-[13px] tabular-nums ${COL.month} ${
                         index === currentMonthIndex
-                          ? "bg-teal-50 text-accent"
-                          : "bg-slate-100/95"
+                          ? "bg-teal-50 text-accent dark:bg-teal-950/40"
+                          : "bg-slate-100/95 dark:bg-slate-800/95"
                       }`}
                     >
                       {formatCurrency(total)}
                     </td>
                   ))}
                   <td
-                    className={`bg-slate-100/95 px-2 py-2.5 text-right text-[13px] tabular-nums text-accent ${COL.total}`}
+                    className={`bg-slate-100/95 px-2 py-2.5 text-right text-[13px] tabular-nums text-accent dark:bg-slate-800/95 ${COL.total}`}
                   >
                     {formatCurrency(workbook.yearExpenseTotal)}
                   </td>
-                  <td className={`bg-slate-100/95 ${COL.actions}`} />
+                  <td className={`bg-slate-100/95 dark:bg-slate-800/95 ${COL.actions}`} />
                 </tr>
-                <tr className="bg-emerald-50 font-semibold text-emerald-900">
+                <tr className="bg-emerald-50 font-semibold text-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-100">
                   <td
                     colSpan={3}
-                    className={`border-r border-border bg-emerald-50 px-3 py-2.5 ${COL.label}`}
+                    className={`border-r border-border bg-emerald-50 px-3 py-2.5 dark:bg-emerald-950/30 ${COL.label}`}
                   >
                     Sobra Salário
                   </td>
                   {workbook.surplus.map((value, index) => (
                     <td
                       key={`surplus-${index}`}
-                      className={`bg-emerald-50 px-1 py-2.5 text-right text-[13px] tabular-nums ${COL.month} ${
+                      className={`bg-emerald-50 px-1 py-2.5 text-right text-[13px] tabular-nums dark:bg-emerald-950/30 ${COL.month} ${
                         value < 0 ? "text-danger" : ""
                       }`}
                     >
@@ -873,11 +873,11 @@ export const PlannedDebtSheet = ({
                     </td>
                   ))}
                   <td
-                    className={`bg-emerald-50 px-2 py-2.5 text-right text-[13px] tabular-nums ${COL.total}`}
+                    className={`bg-emerald-50 px-2 py-2.5 text-right text-[13px] tabular-nums dark:bg-emerald-950/30 ${COL.total}`}
                   >
                     {formatCurrency(workbook.yearSurplus)}
                   </td>
-                  <td className={`bg-emerald-50 ${COL.actions}`} />
+                  <td className={`bg-emerald-50 dark:bg-emerald-950/30 ${COL.actions}`} />
                 </tr>
               </tbody>
             </table>
@@ -994,9 +994,9 @@ export const PlannedDebtSheet = ({
             )}
           </div>
 
-          <div className="rounded-2xl border border-teal-200/70 bg-teal-50/35 p-4">
-            <p className="text-sm font-semibold text-teal-950">No app</p>
-            <p className="mt-1 text-xs leading-relaxed text-teal-900/80">
+          <div className="rounded-2xl border border-teal-200/70 bg-teal-50/35 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
+            <p className="text-sm font-semibold text-teal-950 dark:text-teal-100">No app</p>
+            <p className="mt-1 text-xs leading-relaxed text-teal-900/80 dark:text-teal-200/80">
               Em Dívidas → Confirmar planejamento, confirme a linha e ela vira
               dívida real no sistema.
             </p>

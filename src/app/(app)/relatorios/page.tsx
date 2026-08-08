@@ -78,7 +78,7 @@ const ProgressBar = ({
           {formatCurrency(value)}
         </p>
       </div>
-      <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+      <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
         <div
           className={`h-full rounded-full transition-all ${
             tone === "success" ? "bg-emerald-500" : "bg-red-500"
@@ -112,7 +112,7 @@ const SummaryRow = ({
     <div
       className={`flex items-center justify-between gap-3 ${
         highlighted
-          ? "rounded-xl bg-slate-50 px-3 py-2.5"
+          ? "rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-900/50"
           : "px-1 py-2"
       }`}
     >
@@ -150,7 +150,7 @@ const BreakdownItem = ({
   return (
     <li className="flex items-center gap-3 rounded-xl border border-border/70 bg-background/70 px-3 py-2.5">
       <span
-        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600"
+        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
         aria-hidden="true"
       >
         {initials(title)}
@@ -188,14 +188,14 @@ const BreakdownCard = ({
       {href ? (
         <Link
           href={href}
-          className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold transition hover:bg-slate-50"
+          className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
         >
           Ver todos
         </Link>
       ) : null}
     </div>
     {count === 0 ? (
-      <div className="mt-4 rounded-xl bg-slate-50 px-4 py-8 text-center text-sm text-muted">
+      <div className="mt-4 rounded-xl bg-slate-50 px-4 py-8 text-center text-sm text-muted dark:bg-slate-900/50">
         {emptyLabel}
       </div>
     ) : (
@@ -534,7 +534,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                 tone="danger"
               />
             </div>
-            <div className="mt-5 rounded-2xl border border-border bg-slate-50 px-4 py-4 text-center">
+            <div className="mt-5 rounded-2xl border border-border bg-slate-50 px-4 py-4 text-center dark:bg-slate-900/50">
               <p className="text-xs font-medium uppercase tracking-wide text-muted">
                 Sobra prevista
               </p>
@@ -749,25 +749,25 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
         </section>
 
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+          <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
             <p className="text-sm text-muted">Contas fixas pagas</p>
             <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
               {paidRecurrings.length}/{recurrings.length}
             </p>
           </article>
-          <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+          <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
             <p className="text-sm text-muted">Contas fixas em aberto</p>
             <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
               {openRecurrings.length}
             </p>
           </article>
-          <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+          <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
             <p className="text-sm text-muted">Parcelas pagas</p>
             <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
               {paidDebts.length}/{debts.length}
             </p>
           </article>
-          <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+          <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
             <p className="text-sm text-muted">Parcelas em aberto</p>
             <p className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
               {openDebts.length}
@@ -810,13 +810,13 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
               </div>
               <Link
                 href="/dividas"
-                className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold transition hover:bg-slate-50"
+                className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Dívidas
               </Link>
             </div>
             {projections.length === 0 ? (
-              <div className="rounded-xl bg-slate-50 px-4 py-10 text-center text-sm text-muted">
+              <div className="rounded-xl bg-slate-50 px-4 py-10 text-center text-sm text-muted dark:bg-slate-900/50">
                 Nenhuma dívida com parcelas em aberto
               </div>
             ) : (
@@ -839,13 +839,13 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                       </p>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                      <div className="rounded-lg bg-slate-50 px-2.5 py-2">
+                      <div className="rounded-lg bg-slate-50 px-2.5 py-2 dark:bg-slate-900/50">
                         <p className="text-muted">Média/parcela</p>
                         <p className="mt-0.5 font-semibold tabular-nums">
                           {formatCurrency(item.averageInstallmentValue)}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-teal-50/70 px-2.5 py-2">
+                      <div className="rounded-lg bg-teal-50/70 px-2.5 py-2 dark:bg-teal-950/30">
                         <p className="text-muted">Sugestão mensal</p>
                         <p className="mt-0.5 font-semibold tabular-nums text-accent">
                           {formatCurrency(item.suggestedMonthlyPayment)}

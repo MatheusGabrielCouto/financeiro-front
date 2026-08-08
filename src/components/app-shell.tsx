@@ -314,7 +314,7 @@ export const AppShell = ({
                           } ${
                             active
                               ? "bg-sidebar-active font-semibold text-accent shadow-sm ring-1 ring-accent/10"
-                              : "text-slate-600 hover:bg-sidebar-hover hover:text-foreground"
+                              : "text-slate-600 hover:bg-sidebar-hover hover:text-foreground dark:text-slate-300"
                           }`}
                           aria-current={active ? "page" : undefined}
                           aria-label={item.label}
@@ -323,7 +323,7 @@ export const AppShell = ({
                             className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                               active
                                 ? "bg-accent text-white"
-                                : "bg-slate-100 text-slate-500"
+                                : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
                             }`}
                           >
                             <Icon className="h-4 w-4" />
@@ -352,7 +352,7 @@ export const AppShell = ({
             onKeyDown={(event) =>
               handleKeyDownAction(event, handleToggleSidebar)
             }
-            className={`flex w-full items-center rounded-xl px-3 py-2.5 text-sm text-slate-600 transition hover:bg-sidebar-hover hover:text-foreground ${
+            className={`flex w-full items-center rounded-xl px-3 py-2.5 text-sm text-slate-600 transition hover:bg-sidebar-hover hover:text-foreground dark:text-slate-300 ${
               isRail ? "justify-center px-2" : "gap-2.5"
             }`}
             aria-label={sidebarCollapsed ? "Expandir menu" : "Minimizar menu"}
@@ -360,7 +360,7 @@ export const AppShell = ({
             title={sidebarCollapsed ? "Expandir menu" : "Minimizar menu"}
             tabIndex={0}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">
               <IconSidebar className="h-4 w-4" />
             </span>
             {!isRail ? (

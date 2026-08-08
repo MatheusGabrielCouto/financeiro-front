@@ -134,7 +134,7 @@ export const EditDebtForm = ({ debt, categories }: EditDebtFormProps) => {
                   type="button"
                   onClick={handleClose}
                   disabled={isLoading}
-                  className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60"
+                  className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60 dark:hover:bg-slate-900/50"
                   aria-label="Fechar"
                 >
                   <IconClose className="h-4 w-4" />
@@ -212,7 +212,7 @@ export const EditDebtForm = ({ debt, categories }: EditDebtFormProps) => {
 
                 {error ? (
                   <p
-                    className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger"
+                    className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger dark:bg-red-950/40"
                     role="alert"
                   >
                     {error}
@@ -224,7 +224,7 @@ export const EditDebtForm = ({ debt, categories }: EditDebtFormProps) => {
                     type="button"
                     onClick={handleClose}
                     disabled={isLoading}
-                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60"
+                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-900/50"
                   >
                     Cancelar
                   </button>
@@ -248,7 +248,7 @@ export const EditDebtForm = ({ debt, categories }: EditDebtFormProps) => {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+        className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
         aria-label={`Editar dívida ${debt.title}`}
         aria-haspopup="dialog"
         aria-expanded={isOpen}

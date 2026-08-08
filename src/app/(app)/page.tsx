@@ -718,7 +718,7 @@ const DashboardPage = async () => {
                     </span>
                     <span className="font-semibold text-accent">{goalsProgress}%</span>
                   </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className="h-full rounded-full bg-accent"
                       style={{ width: `${goalsProgress}%` }}
@@ -743,7 +743,7 @@ const DashboardPage = async () => {
                           <span className="truncate font-medium">{goal.name}</span>
                           <span className="shrink-0 text-xs text-muted">{pct}%</span>
                         </div>
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                           <div
                             className="h-full rounded-full bg-teal-400"
                             style={{ width: `${pct}%` }}
@@ -857,7 +857,7 @@ const DashboardPage = async () => {
 
             <div className="p-3 md:p-4">
               {upcomingItems.length === 0 ? (
-                <div className="rounded-xl bg-emerald-50 px-4 py-10 text-center">
+                <div className="rounded-xl bg-emerald-50 px-4 py-10 text-center dark:bg-emerald-950/40">
                   <p className="font-semibold text-success">Tudo em dia neste mês</p>
                   <p className="mt-1 text-sm text-muted">
                     Não há parcelas, contas fixas nem gastos previstos pendentes
@@ -977,7 +977,7 @@ const DashboardPage = async () => {
                         {formatCurrency(row.value)}
                       </span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div
                         className={`h-full rounded-full ${
                           row.tone === "income" ? "bg-emerald-400" : "bg-slate-400"
@@ -1046,7 +1046,7 @@ const DashboardPage = async () => {
                       href={action.href}
                       className="group flex items-center gap-3 rounded-xl border border-border/80 px-3 py-3 transition hover:border-accent/30 hover:bg-accent-soft/40"
                     >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition group-hover:bg-accent group-hover:text-white">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition group-hover:bg-accent group-hover:text-white dark:bg-slate-800 dark:text-slate-300">
                         <Icon className="h-4 w-4" />
                       </span>
                       <span className="min-w-0">

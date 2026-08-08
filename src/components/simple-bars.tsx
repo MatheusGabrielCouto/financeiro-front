@@ -78,7 +78,7 @@ export const SimpleBars = ({
               <div className="flex items-center justify-between gap-3 text-sm">
                 <span className="flex min-w-0 items-center gap-2 font-medium">
                   {showRank ? (
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-100 text-[11px] font-semibold text-muted">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-100 text-[11px] font-semibold text-muted dark:bg-slate-800">
                       {index + 1}
                     </span>
                   ) : null}
@@ -108,7 +108,7 @@ export const SimpleBars = ({
               ) : null}
 
               <div className="space-y-1">
-                <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+                <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                   <div
                     className={`h-full rounded-full transition-all ${
                       mode === "compare" ? "bg-emerald-500" : barColorClass[color]
@@ -117,7 +117,7 @@ export const SimpleBars = ({
                   />
                 </div>
                 {mode === "compare" ? (
-                  <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className="h-full rounded-full bg-amber-400 transition-all"
                       style={{ width: secondaryWidth }}

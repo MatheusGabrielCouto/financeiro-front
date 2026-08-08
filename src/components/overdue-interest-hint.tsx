@@ -115,7 +115,7 @@ export const OverdueInterestHint = ({
           <span
             id={tooltipId}
             role="tooltip"
-            className="pointer-events-none fixed z-[90] w-72 rounded-lg border border-amber-200/90 bg-white px-3 py-2 text-left text-xs leading-relaxed text-amber-950 shadow-lg shadow-slate-900/15"
+            className="pointer-events-none fixed z-[90] w-72 rounded-lg border border-amber-200/90 bg-white px-3 py-2 text-left text-xs leading-relaxed text-amber-950 shadow-lg shadow-slate-900/15 dark:border-amber-900/60 dark:bg-amber-950 dark:text-amber-100"
             style={{ top: position.top, left: position.left }}
           >
             {message}
@@ -129,7 +129,7 @@ export const OverdueInterestHint = ({
       <button
         ref={buttonRef}
         type="button"
-        className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-amber-600 transition hover:bg-amber-50 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${className}`}
+        className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-amber-600 transition hover:bg-amber-50 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 dark:text-amber-400 dark:hover:bg-amber-950/40 dark:hover:text-amber-300 ${className}`}
         aria-label="Informações de juros da parcela em atraso"
         aria-describedby={isOpen ? tooltipId : undefined}
         tabIndex={0}

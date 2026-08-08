@@ -148,7 +148,7 @@ export const CronTestPanel = () => {
         ))}
       </div>
 
-      <label className="mt-3 flex cursor-pointer items-start gap-2.5 rounded-xl border border-amber-200/80 bg-amber-50/50 px-3 py-2.5 text-sm">
+      <label className="mt-3 flex cursor-pointer items-start gap-2.5 rounded-xl border border-amber-200/80 bg-amber-50/50 px-3 py-2.5 text-sm dark:border-amber-900/40 dark:bg-amber-950/30">
         <input
           type="checkbox"
           checked={dryRun}
@@ -184,7 +184,7 @@ export const CronTestPanel = () => {
       ) : null}
 
       {result ? (
-        <div className="mt-4 min-w-0 space-y-3 overflow-hidden rounded-xl border border-teal-100 bg-teal-50/40 p-3 text-sm">
+        <div className="mt-4 min-w-0 space-y-3 overflow-hidden rounded-xl border border-teal-100 bg-teal-50/40 p-3 text-sm dark:border-teal-900/40 dark:bg-teal-950/30">
           <div className="min-w-0 space-y-1">
             <p className="break-words font-semibold text-accent">
               Executado · {result.scope}
@@ -201,7 +201,7 @@ export const CronTestPanel = () => {
             {Object.entries(result.results).map(([job, stats]) => (
               <li
                 key={job}
-                className="min-w-0 overflow-hidden rounded-lg border border-border/60 bg-white px-3 py-2.5"
+                className="min-w-0 overflow-hidden rounded-lg border border-border/60 bg-surface px-3 py-2.5"
               >
                 <p className="break-words font-semibold text-foreground">
                   {JOB_LABELS[job as CronJob] ?? job}
@@ -210,7 +210,7 @@ export const CronTestPanel = () => {
                   {Object.entries(stats).map(([key, value]) => (
                     <div
                       key={key}
-                      className="flex min-w-0 items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 text-xs"
+                      className="flex min-w-0 items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 text-xs dark:bg-slate-900/30"
                     >
                       <dt className="min-w-0 shrink text-muted">
                         {STAT_LABELS[key] ?? key}

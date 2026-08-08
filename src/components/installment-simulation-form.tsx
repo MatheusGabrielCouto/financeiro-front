@@ -12,24 +12,27 @@ const statusMeta = {
   approved: {
     label: "Cabe no orçamento",
     hint: "A parcela deixa sobra positiva no mês",
-    className: "border-emerald-200/80 bg-emerald-50/60",
-    badge: "bg-emerald-100 text-success",
+    className:
+      "border-emerald-200/80 bg-emerald-50/60 dark:border-emerald-900/40 dark:bg-emerald-950/30",
+    badge: "bg-emerald-100 text-success dark:bg-emerald-900/40",
     accent: "text-success",
     bar: "bg-emerald-400",
   },
   caution: {
     label: "Fica apertado",
     hint: "Dá para seguir, mas a margem fica estreita",
-    className: "border-amber-200/80 bg-amber-50/60",
-    badge: "bg-amber-100 text-warning",
+    className:
+      "border-amber-200/80 bg-amber-50/60 dark:border-amber-900/40 dark:bg-amber-950/30",
+    badge: "bg-amber-100 text-warning dark:bg-amber-900/40",
     accent: "text-warning",
     bar: "bg-amber-400",
   },
   rejected: {
     label: "Não recomendado",
     hint: "A parcela compromete demais a sobra do mês",
-    className: "border-red-200/80 bg-red-50/60",
-    badge: "bg-red-100 text-danger",
+    className:
+      "border-red-200/80 bg-red-50/60 dark:border-red-900/40 dark:bg-red-950/30",
+    badge: "bg-red-100 text-danger dark:bg-red-900/40",
     accent: "text-danger",
     bar: "bg-red-400",
   },
@@ -186,7 +189,7 @@ export const InstallmentSimulationForm = () => {
           </label>
         </div>
 
-        <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 px-4 py-3">
+        <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 px-4 py-3 dark:border-teal-900/40 dark:bg-teal-950/30">
           <div className="flex items-end justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-accent">
@@ -204,7 +207,7 @@ export const InstallmentSimulationForm = () => {
 
         {error ? (
           <p
-            className="rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-sm text-danger"
+            className="rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-sm text-danger dark:border-red-900/40 dark:bg-red-950/40"
             role="alert"
           >
             {error}
@@ -231,13 +234,13 @@ export const InstallmentSimulationForm = () => {
               sobra do mês aguenta o comprometimento.
             </p>
             <div className="mx-auto mt-6 grid max-w-md gap-2 text-left text-sm text-muted">
-              <p className="rounded-xl bg-slate-50 px-3 py-2">
+              <p className="rounded-xl bg-slate-50 px-3 py-2 dark:bg-slate-900/50">
                 1. Preencha os dados à esquerda
               </p>
-              <p className="rounded-xl bg-slate-50 px-3 py-2">
+              <p className="rounded-xl bg-slate-50 px-3 py-2 dark:bg-slate-900/50">
                 2. Use atalhos 6x, 12x, 24x se quiser
               </p>
-              <p className="rounded-xl bg-slate-50 px-3 py-2">
+              <p className="rounded-xl bg-slate-50 px-3 py-2 dark:bg-slate-900/50">
                 3. Veja recomendação, margem e primeiros meses
               </p>
             </div>
@@ -261,12 +264,12 @@ export const InstallmentSimulationForm = () => {
               <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-foreground">
                 {result.simulation.name}
               </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-700 dark:text-slate-300">
                 {result.recommendation.message}
               </p>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl bg-white/70 px-4 py-3">
+                <div className="rounded-xl bg-white/70 px-4 py-3 dark:bg-slate-900/50">
                   <p className="text-xs text-muted">Parcela</p>
                   <p className="mt-1 text-xl font-semibold tabular-nums">
                     {formatCurrency(result.simulation.monthlyPayment)}
@@ -275,13 +278,13 @@ export const InstallmentSimulationForm = () => {
                     em {result.simulation.installments}x
                   </p>
                 </div>
-                <div className="rounded-xl bg-white/70 px-4 py-3">
+                <div className="rounded-xl bg-white/70 px-4 py-3 dark:bg-slate-900/50">
                   <p className="text-xs text-muted">Total</p>
                   <p className="mt-1 text-xl font-semibold tabular-nums">
                     {formatCurrency(result.simulation.totalValue)}
                   </p>
                 </div>
-                <div className="rounded-xl bg-white/70 px-4 py-3">
+                <div className="rounded-xl bg-white/70 px-4 py-3 dark:bg-slate-900/50">
                   <p className="text-xs text-muted">Da renda</p>
                   <p
                     className={`mt-1 text-xl font-semibold tabular-nums ${statusMeta[result.recommendation.status].accent}`}
@@ -353,7 +356,7 @@ export const InstallmentSimulationForm = () => {
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                           <div
                             className={`h-full rounded-full ${
                               positive ? "bg-emerald-400" : "bg-red-400"
@@ -376,7 +379,7 @@ export const InstallmentSimulationForm = () => {
             </section>
 
             {result.recommendation.status !== "rejected" ? (
-              <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5">
+              <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5 dark:border-teal-900/40 dark:bg-teal-950/30">
                 <p className="text-sm font-semibold text-accent">Próximo passo</p>
                 <p className="mt-1 text-sm text-muted">
                   Se a compra fizer sentido, registre como dívida parcelada para
@@ -391,7 +394,7 @@ export const InstallmentSimulationForm = () => {
                   </Link>
                   <Link
                     href="/planejador"
-                    className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+                    className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Ver planejador
                   </Link>
@@ -406,19 +409,19 @@ export const InstallmentSimulationForm = () => {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
                     href="/receitas-fixas"
-                    className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50"
+                    className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Receitas fixas
                   </Link>
                   <Link
                     href="/parcelas"
-                    className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50"
+                    className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Pagar pendências
                   </Link>
                   <Link
                     href="/insights"
-                    className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50"
+                    className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Ver insights
                   </Link>

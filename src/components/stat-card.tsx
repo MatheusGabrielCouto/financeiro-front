@@ -8,7 +8,7 @@ type StatCardProps = {
 const toneStyles = {
   default: {
     value: "text-foreground",
-    accent: "bg-slate-100",
+    accent: "bg-slate-100 dark:bg-slate-800",
   },
   accent: {
     value: "text-accent",
@@ -16,15 +16,15 @@ const toneStyles = {
   },
   warning: {
     value: "text-warning",
-    accent: "bg-amber-50",
+    accent: "bg-amber-50 dark:bg-amber-950/40",
   },
   success: {
     value: "text-success",
-    accent: "bg-emerald-50",
+    accent: "bg-emerald-50 dark:bg-emerald-950/40",
   },
   danger: {
     value: "text-danger",
-    accent: "bg-red-50",
+    accent: "bg-red-50 dark:bg-red-950/40",
   },
 }
 

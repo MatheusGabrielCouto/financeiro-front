@@ -18,9 +18,10 @@ const priorityLabel = (priority: PaymentReminderPriority) => {
 }
 
 const priorityClass = (priority: PaymentReminderPriority) => {
-  if (priority === "HIGH") return "bg-red-50 text-danger"
-  if (priority === "LOW") return "bg-slate-100 text-slate-600"
-  return "bg-amber-50 text-warning"
+  if (priority === "HIGH") return "bg-red-50 text-danger dark:bg-red-950/40"
+  if (priority === "LOW")
+    return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+  return "bg-amber-50 text-warning dark:bg-amber-950/40"
 }
 
 const ReminderCard = ({ item }: { item: PaymentReminder }) => {
@@ -44,14 +45,14 @@ const ReminderCard = ({ item }: { item: PaymentReminder }) => {
             <span
               className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                 isOpen
-                  ? "bg-amber-50 text-warning"
-                  : "bg-emerald-50 text-success"
+                  ? "bg-amber-50 text-warning dark:bg-amber-950/40"
+                  : "bg-emerald-50 text-success dark:bg-emerald-950/40"
               }`}
             >
               {isOpen ? "Aberto" : "Feito"}
             </span>
             {item.category ? (
-              <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+              <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                 {item.category.title}
               </span>
             ) : null}
@@ -178,7 +179,7 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
             <div className="flex flex-wrap gap-2">
               <Link
                 href="/extrato"
-                className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+                className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Extrato
               </Link>
@@ -192,7 +193,7 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">Ainda na lista</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {formatCurrency(openTotal)}
@@ -201,7 +202,7 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
                 {openItems.length} item(ns) aberto(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Já marcados</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 {formatCurrency(doneTotal)}
@@ -210,7 +211,7 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
                 {doneItems.length} feito(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Total listado</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {formatCurrency(openTotal + doneTotal)}
@@ -233,7 +234,7 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
                   </p>
                 </div>
                 <div
-                  className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+                  className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                   role="group"
                   aria-label="Filtrar por status"
                 >

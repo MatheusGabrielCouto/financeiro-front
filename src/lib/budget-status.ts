@@ -14,23 +14,23 @@ export const budgetStatusMeta: Record<
 > = {
   ok: {
     label: "Dentro do limite",
-    badge: "bg-emerald-50 text-success",
+    badge: "bg-emerald-50 text-success dark:bg-emerald-950/40",
     bar: "bg-accent",
     border: "border-border/80",
     value: "text-accent",
   },
   warning: {
     label: "Perto do limite",
-    badge: "bg-amber-50 text-warning",
+    badge: "bg-amber-50 text-warning dark:bg-amber-950/40",
     bar: "bg-amber-400",
-    border: "border-amber-200/80",
+    border: "border-amber-200/80 dark:border-amber-900/40",
     value: "text-warning",
   },
   over: {
     label: "Estourado",
-    badge: "bg-red-50 text-danger",
+    badge: "bg-red-50 text-danger dark:bg-red-950/40",
     bar: "bg-danger",
-    border: "border-red-200/80",
+    border: "border-red-200/80 dark:border-red-900/40",
     value: "text-danger",
   },
 }

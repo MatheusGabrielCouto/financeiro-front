@@ -93,7 +93,7 @@ export const HeaderBreadcrumb = ({
               {crumb.href && !isLast ? (
                 <Link
                   href={crumb.href}
-                  className="inline-flex max-w-[46vw] min-w-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-foreground active:scale-[0.99] sm:max-w-[18rem]"
+                  className="inline-flex max-w-[46vw] min-w-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-foreground active:scale-[0.99] sm:max-w-[18rem] dark:text-slate-400 dark:hover:bg-slate-800"
                   tabIndex={0}
                 >
                   {content}

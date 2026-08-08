@@ -39,8 +39,8 @@ const DeltaBadge = ({
     positive == null
       ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
       : positive
-        ? "bg-emerald-50 text-success"
-        : "bg-red-50 text-danger"
+        ? "bg-emerald-50 text-success dark:bg-emerald-950/40"
+        : "bg-red-50 text-danger dark:bg-red-950/40"
 
   return (
     <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${tone}`}>
@@ -86,10 +86,10 @@ const CategoryRow = ({ item }: { item: CategoryCompare }) => {
       <span
         className={`shrink-0 rounded-md px-2 py-0.5 text-[11px] font-semibold ${
           positive == null
-            ? "bg-slate-100 text-slate-600"
+            ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
             : positive
-              ? "bg-emerald-50 text-success"
-              : "bg-red-50 text-danger"
+              ? "bg-emerald-50 text-success dark:bg-emerald-950/40"
+              : "bg-red-50 text-danger dark:bg-red-950/40"
         }`}
       >
         {formatDelta(delta)}

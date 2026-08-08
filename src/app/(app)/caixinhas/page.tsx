@@ -187,7 +187,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
               <h2 className="text-base font-semibold">Reserva de emergência</h2>
               <p className="mt-1 max-w-2xl text-sm text-muted">{reserve.message}</p>
             </div>
-            <p className="rounded-md bg-teal-50 px-2.5 py-1 text-xs font-semibold text-accent">
+            <p className="rounded-md bg-teal-50 px-2.5 py-1 text-xs font-semibold text-accent dark:bg-teal-950/40">
               {reserve.progressPercent.toFixed(0)}% da meta
             </p>
           </div>
@@ -207,7 +207,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
                 {formatCurrency(reserve.recommendedReserve)}
               </p>
             </article>
-            <article className="rounded-xl border border-amber-200/70 bg-amber-50/40 p-3">
+            <article className="rounded-xl border border-amber-200/70 bg-amber-50/40 p-3 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-xs text-muted">Ainda falta</p>
               <p className="mt-1 font-semibold text-warning">
                 {formatCurrency(reserve.missing)}
@@ -218,7 +218,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
             </article>
           </div>
 
-          <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-100">
+          <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
             <div
               className="h-full rounded-full bg-accent"
               style={{
@@ -238,7 +238,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
                 </p>
               </div>
               <div
-                className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+                className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                 role="group"
                 aria-label="Filtrar caixinhas"
               >
@@ -289,7 +289,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
                       key={item.id}
                       className={`rounded-2xl border bg-background/50 p-4 md:p-5 ${
                         item.isGoalReached
-                          ? "border-emerald-200/80"
+                          ? "border-emerald-200/80 dark:border-emerald-900/50"
                           : "border-border/80"
                       }`}
                     >
@@ -307,8 +307,8 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
                             <span
                               className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                                 item.isGoalReached
-                                  ? "bg-emerald-50 text-success"
-                                  : "bg-teal-50 text-accent"
+                                  ? "bg-emerald-50 text-success dark:bg-emerald-950/40"
+                                  : "bg-teal-50 text-accent dark:bg-teal-950/40"
                               }`}
                             >
                               {item.isGoalReached
@@ -350,7 +350,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
 
                           {!item.isGoalReached &&
                           item.suggestedMonthlyToReachByDate > 0 ? (
-                            <p className="mt-3 rounded-xl bg-teal-50/60 px-3 py-2 text-xs text-muted">
+                            <p className="mt-3 rounded-xl bg-teal-50/60 px-3 py-2 text-xs text-muted dark:bg-teal-950/30">
                               Sugestão: guardar cerca de{" "}
                               <span className="font-semibold text-foreground">
                                 {formatCurrency(
@@ -397,7 +397,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
                                 ariaLabel={`Excluir caixinha ${item.name}`}
                               />
                             ) : (
-                              <span className="rounded-lg bg-slate-50 px-3 py-1.5 text-xs text-muted">
+                              <span className="rounded-lg bg-slate-50 px-3 py-1.5 text-xs text-muted dark:bg-slate-800">
                                 Retire o saldo para excluir
                               </span>
                             )}
@@ -413,7 +413,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
 
           <aside className="space-y-4 xl:sticky xl:top-24 xl:self-start">
             <CreateCaixinhaForm />
-            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5">
+            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm font-semibold text-accent">Como funciona</p>
               <ul className="mt-2 space-y-1.5 text-sm text-muted">
                 <li>Guardar move dinheiro do saldo livre para a meta.</li>

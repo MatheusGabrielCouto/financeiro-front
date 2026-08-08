@@ -118,14 +118,14 @@ const CategoryCard = ({
               <span
                 className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                   isSystem
-                    ? "bg-slate-100 text-slate-600"
-                    : "bg-teal-50 text-accent"
+                    ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                    : "bg-teal-50 text-accent dark:bg-teal-950/40"
                 }`}
               >
                 {isSystem ? "Sistema" : "Sua categoria"}
               </span>
               {depth > 0 ? (
-                <span className="rounded-md bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-muted">
+                <span className="rounded-md bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-muted dark:bg-slate-800">
                   Subcategoria
                 </span>
               ) : null}
@@ -156,7 +156,7 @@ const CategoryCard = ({
             />
           </div>
         ) : (
-          <span className="rounded-lg bg-slate-50 px-3 py-1.5 text-xs font-medium text-muted">
+          <span className="rounded-lg bg-slate-50 px-3 py-1.5 text-xs font-medium text-muted dark:bg-slate-800">
             Protegida
           </span>
         )}
@@ -217,14 +217,14 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
             </div>
             <Link
               href="/orcamento"
-              className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+              className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               Ir para orçamento
             </Link>
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Total</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {stats.total}
@@ -233,21 +233,21 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
                 {stats.roots} principal(is)
               </p>
             </article>
-            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm text-muted">Suas categorias</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
                 {stats.custom}
               </p>
               <p className="mt-1 text-xs text-muted">criadas por você</p>
             </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Do sistema</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {stats.system}
               </p>
               <p className="mt-1 text-xs text-muted">protegidas</p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Com subcategorias</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 {stats.withChildren}
@@ -270,7 +270,7 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
                 </div>
 
                 <div
-                  className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+                  className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                   role="group"
                   aria-label="Filtrar categorias por tipo"
                 >
@@ -296,7 +296,7 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
 
               <Suspense
                 fallback={
-                  <div className="h-10 max-w-md animate-pulse rounded-xl bg-slate-100" />
+                  <div className="h-10 max-w-md animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />
                 }
               >
                 <CategorySearchFilter initialQuery={query} />
@@ -331,7 +331,7 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
           <aside className="space-y-4">
             <CreateCategoryForm categories={categories} />
 
-            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5">
+            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm font-semibold text-accent">Para que serve</p>
               <ul className="mt-2 space-y-1.5 text-sm text-muted">
                 <li>Classificar gastos e entradas no Extrato.</li>
@@ -341,13 +341,13 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
                   href="/extrato"
-                  className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold transition hover:bg-slate-50"
+                  className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   Extrato
                 </Link>
                 <Link
                   href="/orcamento"
-                  className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold transition hover:bg-slate-50"
+                  className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   Orçamento
                 </Link>

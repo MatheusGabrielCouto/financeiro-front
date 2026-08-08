@@ -72,7 +72,7 @@ export const CategorySearchFilter = ({
           <button
             type="button"
             onClick={handleClear}
-            className="rounded-lg px-2 py-1 text-xs font-semibold text-muted transition hover:bg-slate-100 hover:text-foreground"
+            className="rounded-lg px-2 py-1 text-xs font-semibold text-muted transition hover:bg-slate-100 hover:text-foreground dark:hover:bg-slate-800"
             aria-label="Limpar busca"
           >
             Limpar

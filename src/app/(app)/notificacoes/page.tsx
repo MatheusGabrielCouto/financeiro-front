@@ -27,27 +27,27 @@ const urgencyStyles: Record<
   { badge: string; border: string }
 > = {
   overdue: {
-    badge: "bg-red-50 text-danger",
-    border: "border-red-200/80",
+    badge: "bg-red-50 text-danger dark:bg-red-950/40",
+    border: "border-red-200/80 dark:border-red-900/40",
   },
   today: {
-    badge: "bg-amber-50 text-warning",
-    border: "border-amber-200/80",
+    badge: "bg-amber-50 text-warning dark:bg-amber-950/40",
+    border: "border-amber-200/80 dark:border-amber-900/40",
   },
   tomorrow: {
-    badge: "bg-teal-50 text-accent",
-    border: "border-teal-200/70",
+    badge: "bg-teal-50 text-accent dark:bg-teal-950/40",
+    border: "border-teal-200/70 dark:border-teal-900/40",
   },
   week: {
-    badge: "bg-slate-100 text-slate-600",
+    badge: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
     border: "border-border/80",
   },
 }
 
 const insightStyles = {
-  danger: "border-red-200/70 bg-red-50/40",
-  warning: "border-amber-200/70 bg-amber-50/40",
-  accent: "border-teal-200/70 bg-teal-50/40",
+  danger: "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/30",
+  warning: "border-amber-200/70 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/30",
+  accent: "border-teal-200/70 bg-teal-50/40 dark:border-teal-900/40 dark:bg-teal-950/30",
 } as const
 
 const NotificacoesPage = async () => {
@@ -186,7 +186,7 @@ const NotificacoesPage = async () => {
             <div className="flex flex-wrap gap-2">
               <Link
                 href="/pra-pagar"
-                className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+                className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Pra pagar
               </Link>
@@ -200,19 +200,19 @@ const NotificacoesPage = async () => {
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-            <article className="rounded-2xl border border-red-200/70 bg-red-50/40 p-4">
+            <article className="rounded-2xl border border-red-200/70 bg-red-50/40 p-4 dark:border-red-900/40 dark:bg-red-950/30">
               <p className="text-sm text-muted">Atrasados</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-danger">
                 {counts.overdue}
               </p>
             </article>
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">Hoje / amanhã</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {counts.today + counts.tomorrow}
               </p>
             </article>
-            <article className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Pra pagar</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {openReminders.length}
@@ -230,7 +230,7 @@ const NotificacoesPage = async () => {
                 {formatCurrency(cardInvoicesTotal)}
               </p>
             </article>
-            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm text-muted">Alertas</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
                 {insights.length}
@@ -281,7 +281,7 @@ const NotificacoesPage = async () => {
                   </div>
                   <Link
                     href="/cartoes"
-                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
                     Ver cartões
                   </Link>
@@ -320,7 +320,7 @@ const NotificacoesPage = async () => {
                             </p>
                             <Link
                               href={item.href}
-                              className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                              className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                             >
                               Pagar fatura
                             </Link>
@@ -344,7 +344,7 @@ const NotificacoesPage = async () => {
                   </div>
                   <Link
                     href="/pra-pagar"
-                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
                     Abrir lista
                   </Link>
@@ -364,10 +364,10 @@ const NotificacoesPage = async () => {
                             <span
                               className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                                 item.priority === "HIGH"
-                                  ? "bg-red-50 text-danger"
+                                  ? "bg-red-50 text-danger dark:bg-red-950/40"
                                   : item.priority === "LOW"
-                                    ? "bg-slate-100 text-slate-600"
-                                    : "bg-amber-50 text-warning"
+                                    ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                                    : "bg-amber-50 text-warning dark:bg-amber-950/40"
                               }`}
                             >
                               {item.priority === "HIGH"
@@ -395,7 +395,7 @@ const NotificacoesPage = async () => {
                           />
                           <Link
                             href="/pra-pagar"
-                            className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                            className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                           >
                             Abrir
                           </Link>
@@ -410,7 +410,7 @@ const NotificacoesPage = async () => {
             {alerts.length === 0 &&
             openReminders.length === 0 &&
             cardInvoiceAlerts.length === 0 ? (
-              <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 px-4 py-14 text-center">
+              <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 px-4 py-14 text-center dark:border-emerald-900/40 dark:bg-emerald-950/30">
                 <p className="font-semibold text-success">Tudo em dia</p>
                 <p className="mt-1 text-sm text-muted">
                   Nenhum vencimento próximo, fatura aberta nem item na lista pra
@@ -457,7 +457,7 @@ const NotificacoesPage = async () => {
                                   >
                                     {urgencyLabel(item.urgency)}
                                   </span>
-                                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                                     {kindLabel(item.kind)}
                                   </span>
                                 </div>
@@ -471,7 +471,7 @@ const NotificacoesPage = async () => {
                                 </p>
                                 <Link
                                   href={item.href}
-                                  className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                                  className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                                 >
                                   Resolver
                                 </Link>
@@ -489,7 +489,7 @@ const NotificacoesPage = async () => {
 
           <aside className="space-y-4 xl:sticky xl:top-24 xl:self-start">
             <BrowserReminders alerts={alerts} />
-            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5">
+            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm font-semibold text-accent">Atalhos</p>
               <p className="mt-1 text-sm text-muted">
                 Complete o mapa financeiro para a inbox ficar útil.

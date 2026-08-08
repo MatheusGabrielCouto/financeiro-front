@@ -26,15 +26,15 @@ const variantClass = {
   primary:
     "bg-accent text-white hover:brightness-110 border-transparent",
   danger:
-    "border-border text-danger hover:bg-red-50",
+    "border-border text-danger hover:bg-red-50 dark:hover:bg-red-950/40",
   ghost:
     "border-border text-foreground hover:bg-background",
 }
 
 const menuVariantClass = {
   primary: "text-accent hover:bg-accent-soft",
-  danger: "text-danger hover:bg-red-50",
-  ghost: "text-foreground hover:bg-slate-50",
+  danger: "text-danger hover:bg-red-50 dark:hover:bg-red-950/40",
+  ghost: "text-foreground hover:bg-slate-50 dark:hover:bg-slate-800",
 }
 
 export const ProxyActionButton = ({

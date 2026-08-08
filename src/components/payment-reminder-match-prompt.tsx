@@ -142,7 +142,7 @@ export const PaymentReminderMatchPrompt = ({
         </ul>
 
         {error ? (
-          <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-danger" role="alert">
+          <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-danger dark:bg-red-950/40" role="alert">
             {error}
           </p>
         ) : null}
@@ -151,7 +151,7 @@ export const PaymentReminderMatchPrompt = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
             aria-label="Ignorar sugestões de conciliação"
           >
             Agora não

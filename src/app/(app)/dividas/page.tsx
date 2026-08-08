@@ -190,28 +190,28 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">Ainda falta</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {formatCurrency(totalRemaining)}
               </p>
               <p className="mt-1 text-xs text-muted">{activeCount} dívida(s) ativa(s)</p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Já pago</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 {formatCurrency(totalPaid)}
               </p>
               <p className="mt-1 text-xs text-muted">em todas as dívidas</p>
             </article>
-            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm text-muted">Em andamento</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
                 {activeCount}
               </p>
               <p className="mt-1 text-xs text-muted">compromissos abertos</p>
             </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Quitadas</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {settledCount}
@@ -230,7 +230,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
               </p>
             </div>
             <div
-              className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+              className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
               role="group"
               aria-label="Filtrar dívidas"
             >
@@ -308,8 +308,8 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                             <span
                               className={`rounded-md px-2 py-0.5 text-xs font-medium ${
                                 isSettled
-                                  ? "bg-emerald-50 text-success"
-                                  : "bg-amber-50 text-warning"
+                                  ? "bg-emerald-50 text-success dark:bg-emerald-950/40"
+                                  : "bg-amber-50 text-warning dark:bg-amber-950/40"
                               }`}
                             >
                               {isSettled ? "Quitada" : "Em andamento"}
@@ -325,7 +325,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                         <div className="flex flex-wrap items-center gap-2">
                           <Link
                             href={`/dividas/${debt.id}`}
-                            className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                            className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                           >
                             Ver detalhes
                           </Link>
@@ -381,7 +381,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                           <span>Andamento</span>
                           <span>{progress}%</span>
                         </div>
-                        <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                           <div
                             className={`h-full rounded-full transition-all ${
                               isSettled ? "bg-emerald-500" : "bg-accent"

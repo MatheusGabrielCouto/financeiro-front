@@ -45,7 +45,7 @@ export const BudgetSpotlight = ({
         </div>
         <Link
           href="/orcamento"
-          className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50"
+          className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
           aria-label="Ver orçamento completo"
         >
           Ver todas
@@ -77,7 +77,7 @@ export const BudgetSpotlight = ({
                 {overallProgress}%
               </span>
             </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div
                 className={`h-full rounded-full ${
                   overallOver ? "bg-danger" : "bg-accent"
@@ -119,7 +119,7 @@ export const BudgetSpotlight = ({
                       ? ` · passou ${formatCurrency(overage)}`
                       : ` · sobra ${formatCurrency(budget.remaining)}`}
                   </p>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className={`h-full rounded-full ${meta.bar}`}
                       style={{ width: `${getBudgetBarWidth(budget)}%` }}

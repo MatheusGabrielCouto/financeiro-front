@@ -84,7 +84,7 @@ export const QuickTransactionLauncher = ({
       <button
         type="button"
         onClick={() => handleOpen("CREDIT")}
-        className={`${buttonBase} border border-emerald-200 bg-emerald-50 text-success hover:bg-emerald-100`}
+        className={`${buttonBase} border border-emerald-200 bg-emerald-50 text-success hover:bg-emerald-100 dark:border-emerald-900/40 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40`}
         aria-label="Registrar entrada rápida"
       >
         + Entrada
@@ -92,7 +92,7 @@ export const QuickTransactionLauncher = ({
       <button
         type="button"
         onClick={() => handleOpen("DEBIT")}
-        className={`${buttonBase} border border-amber-200 bg-amber-50 text-warning hover:bg-amber-100`}
+        className={`${buttonBase} border border-amber-200 bg-amber-50 text-warning hover:bg-amber-100 dark:border-amber-900/40 dark:bg-amber-950/40 dark:hover:bg-amber-900/40`}
         aria-label="Registrar saída rápida"
       >
         + Saída
@@ -101,7 +101,7 @@ export const QuickTransactionLauncher = ({
         <button
           type="button"
           onClick={() => handleOpen("ANY")}
-          className={`${buttonBase} border border-border bg-surface text-foreground hover:bg-slate-50`}
+          className={`${buttonBase} border border-border bg-surface text-foreground hover:bg-slate-50 dark:hover:bg-slate-800`}
           aria-label="Novo lançamento"
         >
           <IconPlus className="h-4 w-4" />
@@ -141,7 +141,7 @@ export const QuickTransactionLauncher = ({
       <button
         type="button"
         onClick={() => handleOpen("CREDIT")}
-        className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold text-success shadow-lg shadow-slate-900/10"
+        className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold text-success shadow-lg shadow-slate-900/10 dark:border-emerald-900/40 dark:bg-emerald-950/40"
         aria-label="Entrada rápida"
       >
         + Entrada
@@ -197,7 +197,7 @@ export const QuickTransactionLauncher = ({
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground"
+                    className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground dark:hover:bg-slate-800"
                     aria-label="Fechar"
                   >
                     <IconClose className="h-4 w-4" />

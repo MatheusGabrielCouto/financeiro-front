@@ -328,10 +328,10 @@ export const BrowserReminders = ({
       </p>
 
       <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600">
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
           Permissão: {permissionLabel(permission)}
         </span>
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600">
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
           Contexto: {isSecure ? "seguro" : "inseguro"}
         </span>
       </div>
@@ -355,7 +355,7 @@ export const BrowserReminders = ({
           <button
             type="button"
             onClick={handleDisable}
-            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
             aria-label="Desativar lembretes"
           >
             Desativar lembretes

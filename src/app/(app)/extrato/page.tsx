@@ -128,13 +128,13 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm text-muted">Saldo atual</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
                 {formatCurrency(amount.amount)}
               </p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Entradas</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 + {formatCurrency(income)}
@@ -143,7 +143,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 {sorted.filter((item) => item.type === "CREDIT").length} lançamento(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">Já saiu</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 − {formatCurrency(outflow)}
@@ -156,8 +156,8 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
             <article
               className={`rounded-2xl border p-4 ${
                 net >= 0
-                  ? "border-slate-200 bg-slate-50/80"
-                  : "border-red-200/70 bg-red-50/40"
+                  ? "border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-900/50"
+                  : "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/30"
               }`}
             >
               <p className="text-sm text-muted">Resultado do extrato</p>
@@ -186,7 +186,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
                 </p>
               </div>
               <div
-                className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+                className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                 role="group"
                 aria-label="Filtrar por tipo"
               >

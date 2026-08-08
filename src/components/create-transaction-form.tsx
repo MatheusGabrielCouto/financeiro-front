@@ -190,11 +190,11 @@ export const CreateTransactionForm = ({
                       className={`rounded-xl border px-2 py-2.5 text-center transition ${
                         isActive
                           ? option.value === "CREDIT"
-                            ? "border-emerald-300 bg-emerald-50 text-success"
+                            ? "border-emerald-300 bg-emerald-50 text-success dark:border-emerald-500/40 dark:bg-emerald-950/40"
                             : option.value === "PAY"
-                              ? "border-teal-300 bg-teal-50 text-accent"
-                              : "border-amber-300 bg-amber-50 text-warning"
-                          : "border-border bg-background text-muted hover:border-slate-300"
+                              ? "border-teal-300 bg-teal-50 text-accent dark:border-teal-500/40 dark:bg-teal-950/40"
+                              : "border-amber-300 bg-amber-50 text-warning dark:border-amber-500/40 dark:bg-amber-950/40"
+                          : "border-border bg-background text-muted hover:border-slate-300 dark:hover:border-slate-600"
                       }`}
                       aria-pressed={isActive}
                       aria-label={`Selecionar tipo ${option.label}`}
@@ -211,7 +211,7 @@ export const CreateTransactionForm = ({
               </div>
             </fieldset>
           ) : (
-            <p className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-muted">
+            <p className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-muted dark:bg-slate-900/50">
               Tipo:{" "}
               <span className="font-semibold text-foreground">
                 {typeOptions.find((item) => item.value === type)?.label ?? type}
@@ -258,7 +258,7 @@ export const CreateTransactionForm = ({
 
           {error ? (
             <p
-              className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger"
+              className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger dark:bg-red-950/40"
               role="alert"
             >
               {error}

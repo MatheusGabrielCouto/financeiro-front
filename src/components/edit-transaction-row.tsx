@@ -14,9 +14,9 @@ type EditTransactionRowProps = {
 }
 
 const typeBadgeClass = (type: Transaction["type"]) => {
-  if (type === "CREDIT") return "bg-emerald-50 text-success"
-  if (type === "PAY") return "bg-teal-50 text-accent"
-  return "bg-amber-50 text-warning"
+  if (type === "CREDIT") return "bg-emerald-50 text-success dark:bg-emerald-950/40"
+  if (type === "PAY") return "bg-teal-50 text-accent dark:bg-teal-950/40"
+  return "bg-amber-50 text-warning dark:bg-amber-950/40"
 }
 
 const typeDotClass = (type: Transaction["type"]) => {
@@ -195,7 +195,7 @@ export const EditTransactionRow = ({
           <button
             type="button"
             onClick={() => setIsEditing(true)}
-            className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold hover:bg-slate-50"
+            className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-900/50"
             aria-label={`Editar lançamento ${transaction.message}`}
           >
             Editar
@@ -204,7 +204,7 @@ export const EditTransactionRow = ({
             type="button"
             onClick={() => setIsConfirmOpen(true)}
             disabled={isLoading}
-            className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold text-danger hover:bg-red-50 disabled:opacity-60"
+            className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold text-danger hover:bg-red-50 disabled:opacity-60 dark:hover:bg-red-950/40"
             aria-label={`Excluir lançamento ${transaction.message}`}
           >
             Excluir

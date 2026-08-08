@@ -157,7 +157,7 @@ export const CreateCategoryForm = ({ categories }: CreateCategoryFormProps) => {
       </div>
 
       {error ? (
-        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger" role="alert">
+        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger dark:bg-red-950/40" role="alert">
           {error}
         </p>
       ) : null}

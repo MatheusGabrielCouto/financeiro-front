@@ -91,7 +91,7 @@ export const ConfirmDialog = ({
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60"
+            className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60 dark:hover:bg-slate-800"
             aria-label="Fechar"
           >
             <IconClose className="h-4 w-4" />
@@ -103,7 +103,7 @@ export const ConfirmDialog = ({
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60"
+            className="rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
           >
             {cancelLabel}
           </button>

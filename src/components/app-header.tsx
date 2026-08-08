@@ -38,7 +38,7 @@ export const AppHeader = ({
       <div className="flex min-h-[3.75rem] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 lg:px-6">
         <button
           type="button"
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-900/15 bg-surface text-slate-600 shadow-sm lg:hidden"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-900/15 bg-surface text-slate-600 shadow-sm dark:text-slate-300 lg:hidden"
           aria-label="Abrir menu"
           aria-expanded={mobileOpen}
           tabIndex={0}
@@ -49,7 +49,7 @@ export const AppHeader = ({
 
         <button
           type="button"
-          className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-900/15 bg-surface text-slate-600 shadow-sm transition hover:border-teal-700/30 hover:bg-teal-50/70 hover:text-accent lg:inline-flex"
+          className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-900/15 bg-surface text-slate-600 shadow-sm transition hover:border-teal-700/30 hover:bg-teal-50/70 hover:text-accent dark:text-slate-300 dark:hover:bg-teal-950/40 lg:inline-flex"
           aria-label={sidebarCollapsed ? "Expandir menu" : "Minimizar menu"}
           aria-expanded={!sidebarCollapsed}
           tabIndex={0}

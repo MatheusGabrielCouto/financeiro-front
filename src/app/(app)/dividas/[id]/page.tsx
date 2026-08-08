@@ -62,8 +62,8 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
                 <span
                   className={`rounded-md px-2 py-0.5 text-xs font-medium ${
                     isSettled
-                      ? "bg-emerald-50 text-success"
-                      : "bg-amber-50 text-warning"
+                      ? "bg-emerald-50 text-success dark:bg-emerald-950/40"
+                      : "bg-amber-50 text-warning dark:bg-amber-950/40"
                   }`}
                 >
                   {isSettled ? "Quitada" : "Em andamento"}
@@ -89,7 +89,7 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
               <EditDebtForm debt={debt} categories={categories} />
               <Link
                 href="/parcelas"
-                className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+                className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Ir para parcelas
               </Link>
@@ -102,25 +102,25 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">Ainda falta</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {formatCurrency(remaining)}
               </p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Já pago</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 {formatCurrency(paidTotal)}
               </p>
             </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Total da dívida</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {formatCurrency(total)}
               </p>
             </article>
-            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm text-muted">Progresso</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
                 {progress}%
@@ -136,7 +136,7 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
               <span>Andamento da quitação</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div
                 className={`h-full rounded-full ${
                   isSettled ? "bg-emerald-500" : "bg-accent"

@@ -70,35 +70,35 @@ const RecorrentesPage = async () => {
             </div>
             <Link
               href="/receitas-fixas"
-              className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+              className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
             >
               Ir para receitas fixas
             </Link>
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">A pagar em {monthLabel}</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {formatCurrency(pendingTotal)}
               </p>
               <p className="mt-1 text-xs text-muted">{pending.length} conta(s)</p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Já pagas no mês</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 {formatCurrency(paidTotal)}
               </p>
               <p className="mt-1 text-xs text-muted">{paid.length} quitada(s)</p>
             </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Total mensal de contas</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {formatCurrency(paymentTotal)}
               </p>
               <p className="mt-1 text-xs text-muted">{payments.length} cadastrada(s)</p>
             </article>
-            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm text-muted">Progresso do mês</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
                 {progress}%
@@ -112,7 +112,7 @@ const RecorrentesPage = async () => {
               <span>Quitação das contas fixas</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div
                 className="h-full rounded-full bg-accent"
                 style={{ width: `${Math.min(progress, 100)}%` }}
@@ -153,7 +153,7 @@ const RecorrentesPage = async () => {
                             <h3 className="truncate text-base font-semibold">
                               {payment.title}
                             </h3>
-                            <span className="rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-warning">
+                            <span className="rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-warning dark:bg-amber-950/40">
                               Conta fixa
                             </span>
                           </div>
@@ -225,7 +225,7 @@ const RecorrentesPage = async () => {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5">
+            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm font-semibold text-accent">Receitas ficam à parte</p>
               <p className="mt-1 text-sm text-muted">
                 Salário, freelance recorrente e outras entradas mensais são

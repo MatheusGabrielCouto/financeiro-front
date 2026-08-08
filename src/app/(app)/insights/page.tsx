@@ -19,8 +19,8 @@ const ratingTone = (rating: string, score: number) => {
   if (value.includes("excelente") || score >= 80) {
     return {
       label: rating,
-      badge: "bg-emerald-50 text-success",
-      soft: "border-emerald-200/70 bg-emerald-50/40",
+      badge: "bg-emerald-50 text-success dark:bg-emerald-950/40",
+      soft: "border-emerald-200/70 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/30",
       score: "text-success",
       ring: "#10b981",
       track: "#d1fae5",
@@ -30,8 +30,8 @@ const ratingTone = (rating: string, score: number) => {
   if (value.includes("bom") || score >= 65) {
     return {
       label: rating,
-      badge: "bg-teal-50 text-accent",
-      soft: "border-teal-200/70 bg-teal-50/40",
+      badge: "bg-teal-50 text-accent dark:bg-teal-950/40",
+      soft: "border-teal-200/70 bg-teal-50/40 dark:border-teal-900/40 dark:bg-teal-950/30",
       score: "text-accent",
       ring: "#0f766e",
       track: "#ccfbf1",
@@ -41,8 +41,8 @@ const ratingTone = (rating: string, score: number) => {
   if (value.includes("regular") || score >= 45) {
     return {
       label: rating,
-      badge: "bg-amber-50 text-warning",
-      soft: "border-amber-200/70 bg-amber-50/40",
+      badge: "bg-amber-50 text-warning dark:bg-amber-950/40",
+      soft: "border-amber-200/70 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/30",
       score: "text-warning",
       ring: "#d97706",
       track: "#fef3c7",
@@ -51,8 +51,8 @@ const ratingTone = (rating: string, score: number) => {
   }
   return {
     label: rating,
-    badge: "bg-red-50 text-danger",
-    soft: "border-red-200/70 bg-red-50/40",
+    badge: "bg-red-50 text-danger dark:bg-red-950/40",
+    soft: "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/30",
     score: "text-danger",
     ring: "#dc2626",
     track: "#fee2e2",
@@ -62,15 +62,15 @@ const ratingTone = (rating: string, score: number) => {
 
 const dimensionStatus = (pct: number) => {
   if (pct >= 80) {
-    return { label: "Forte", className: "bg-emerald-50 text-success", bar: "bg-emerald-500" }
+    return { label: "Forte", className: "bg-emerald-50 text-success dark:bg-emerald-950/40", bar: "bg-emerald-500" }
   }
   if (pct >= 55) {
-    return { label: "Ok", className: "bg-teal-50 text-accent", bar: "bg-accent" }
+    return { label: "Ok", className: "bg-teal-50 text-accent dark:bg-teal-950/40", bar: "bg-accent" }
   }
   if (pct >= 35) {
-    return { label: "Frágil", className: "bg-amber-50 text-warning", bar: "bg-amber-400" }
+    return { label: "Frágil", className: "bg-amber-50 text-warning dark:bg-amber-950/40", bar: "bg-amber-400" }
   }
-  return { label: "Crítico", className: "bg-red-50 text-danger", bar: "bg-danger" }
+  return { label: "Crítico", className: "bg-red-50 text-danger dark:bg-red-950/40", bar: "bg-danger" }
 }
 
 const ScoreRing = ({
@@ -323,9 +323,9 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
           <article
             className={`rounded-2xl border p-4 shadow-sm shadow-slate-200/30 ${
               spendingDelta > 5
-                ? "border-amber-200/70 bg-amber-50/40"
+                ? "border-amber-200/70 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/30"
                 : spendingDelta < -5
-                  ? "border-emerald-200/70 bg-emerald-50/40"
+                  ? "border-emerald-200/70 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/30"
                   : "border-border/80 bg-surface"
             }`}
           >
@@ -349,8 +349,8 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
           <article
             className={`rounded-2xl border p-4 shadow-sm shadow-slate-200/30 ${
               insights.categoryAlerts.length > 0
-                ? "border-amber-200/70 bg-amber-50/40"
-                : "border-emerald-200/70 bg-emerald-50/40"
+                ? "border-amber-200/70 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/30"
+                : "border-emerald-200/70 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/30"
             }`}
           >
             <p className="text-sm text-muted">Alertas</p>
@@ -407,7 +407,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                     key={item}
                     className="flex gap-3 rounded-xl border border-border/80 bg-background/60 px-4 py-3"
                   >
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                       {index + 1}
                     </span>
                     <p className="text-sm leading-relaxed">{item}</p>
@@ -432,7 +432,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                   tips.slice(0, 5).map((tip, index) => (
                     <div
                       key={tip}
-                      className="rounded-xl border border-teal-200/60 bg-teal-50/30 px-4 py-3"
+                      className="rounded-xl border border-teal-200/60 bg-teal-50/30 px-4 py-3 dark:border-teal-900/40 dark:bg-teal-950/30"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-accent">
                         Dica {index + 1}
@@ -515,7 +515,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
                       <span className="w-14 text-[11px] text-muted">Atual</span>
-                      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                         <div
                           className="h-full rounded-full bg-accent"
                           style={{
@@ -529,7 +529,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="w-14 text-[11px] text-muted">Média</span>
-                      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                         <div
                           className="h-full rounded-full bg-slate-400"
                           style={{
@@ -558,7 +558,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
 
           <div className="p-4">
             {insights.categoryAlerts.length === 0 ? (
-              <div className="rounded-xl bg-emerald-50 px-4 py-10 text-center">
+              <div className="rounded-xl bg-emerald-50 px-4 py-10 text-center dark:bg-emerald-950/40">
                 <p className="font-semibold text-success">
                   Nenhuma categoria disparada
                 </p>
@@ -573,14 +573,14 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                   return (
                     <article
                       key={alert.categoryId}
-                      className="rounded-2xl border border-amber-200/70 bg-amber-50/30 p-4"
+                      className="rounded-2xl border border-amber-200/70 bg-amber-50/30 p-4 dark:border-amber-900/40 dark:bg-amber-950/30"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <h3 className="font-semibold">{alert.categoryTitle}</h3>
                           <p className="mt-1 text-sm text-muted">{alert.message}</p>
                         </div>
-                        <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-warning">
+                        <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-warning dark:bg-amber-900/40">
                           +{alert.percentageIncrease}%
                         </span>
                       </div>
@@ -591,7 +591,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                             <span>Este mês</span>
                             <span>{formatCurrency(alert.currentSpent)}</span>
                           </div>
-                          <div className="h-2 overflow-hidden rounded-full bg-white/80">
+                          <div className="h-2 overflow-hidden rounded-full bg-white/80 dark:bg-slate-900/50">
                             <div
                               className="h-full rounded-full bg-amber-500"
                               style={{
@@ -605,7 +605,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                             <span>Média</span>
                             <span>{formatCurrency(alert.averageSpent)}</span>
                           </div>
-                          <div className="h-2 overflow-hidden rounded-full bg-white/80">
+                          <div className="h-2 overflow-hidden rounded-full bg-white/80 dark:bg-slate-900/50">
                             <div
                               className="h-full rounded-full bg-slate-400"
                               style={{

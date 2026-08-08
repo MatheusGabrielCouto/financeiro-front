@@ -50,7 +50,7 @@ const ReceitasFixasPage = async () => {
         <section className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700 dark:text-emerald-300">
                 Entradas recorrentes
               </p>
               <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight md:text-3xl">
@@ -67,14 +67,14 @@ const ReceitasFixasPage = async () => {
             </div>
             <Link
               href="/recorrentes"
-              className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+              className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
             >
               Ir para contas fixas
             </Link>
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">A receber em {monthLabel}</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {formatCurrency(pendingTotal)}
@@ -83,7 +83,7 @@ const ReceitasFixasPage = async () => {
                 {pending.length} fonte(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Já recebidas no mês</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 {formatCurrency(receivedTotal)}
@@ -92,7 +92,7 @@ const ReceitasFixasPage = async () => {
                 {received.length} confirmada(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Total mensal previsto</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {formatCurrency(incomeTotal)}
@@ -101,7 +101,7 @@ const ReceitasFixasPage = async () => {
                 {incomes.length} cadastrada(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4">
+            <article className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm text-muted">Progresso do mês</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-accent">
                 {progress}%
@@ -115,7 +115,7 @@ const ReceitasFixasPage = async () => {
               <span>Confirmação das receitas fixas</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div
                 className="h-full rounded-full bg-emerald-500"
                 style={{ width: `${Math.min(progress, 100)}%` }}
@@ -159,7 +159,7 @@ const ReceitasFixasPage = async () => {
                           <h3 className="truncate text-base font-semibold">
                             {income.title}
                           </h3>
-                          <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-success">
+                          <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-success dark:bg-emerald-950/40">
                             Receita fixa
                           </span>
                         </div>
@@ -185,8 +185,8 @@ const ReceitasFixasPage = async () => {
                           <span
                             className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
                               receivedThisMonth
-                                ? "bg-emerald-50 text-success"
-                                : "bg-amber-50 text-warning"
+                                ? "bg-emerald-50 text-success dark:bg-emerald-950/40"
+                                : "bg-amber-50 text-warning dark:bg-amber-950/40"
                             }`}
                           >
                             {receivedThisMonth ? "Recebida" : "Pendente"}
@@ -233,7 +233,7 @@ const ReceitasFixasPage = async () => {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5">
+            <div className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm font-semibold text-warning">
                 Contas ficam à parte
               </p>
@@ -243,7 +243,7 @@ const ReceitasFixasPage = async () => {
               </p>
               <Link
                 href="/recorrentes"
-                className="mt-4 inline-flex rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50"
+                className="mt-4 inline-flex rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Cadastrar conta fixa
               </Link>

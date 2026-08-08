@@ -96,7 +96,7 @@ const GastosPrevistosPage = async ({
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">Em aberto no mês</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {formatCurrency(openTotal)}
@@ -105,13 +105,13 @@ const GastosPrevistosPage = async ({
                 {openItems.length} gasto(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+            <article className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/30">
               <p className="text-sm text-muted">Já pagos no mês</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-success">
                 {formatCurrency(paidTotal)}
               </p>
             </article>
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Total listado</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {formatCurrency(openTotal + paidTotal)}
@@ -131,7 +131,7 @@ const GastosPrevistosPage = async ({
                 </p>
               </div>
               <div
-                className="inline-flex rounded-xl border border-border bg-slate-50 p-1"
+                className="inline-flex rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                 role="group"
                 aria-label="Filtrar gastos previstos"
               >
@@ -161,7 +161,7 @@ const GastosPrevistosPage = async ({
             </div>
 
             {items.length === 0 ? (
-              <div className="mt-6 rounded-xl bg-slate-50 px-4 py-10 text-center">
+              <div className="mt-6 rounded-xl bg-slate-50 px-4 py-10 text-center dark:bg-slate-900/50">
                 <p className="font-medium">Nenhum gasto previsto neste filtro</p>
                 <p className="mt-1 text-sm text-muted">
                   Ex.: passagem no mês que vem — cadastre ao lado.
@@ -190,9 +190,9 @@ const GastosPrevistosPage = async ({
                 <CreatePlannedExpenseForm categories={categories} />
               </div>
             </div>
-            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/35 p-4">
-              <p className="text-sm font-semibold text-teal-950">Dica</p>
-              <p className="mt-1 text-xs leading-relaxed text-teal-900/80">
+            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/35 p-4 dark:border-teal-900/40 dark:bg-teal-950/30">
+              <p className="text-sm font-semibold text-teal-950 dark:text-teal-200">Dica</p>
+              <p className="mt-1 text-xs leading-relaxed text-teal-900/80 dark:text-teal-100/70">
                 O gasto também aparece na planilha anual e no detalhamento do
                 mês. Se quiser guardar dinheiro aos poucos, use também uma
                 caixinha.

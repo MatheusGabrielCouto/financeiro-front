@@ -29,8 +29,8 @@ const InternoPage = async () => {
 
     return (
       <div className="space-y-6">
-        <section className="rounded-2xl border border-amber-200/80 bg-amber-50/60 px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-800/80">
+        <section className="rounded-2xl border border-amber-200/80 bg-amber-50/60 px-5 py-4 dark:border-amber-900/40 dark:bg-amber-950/30">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-800/80 dark:text-amber-300/80">
             Área interna
           </p>
           <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-foreground">

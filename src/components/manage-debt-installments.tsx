@@ -292,7 +292,7 @@ export const ManageDebtInstallments = ({
                               type="button"
                               onClick={handleCancelEdit}
                               disabled={isEditLoading}
-                              className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 disabled:opacity-60"
+                              className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-900/50"
                               aria-label={`Cancelar edição da parcela ${installment.order}`}
                             >
                               Cancelar
@@ -309,7 +309,7 @@ export const ManageDebtInstallments = ({
                           <button
                             type="button"
                             onClick={() => handleStartEdit(installment)}
-                            className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+                            className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                             aria-label={`Editar parcela ${installment.order}`}
                           >
                             Editar
@@ -320,7 +320,7 @@ export const ManageDebtInstallments = ({
                               setDeleteError(null)
                               setDeleteTarget(installment)
                             }}
-                            className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100"
+                            className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-900/50"
                             aria-label={`Remover parcela ${installment.order}`}
                           >
                             Remover

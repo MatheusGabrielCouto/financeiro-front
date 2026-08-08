@@ -124,7 +124,7 @@ export const CreateCaixinhaForm = () => {
       </label>
 
       {error ? (
-        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger" role="alert">
+        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger dark:bg-red-950/40" role="alert">
           {error}
         </p>
       ) : null}
@@ -286,7 +286,7 @@ export const CaixinhaMoveForm = ({
                   type="button"
                   onClick={handleClose}
                   disabled={isLoading}
-                  className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60"
+                  className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60 dark:hover:bg-slate-800"
                   aria-label="Fechar"
                 >
                   <IconClose className="h-4 w-4" />
@@ -304,7 +304,7 @@ export const CaixinhaMoveForm = ({
                   />
                 </label>
 
-                <div className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-muted">
+                <div className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-muted dark:bg-slate-900/50">
                   {isDeposit ? (
                     <p>
                       Saldo livre disponível:{" "}
@@ -324,7 +324,7 @@ export const CaixinhaMoveForm = ({
 
                 {error ? (
                   <p
-                    className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger"
+                    className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger dark:bg-red-950/40"
                     role="alert"
                   >
                     {error}
@@ -336,7 +336,7 @@ export const CaixinhaMoveForm = ({
                     type="button"
                     onClick={handleClose}
                     disabled={isLoading}
-                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60"
+                    className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
                   >
                     Cancelar
                   </button>
@@ -363,7 +363,7 @@ export const CaixinhaMoveForm = ({
         className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
           isDeposit
             ? "border-transparent bg-accent text-white hover:bg-accent-hover"
-            : "border-border text-foreground hover:bg-slate-50"
+            : "border-border text-foreground hover:bg-slate-50 dark:hover:bg-slate-800"
         }`}
         aria-label={`${label} na caixinha ${caixinhaName}`}
         aria-haspopup="dialog"

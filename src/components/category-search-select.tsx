@@ -169,7 +169,7 @@ export const CategorySearchSelect = ({
                   role="option"
                   aria-selected={value === ""}
                   onClick={() => handleSelect("", emptyLabel)}
-                  className={`flex w-full items-center px-3 py-2.5 text-left text-sm transition hover:bg-slate-50 ${
+                  className={`flex w-full items-center px-3 py-2.5 text-left text-sm transition hover:bg-slate-50 dark:hover:bg-slate-800 ${
                     value === "" ? "bg-accent-soft font-medium text-accent" : ""
                   }`}
                 >
@@ -190,7 +190,7 @@ export const CategorySearchSelect = ({
                     role="option"
                     aria-selected={value === item.id}
                     onClick={() => handleSelect(item.id, item.title)}
-                    className={`flex w-full items-center px-3 py-2.5 text-left text-sm transition hover:bg-slate-50 ${
+                    className={`flex w-full items-center px-3 py-2.5 text-left text-sm transition hover:bg-slate-50 dark:hover:bg-slate-800 ${
                       value === item.id
                         ? "bg-accent-soft font-medium text-accent"
                         : ""
@@ -235,7 +235,7 @@ export const CategorySearchSelect = ({
             <button
               type="button"
               onClick={handleClear}
-              className="rounded-md px-2 py-1 text-xs font-medium text-muted transition hover:bg-slate-100 hover:text-foreground"
+              className="rounded-md px-2 py-1 text-xs font-medium text-muted transition hover:bg-slate-100 hover:text-foreground dark:hover:bg-slate-800"
               aria-label="Limpar categoria"
             >
               Limpar

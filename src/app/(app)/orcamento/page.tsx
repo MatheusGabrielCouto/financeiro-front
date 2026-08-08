@@ -106,7 +106,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4">
+            <article className="rounded-2xl border border-border/80 bg-slate-50/80 p-4 dark:bg-slate-900/50">
               <p className="text-sm text-muted">Planejado</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold">
                 {formatCurrency(totalLimit)}
@@ -115,7 +115,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
                 {budgets.length} categoria(s)
               </p>
             </article>
-            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4">
+            <article className="rounded-2xl border border-amber-200/70 bg-amber-50/40 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
               <p className="text-sm text-muted">Já gasto</p>
               <p className="mt-2 font-[family-name:var(--font-display)] text-2xl font-semibold text-warning">
                 {formatCurrency(totalSpent)}
@@ -125,8 +125,8 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
             <article
               className={`rounded-2xl border p-4 ${
                 overallOver
-                  ? "border-red-200/70 bg-red-50/40"
-                  : "border-emerald-200/70 bg-emerald-50/40"
+                  ? "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/30"
+                  : "border-emerald-200/70 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/30"
               }`}
             >
               <p className="text-sm text-muted">
@@ -148,8 +148,8 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
             <article
               className={`rounded-2xl border p-4 ${
                 overCount > 0
-                  ? "border-red-200/70 bg-red-50/40"
-                  : "border-teal-200/70 bg-teal-50/40"
+                  ? "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/30"
+                  : "border-teal-200/70 bg-teal-50/40 dark:border-teal-900/40 dark:bg-teal-950/30"
               }`}
             >
               <p className="text-sm text-muted">Atenção</p>
@@ -175,7 +175,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
               <span>Uso geral do orçamento</span>
               <span>{overallProgress}%</span>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div
                 className={`h-full rounded-full ${
                   overallOver ? "bg-danger" : "bg-accent"
@@ -197,7 +197,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
               </div>
 
               <div
-                className="inline-flex flex-wrap rounded-xl border border-border bg-slate-50 p-1"
+                className="inline-flex flex-wrap rounded-xl border border-border bg-slate-50 p-1 dark:bg-slate-900/50"
                 role="group"
                 aria-label="Filtrar orçamentos"
               >
@@ -296,7 +296,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
                       </div>
 
                       <div className="mt-4">
-                        <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                           <div
                             className={`h-full rounded-full ${meta.bar}`}
                             style={{
@@ -315,7 +315,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
           <aside className="space-y-4">
             <UpsertBudgetForm categories={categories} month={month} year={year} />
 
-            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5">
+            <div className="rounded-2xl border border-teal-200/70 bg-teal-50/40 p-5 dark:border-teal-900/40 dark:bg-teal-950/30">
               <p className="text-sm font-semibold text-accent">Como usar</p>
               <ul className="mt-2 space-y-1.5 text-sm text-muted">
                 <li>Escolha uma categoria e defina o teto do mês.</li>

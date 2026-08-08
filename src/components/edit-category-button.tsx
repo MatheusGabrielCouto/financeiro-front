@@ -57,7 +57,7 @@ export const EditCategoryButton = ({ category }: EditCategoryButtonProps) => {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50"
+        className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
         aria-label={`Editar categoria ${category.title}`}
       >
         Editar

@@ -29,9 +29,9 @@ const statusLabel = (status: PlannedExpense["status"]) => {
 }
 
 const statusClass = (status: PlannedExpense["status"]) => {
-  if (status === "PAID") return "bg-emerald-50 text-success"
-  if (status === "CANCELLED") return "bg-slate-100 text-muted"
-  return "bg-amber-50 text-warning"
+  if (status === "PAID") return "bg-emerald-50 text-success dark:bg-emerald-950/40"
+  if (status === "CANCELLED") return "bg-slate-100 text-muted dark:bg-slate-800"
+  return "bg-amber-50 text-warning dark:bg-amber-950/40"
 }
 
 const toInputDate = (value: string) => {
@@ -157,7 +157,7 @@ const EditPlannedExpenseModal = ({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60"
+            className="rounded-lg border border-border p-2 text-muted transition hover:bg-slate-50 hover:text-foreground disabled:opacity-60 dark:hover:bg-slate-800"
             aria-label="Fechar"
           >
             <IconClose className="h-4 w-4" />
@@ -234,7 +234,7 @@ const EditPlannedExpenseModal = ({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60"
+              className="rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
             >
               Cancelar
             </button>
@@ -325,7 +325,7 @@ export const PlannedExpenseRow = ({ item, categories }: PlannedExpenseRowProps) 
                 type="button"
                 onClick={handleToggleMenu}
                 onKeyDown={handleMenuKeyDown}
-                className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:hover:bg-slate-800"
                 aria-label={`Mais ações para ${item.title}`}
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
@@ -345,7 +345,7 @@ export const PlannedExpenseRow = ({ item, categories }: PlannedExpenseRowProps) 
                         type="button"
                         role="menuitem"
                         onClick={handleStartEdit}
-                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-foreground transition hover:bg-slate-50"
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-foreground transition hover:bg-slate-50 dark:hover:bg-slate-800"
                         aria-label={`Editar gasto previsto ${item.title}`}
                       >
                         <IconEdit className="h-4 w-4 shrink-0" />

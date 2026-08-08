@@ -335,7 +335,7 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
                         cell.isSelected
                           ? "border-accent/60 bg-teal-50/70 shadow-[0_0_0_1px_rgba(15,118,110,0.12)] dark:border-teal-500/40 dark:bg-teal-950/35"
                           : cell.isToday
-                            ? "border-amber-300/70 bg-amber-50/50 hover:border-amber-300 hover:bg-amber-50/80 dark:border-amber-700/50 dark:bg-amber-950/25"
+                            ? "border-amber-300/70 bg-amber-50/50 hover:border-amber-300 hover:bg-amber-50/80 dark:border-amber-700/50 dark:bg-amber-950/25 dark:hover:border-amber-700 dark:hover:bg-amber-950/40"
                             : cell.isWeekend
                               ? "border-transparent bg-slate-50/70 hover:border-border hover:bg-slate-50 dark:bg-slate-900/40 dark:hover:bg-slate-900/70"
                               : "border-transparent bg-background/70 hover:border-border hover:bg-slate-50 dark:hover:bg-slate-900/50"

@@ -74,7 +74,7 @@ export const ProfileMenu = ({ user }: ProfileMenuProps) => {
         type="button"
         onClick={handleToggle}
         onKeyDown={handleKeyDownToggle}
-        className="flex max-w-[40vw] items-center gap-2.5 rounded-2xl border border-teal-900/15 bg-teal-700/[0.06] px-1.5 py-1.5 text-left shadow-sm transition hover:border-teal-700/30 hover:bg-teal-700/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:max-w-none sm:pr-2.5"
+        className="flex max-w-[40vw] items-center gap-2.5 rounded-2xl border border-teal-900/15 bg-teal-700/[0.06] px-1.5 py-1.5 text-left shadow-sm transition hover:border-teal-700/30 hover:bg-teal-700/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:max-w-none sm:pr-2.5 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10"
         aria-label="Abrir menu do perfil"
         aria-expanded={open}
         aria-haspopup="menu"
@@ -114,7 +114,7 @@ export const ProfileMenu = ({ user }: ProfileMenuProps) => {
               href="/perfil"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-foreground transition hover:bg-slate-50"
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-foreground transition hover:bg-slate-50 dark:hover:bg-slate-800"
               aria-label="Abrir perfil"
               tabIndex={0}
             >
@@ -125,7 +125,7 @@ export const ProfileMenu = ({ user }: ProfileMenuProps) => {
               href="/interno"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-slate-500 transition hover:bg-slate-50"
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-slate-500 transition hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800"
               aria-label="Abrir ferramentas internas"
               tabIndex={0}
             >
@@ -137,7 +137,7 @@ export const ProfileMenu = ({ user }: ProfileMenuProps) => {
               role="menuitem"
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-danger transition hover:bg-red-50 disabled:opacity-60"
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-danger transition hover:bg-red-50 disabled:opacity-60 dark:hover:bg-red-950/40"
               aria-label="Sair da conta"
             >
               <IconLogout className="h-4 w-4" />

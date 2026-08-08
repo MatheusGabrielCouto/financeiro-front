@@ -68,7 +68,7 @@ export const DeleteDebtButton = ({
         type="button"
         onClick={() => setIsConfirmOpen(true)}
         disabled={isLoading}
-        className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-danger transition hover:bg-red-50 disabled:opacity-60"
+        className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-danger transition hover:bg-red-50 disabled:opacity-60 dark:hover:bg-red-950/40"
         aria-label={`Excluir dívida ${debtTitle}`}
       >
         {isLoading ? "Excluindo..." : "Excluir"}

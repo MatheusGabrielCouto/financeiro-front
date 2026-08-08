@@ -69,7 +69,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent text-sm font-bold text-white shadow-lg shadow-teal-900/15">
               F
             </span>
-            <span className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight">
+            <span className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight text-slate-900">
               Financeiro
             </span>
           </div>

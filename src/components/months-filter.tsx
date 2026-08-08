@@ -27,7 +27,7 @@ export const MonthsFilter = ({ months }: MonthsFilterProps) => {
 
   return (
     <div
-      className="inline-flex rounded-xl border border-border bg-slate-50 p-1 shadow-sm shadow-slate-200/40"
+      className="inline-flex rounded-xl border border-border bg-slate-50 p-1 shadow-sm shadow-slate-200/40 dark:bg-slate-900/50"
       role="group"
       aria-label="Período do relatório"
     >

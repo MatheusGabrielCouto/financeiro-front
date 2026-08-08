@@ -106,7 +106,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
       </label>
 
       <div className="rounded-xl border border-border bg-background px-3.5 py-3">
-        <p className="text-sm font-medium text-slate-800">Saldo disponível</p>
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-100">Saldo disponível</p>
         <p className="mt-1 text-lg font-semibold text-foreground">
           {formatCurrency(user.amount)}
         </p>
@@ -117,7 +117,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
 
       {error ? (
         <p
-          className="rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-sm text-danger"
+          className="rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-sm text-danger dark:border-red-900/40 dark:bg-red-950/40"
           role="alert"
         >
           {error}
@@ -126,7 +126,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
 
       {success ? (
         <p
-          className="rounded-xl border border-teal-100 bg-teal-50 px-3.5 py-2.5 text-sm text-accent"
+          className="rounded-xl border border-teal-100 bg-teal-50 px-3.5 py-2.5 text-sm text-accent dark:border-teal-900/40 dark:bg-teal-950/40"
           role="status"
         >
           {success}
