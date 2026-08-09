@@ -281,11 +281,44 @@ export const IconJournal = ({ className }: IconProps) => (
   </svg>
 )
 
+export const IconStudy = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3Zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9ZM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
 export const IconTarget = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path
       d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8V2Zm0 4a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V6Zm0 4a2 2 0 1 0 2 2h-2v-2Zm7-6-2 2 2 2 3-1V5l-3 1Z"
       fill="currentColor"
     />
+  </svg>
+)
+
+export const IconNotebook = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4Zm0 2h1v14H4V5Zm3 0h11v14H7V5Zm2 3h7v2H9V8Zm0 4h7v2H9v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconHighlighter = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12.9 2.1a1 1 0 0 1 1.41 0l3.59 3.59a1 1 0 0 1 0 1.41l-7.5 7.5a1 1 0 0 1-.46.26l-4 1a1 1 0 0 1-1.21-1.21l1-4a1 1 0 0 1 .26-.46l7.5-7.5Zm-.71 2.12L6 10.41 5.34 13l2.59-.66 6.19-6.19-1.93-1.93ZM3 20h18v2H3v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconBookmarkFlag = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M6 2a2 2 0 0 0-2 2v18l8-5.5 8 5.5V4a2 2 0 0 0-2-2H6Z" fill="currentColor" />
   </svg>
 )

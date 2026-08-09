@@ -271,6 +271,74 @@ export type UpsertJournalEntryBody = {
   mood?: number | null
 }
 
+export type Notebook = {
+  id: string
+  title: string
+  emoji: string
+  color: string
+  sortOrder: number
+  pageCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type NotebookPageSummary = {
+  id: string
+  title: string
+  sortOrder: number
+  updatedAt: string
+}
+
+export type NotebookWithPages = {
+  id: string
+  title: string
+  emoji: string
+  color: string
+  pages: NotebookPageSummary[]
+}
+
+export type NotebookMark = {
+  id: string
+  pageId: string
+  snippet: string
+  createdAt: string
+}
+
+export type NotebookPage = {
+  id: string
+  title: string
+  content: string
+  sortOrder: number
+  updatedAt: string
+  marks: NotebookMark[]
+}
+
+export type CreateNotebookBody = {
+  title: string
+  emoji?: string
+  color?: string
+}
+
+export type UpdateNotebookBody = {
+  title?: string
+  emoji?: string
+  color?: string
+}
+
+export type CreateNotebookPageBody = {
+  title?: string
+}
+
+export type UpdateNotebookPageBody = {
+  title?: string
+  content?: string
+}
+
+export type CreateNotebookMarkBody = {
+  markId: string
+  snippet: string
+}
+
 export type PersonalGoal = {
   id: string
   title: string
@@ -304,6 +372,46 @@ export type UpdatePersonalGoalBody = {
 
 export type AddPersonalGoalEntryBody = {
   amount: number
+  date?: string
+}
+
+export type StudySubject = {
+  id: string
+  title: string
+  color: string
+  weeklyGoalHours: number
+  weekMinutes: number
+  weekProgressPct: number
+  archivedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type StudySession = {
+  id: string
+  durationMinutes: number
+  skill: string
+  topic: string
+  date: string
+  createdAt: string
+}
+
+export type CreateStudySubjectBody = {
+  title: string
+  color?: string
+  weeklyGoalHours: number
+}
+
+export type UpdateStudySubjectBody = {
+  title?: string
+  color?: string
+  weeklyGoalHours?: number
+}
+
+export type LogStudySessionBody = {
+  durationMinutes: number
+  skill?: string
+  topic?: string
   date?: string
 }
 

@@ -42,6 +42,22 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
+  if (pathname.startsWith("/estudos")) {
+    return {
+      title: "Estudos",
+      section: "Vida pessoal",
+      crumbs: [{ label: "Estudos" }],
+    }
+  }
+
+  if (pathname.startsWith("/cadernos")) {
+    return {
+      title: "Cadernos",
+      section: "Vida pessoal",
+      crumbs: [{ label: "Cadernos" }],
+    }
+  }
+
   if (pathname.startsWith("/dividas/nova")) {
     return {
       title: "Nova dívida",

@@ -47,6 +47,11 @@ import type {
   CreatePersonalGoalBody,
   UpdatePersonalGoalBody,
   AddPersonalGoalEntryBody,
+  StudySubject,
+  StudySession,
+  CreateStudySubjectBody,
+  UpdateStudySubjectBody,
+  LogStudySessionBody,
   CreatePlannedDebtLineBody,
   CreatePlannedExpenseBody,
   UpdatePlannedDebtLineBody,
@@ -60,6 +65,16 @@ import type {
   CreateInstallmentBody,
   UpdateInstallmentBody,
   Installment,
+  Notebook,
+  NotebookWithPages,
+  NotebookPage,
+  NotebookPageSummary,
+  NotebookMark,
+  CreateNotebookBody,
+  UpdateNotebookBody,
+  CreateNotebookPageBody,
+  UpdateNotebookPageBody,
+  CreateNotebookMarkBody,
 } from "@/lib/types"
 
 export const getAmount = () => apiFetch<AmountResponse>("/amount")
@@ -423,6 +438,62 @@ export const upsertJournalEntry = (date: string, body: UpsertJournalEntryBody) =
 export const deleteJournalEntry = (date: string) =>
   apiFetch<{ success: true }>(`/journal/${date}`, { method: "DELETE" })
 
+export const getNotebooks = () => apiFetch<Notebook[]>("/notebook")
+
+export const createNotebook = (body: CreateNotebookBody) =>
+  apiFetch<Notebook>("/notebook", { method: "POST", body })
+
+export const updateNotebook = (id: string, body: UpdateNotebookBody) =>
+  apiFetch<Notebook>(`/notebook/${id}`, { method: "PATCH", body })
+
+export const deleteNotebook = (id: string) =>
+  apiFetch<{ success: true }>(`/notebook/${id}`, { method: "DELETE" })
+
+export const getNotebook = (id: string) =>
+  apiFetch<NotebookWithPages>(`/notebook/${id}`)
+
+export const createNotebookPage = (notebookId: string, body: CreateNotebookPageBody) =>
+  apiFetch<NotebookPageSummary>(`/notebook/${notebookId}/page`, { method: "POST", body })
+
+export const reorderNotebookPages = (notebookId: string, pageIds: string[]) =>
+  apiFetch<{ success: true }>(`/notebook/${notebookId}/pages/reorder`, {
+    method: "PATCH",
+    body: { pageIds },
+  })
+
+export const getNotebookPage = (notebookId: string, pageId: string) =>
+  apiFetch<NotebookPage>(`/notebook/${notebookId}/page/${pageId}`)
+
+export const updateNotebookPage = (
+  notebookId: string,
+  pageId: string,
+  body: UpdateNotebookPageBody
+) =>
+  apiFetch<NotebookPage>(`/notebook/${notebookId}/page/${pageId}`, {
+    method: "PATCH",
+    body,
+  })
+
+export const deleteNotebookPage = (notebookId: string, pageId: string) =>
+  apiFetch<{ success: true }>(`/notebook/${notebookId}/page/${pageId}`, {
+    method: "DELETE",
+  })
+
+export const createNotebookMark = (
+  notebookId: string,
+  pageId: string,
+  body: CreateNotebookMarkBody
+) =>
+  apiFetch<NotebookMark>(`/notebook/${notebookId}/page/${pageId}/mark`, {
+    method: "POST",
+    body,
+  })
+
+export const deleteNotebookMark = (notebookId: string, pageId: string, markId: string) =>
+  apiFetch<{ success: true }>(`/notebook/${notebookId}/page/${pageId}/mark/${markId}`, {
+    method: "DELETE",
+  })
+
 export const getPersonalGoals = (params?: { includeArchived?: boolean }) => {
   const query = params?.includeArchived ? "?includeArchived=true" : ""
   return apiFetch<PersonalGoal[]>(`/personal-goal${query}`)
@@ -448,6 +519,32 @@ export const deletePersonalGoal = (id: string) =>
 
 export const addPersonalGoalEntry = (id: string, body: AddPersonalGoalEntryBody) =>
   apiFetch<PersonalGoal>(`/personal-goal/${id}/entry`, { method: "POST", body })
+
+export const getStudySubjects = (params?: { includeArchived?: boolean }) => {
+  const query = params?.includeArchived ? "?includeArchived=true" : ""
+  return apiFetch<StudySubject[]>(`/study-subject${query}`)
+}
+
+export const getStudySessions = (id: string) =>
+  apiFetch<StudySession[]>(`/study-subject/${id}/sessions`)
+
+export const createStudySubject = (body: CreateStudySubjectBody) =>
+  apiFetch<StudySubject>("/study-subject", { method: "POST", body })
+
+export const updateStudySubject = (id: string, body: UpdateStudySubjectBody) =>
+  apiFetch<StudySubject>(`/study-subject/${id}`, { method: "PATCH", body })
+
+export const archiveStudySubject = (id: string) =>
+  apiFetch<StudySubject>(`/study-subject/${id}/archive`, { method: "POST" })
+
+export const restoreStudySubject = (id: string) =>
+  apiFetch<StudySubject>(`/study-subject/${id}/restore`, { method: "POST" })
+
+export const deleteStudySubject = (id: string) =>
+  apiFetch<{ success: true }>(`/study-subject/${id}`, { method: "DELETE" })
+
+export const logStudySession = (id: string, body: LogStudySessionBody) =>
+  apiFetch<StudySubject>(`/study-subject/${id}/session`, { method: "POST", body })
 
 export const getCreditCards = () => apiFetch<CreditCard[]>("/credit-card")
 

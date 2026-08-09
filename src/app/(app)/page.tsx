@@ -44,6 +44,7 @@ import {
   getFuturePurchaseProjections,
   getPlannedDebtWorkbook,
   getRecurringIncomes,
+  getStudySubjects,
 } from "@/lib/finance-api"
 import { buildCreditCardInvoiceAlerts } from "@/lib/credit-card-alerts"
 import { getPriorityNotificationCount } from "@/lib/notification-count"
@@ -87,6 +88,7 @@ const loadDashboardData = async () => {
     attentionCount,
     budgets,
     creditCards,
+    studySubjects,
   ] = await Promise.all([
     getAmount(),
     getDetails(month, year),
@@ -99,6 +101,7 @@ const loadDashboardData = async () => {
     getPriorityNotificationCount(),
     getBudgets(month, year).catch(() => []),
     getCreditCards().catch(() => []),
+    getStudySubjects().catch(() => []),
   ])
 
   const creditCardSummaries = await Promise.all(
@@ -292,6 +295,23 @@ const loadDashboardData = async () => {
     })
     .slice(0, 3)
 
+  const activeStudySubjects = studySubjects.filter((subject) => !subject.archivedAt)
+  const studyWeekMinutes = activeStudySubjects.reduce(
+    (sum, subject) => sum + subject.weekMinutes,
+    0
+  )
+  const studyGoalMinutes = activeStudySubjects.reduce(
+    (sum, subject) => sum + subject.weeklyGoalHours * 60,
+    0
+  )
+  const studyProgress =
+    studyGoalMinutes > 0
+      ? Math.min(100, Math.round((studyWeekMinutes / studyGoalMinutes) * 100))
+      : 0
+  const topStudySubjects = [...activeStudySubjects]
+    .sort((a, b) => b.weekProgressPct - a.weekProgressPct)
+    .slice(0, 3)
+
   const plannedLines = plannedWorkbook?.lines ?? []
   const plannedPreview = plannedLines.slice(0, 4)
   const plannedMonthTotal =
@@ -336,6 +356,10 @@ const loadDashboardData = async () => {
     totalGoals,
     goalsProgress,
     topGoals,
+    studyWeekMinutes,
+    studyGoalMinutes,
+    studyProgress,
+    topStudySubjects,
     plannedLines,
     plannedPreview,
     plannedMonthTotal,
@@ -392,6 +416,10 @@ const DashboardPage = async () => {
     totalGoals,
     goalsProgress,
     topGoals,
+    studyWeekMinutes,
+    studyGoalMinutes,
+    studyProgress,
+    topStudySubjects,
     plannedLines,
     plannedPreview,
     plannedMonthTotal,
@@ -680,7 +708,7 @@ const DashboardPage = async () => {
         ) : null}
 
         <section
-          className="dashboard-enter grid gap-4 lg:grid-cols-2 xl:grid-cols-3"
+          className="dashboard-enter grid gap-4 lg:grid-cols-2 xl:grid-cols-4"
           style={{ animationDelay: "180ms" }}
         >
           <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
@@ -824,6 +852,72 @@ const DashboardPage = async () => {
             >
               Abrir planilha
             </Link>
+          </article>
+
+          <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold">Estudos</h2>
+                <p className="mt-1 text-sm text-muted">Horas estudadas na semana</p>
+              </div>
+              <Link
+                href="/estudos"
+                className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
+              >
+                Ver todas
+              </Link>
+            </div>
+
+            {topStudySubjects.length === 0 ? (
+              <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
+                <p className="text-sm font-medium">Nenhuma matéria ainda</p>
+                <Link
+                  href="/estudos"
+                  className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
+                >
+                  Criar matéria
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted">
+                      {(studyWeekMinutes / 60).toFixed(1)}h de{" "}
+                      {(studyGoalMinutes / 60).toFixed(1)}h
+                    </span>
+                    <span className="font-semibold text-accent">{studyProgress}%</span>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                    <div
+                      className="h-full rounded-full bg-accent"
+                      style={{ width: `${studyProgress}%` }}
+                    />
+                  </div>
+                </div>
+                <ul className="mt-4 space-y-2">
+                  {topStudySubjects.map((subject) => (
+                    <li
+                      key={subject.id}
+                      className="rounded-xl border border-border/70 bg-background/60 px-3 py-2.5"
+                    >
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <span className="truncate font-medium">{subject.title}</span>
+                        <span className="shrink-0 text-xs text-muted">
+                          {subject.weekProgressPct}%
+                        </span>
+                      </div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                        <div
+                          className="h-full rounded-full bg-teal-400"
+                          style={{ width: `${subject.weekProgressPct}%` }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </article>
         </section>
 

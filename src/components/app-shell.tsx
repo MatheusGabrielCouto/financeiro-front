@@ -17,6 +17,7 @@ import {
   IconInsights,
   IconInstallments,
   IconJournal,
+  IconNotebook,
   IconOverview,
   IconPiggy,
   IconRecurring,
@@ -24,6 +25,7 @@ import {
   IconRoutine,
   IconSidebar,
   IconSimulate,
+  IconStudy,
   IconTarget,
   IconTransactions,
 } from "@/components/icons"
@@ -72,6 +74,8 @@ const navSections: NavSection[] = [
       { href: "/rotinas", label: "Rotinas", icon: IconRoutine },
       { href: "/diario", label: "Diário", icon: IconJournal },
       { href: "/metas-pessoais", label: "Metas", icon: IconTarget },
+      { href: "/estudos", label: "Estudos", icon: IconStudy },
+      { href: "/cadernos", label: "Cadernos", icon: IconNotebook },
     ],
   },
   {
@@ -108,6 +112,9 @@ const defaultOpenGroups = Object.fromEntries(
 
 const isItemActive = (pathname: string, href: string) =>
   href === "/" ? pathname === "/" : pathname.startsWith(href)
+
+const isImmersiveRoute = (pathname: string) =>
+  pathname.startsWith("/planejamento") || pathname.startsWith("/cadernos")
 
 export const AppShell = ({
   user,
@@ -377,7 +384,7 @@ export const AppShell = ({
   return (
     <div
       className={`transition-[padding] duration-300 ${
-        pathname.startsWith("/planejamento")
+        isImmersiveRoute(pathname)
           ? "h-dvh overflow-hidden"
           : "min-h-screen"
       } ${sidebarCollapsed ? "lg:pl-[4.75rem]" : "lg:pl-64"}`}
@@ -412,7 +419,7 @@ export const AppShell = ({
 
       <div
         className={`flex min-w-0 flex-1 flex-col ${
-          pathname.startsWith("/planejamento")
+          isImmersiveRoute(pathname)
             ? "h-dvh overflow-hidden"
             : "min-h-screen"
         }`}
@@ -430,7 +437,7 @@ export const AppShell = ({
 
         <main
           className={`mx-auto w-full min-w-0 flex-1 ${
-            pathname.startsWith("/planejamento")
+            isImmersiveRoute(pathname)
               ? "flex min-h-0 max-w-none flex-col overflow-hidden px-3 py-3 md:px-4 md:py-4"
               : "max-w-6xl px-4 py-6 md:px-6 md:py-8"
           }`}

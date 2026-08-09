@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { JournalFormatToolbar } from "@/components/journal-format-toolbar"
 import { ProxyActionButton } from "@/components/proxy-action-button"
+import { RichTextEditor } from "@/components/rich-text-editor"
 import { MOOD_OPTIONS } from "@/lib/journal-mood"
 
 type JournalEditorProps = {
@@ -33,10 +34,6 @@ export const JournalEditor = ({
     setMood(initialMood)
     setError(null)
   }, [date, initialMood])
-
-  const handleFocus = () => {
-    document.execCommand("defaultParagraphSeparator", false, "p")
-  }
 
   const handleSubmit = async () => {
     setError(null)
@@ -87,18 +84,13 @@ export const JournalEditor = ({
       <div className="space-y-1.5">
         <span className="text-sm font-medium">Como foi o dia?</span>
         <JournalFormatToolbar editorRef={editorRef} />
-        <div
+        <RichTextEditor
           key={date}
-          ref={editorRef}
-          contentEditable
-          suppressContentEditableWarning
-          onFocus={handleFocus}
-          data-placeholder="Escreva livremente..."
-          dangerouslySetInnerHTML={{ __html: initialContent }}
-          className="prose-journal min-h-[176px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
-          aria-label="Conteúdo da entrada"
-          role="textbox"
-          aria-multiline="true"
+          editorRef={editorRef}
+          content={initialContent}
+          placeholder="Escreva livremente..."
+          className="min-h-[176px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm ring-accent focus:ring-2"
+          ariaLabel="Conteúdo da entrada"
         />
       </div>
 
