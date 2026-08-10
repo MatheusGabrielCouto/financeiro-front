@@ -6,6 +6,7 @@ import {
   IconDebts,
   IconInstallments,
   IconTransactions,
+  IconNotebook,
   IconPiggy,
   IconInsights,
   IconReports,
@@ -42,11 +43,13 @@ import {
   getDetails,
   getEmergencyReserve,
   getFuturePurchaseProjections,
+  getNotebooks,
   getPlannedDebtWorkbook,
   getRecurringIncomes,
   getStudySubjects,
 } from "@/lib/finance-api"
 import { buildCreditCardInvoiceAlerts } from "@/lib/credit-card-alerts"
+import { getNotebookColorTokens } from "@/lib/notebook-colors"
 import { getPriorityNotificationCount } from "@/lib/notification-count"
 
 type UpcomingItem = {
@@ -89,6 +92,7 @@ const loadDashboardData = async () => {
     budgets,
     creditCards,
     studySubjects,
+    notebooks,
   ] = await Promise.all([
     getAmount(),
     getDetails(month, year),
@@ -102,6 +106,7 @@ const loadDashboardData = async () => {
     getBudgets(month, year).catch(() => []),
     getCreditCards().catch(() => []),
     getStudySubjects().catch(() => []),
+    getNotebooks().catch(() => []),
   ])
 
   const creditCardSummaries = await Promise.all(
@@ -312,6 +317,16 @@ const loadDashboardData = async () => {
     .sort((a, b) => b.weekProgressPct - a.weekProgressPct)
     .slice(0, 3)
 
+  const recentNotebooks = [...notebooks]
+    .sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    )
+    .slice(0, 4)
+  const notebookPageTotal = notebooks.reduce(
+    (sum, notebook) => sum + notebook.pageCount,
+    0
+  )
+
   const plannedLines = plannedWorkbook?.lines ?? []
   const plannedPreview = plannedLines.slice(0, 4)
   const plannedMonthTotal =
@@ -364,6 +379,9 @@ const loadDashboardData = async () => {
     plannedPreview,
     plannedMonthTotal,
     plannedSurplus,
+    notebooks,
+    recentNotebooks,
+    notebookPageTotal,
   }
 }
 
@@ -424,6 +442,8 @@ const DashboardPage = async () => {
     plannedPreview,
     plannedMonthTotal,
     plannedSurplus,
+    recentNotebooks,
+    notebookPageTotal,
   } = data
 
   return (
@@ -706,6 +726,74 @@ const DashboardPage = async () => {
             </div>
           </section>
         ) : null}
+
+        <section
+          className="dashboard-enter rounded-3xl border border-border/70 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6"
+          style={{ animationDelay: "160ms" }}
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
+                Cadernos
+              </h2>
+              <p className="mt-1 text-sm text-muted">
+                {recentNotebooks.length > 0
+                  ? `${notebookPageTotal} página(s) em ${recentNotebooks.length === 1 ? "1 caderno" : `${recentNotebooks.length > 4 ? "4+" : recentNotebooks.length} cadernos`}`
+                  : "Suas anotações e resumos"}
+              </p>
+            </div>
+            <Link
+              href="/cadernos"
+              className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
+            >
+              Ver cadernos
+            </Link>
+          </div>
+
+          {recentNotebooks.length === 0 ? (
+            <div className="mt-5 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
+              <p className="text-sm font-medium">Nenhum caderno ainda</p>
+              <Link
+                href="/cadernos"
+                className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
+              >
+                Criar caderno
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {recentNotebooks.map((notebook) => {
+                const tokens = getNotebookColorTokens(notebook.color)
+                return (
+                  <Link
+                    key={notebook.id}
+                    href={`/cadernos?notebook=${notebook.id}`}
+                    aria-label={`Abrir caderno ${notebook.title}`}
+                    className="flex items-center gap-3 rounded-xl border border-border/80 bg-background/70 px-4 py-3 transition hover:border-accent/30 hover:bg-accent-soft/40"
+                  >
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg ${tokens.bg} ${tokens.text}`}
+                      aria-hidden="true"
+                    >
+                      {notebook.emoji}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-semibold">
+                        {notebook.title}
+                      </span>
+                      <span className="block text-xs text-muted">
+                        {notebook.pageCount === 1
+                          ? "1 página"
+                          : `${notebook.pageCount} páginas`}{" "}
+                        · {formatDate(notebook.updatedAt)}
+                      </span>
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </section>
 
         <section
           className="dashboard-enter grid gap-4 lg:grid-cols-2 xl:grid-cols-4"
@@ -1125,6 +1213,12 @@ const DashboardPage = async () => {
                     label: "Extrato",
                     hint: "Lançamentos do mês",
                     icon: IconTransactions,
+                  },
+                  {
+                    href: "/cadernos",
+                    label: "Cadernos",
+                    hint: "Anotações e resumos",
+                    icon: IconNotebook,
                   },
                   {
                     href: "/notificacoes",
