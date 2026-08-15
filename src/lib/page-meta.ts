@@ -58,6 +58,14 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
+  if (pathname.startsWith("/remedios")) {
+    return {
+      title: "Remédios",
+      section: "Vida pessoal",
+      crumbs: [{ label: "Remédios" }],
+    }
+  }
+
   if (pathname.startsWith("/dividas/nova")) {
     return {
       title: "Nova dívida",

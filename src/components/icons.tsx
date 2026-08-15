@@ -308,6 +308,20 @@ export const IconNotebook = ({ className }: IconProps) => (
   </svg>
 )
 
+export const IconPill = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <g transform="rotate(45 12 12)">
+      <path d="M7.5 8.5H12V15.5H7.5A3.5 3.5 0 0 1 7.5 8.5Z" fill="currentColor" />
+      <path
+        d="M12 8.5H16.5A3.5 3.5 0 0 1 16.5 15.5H12V8.5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </g>
+  </svg>
+)
+
 export const IconHighlighter = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path

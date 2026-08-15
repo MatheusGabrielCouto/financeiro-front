@@ -75,6 +75,10 @@ import type {
   CreateNotebookPageBody,
   UpdateNotebookPageBody,
   CreateNotebookMarkBody,
+  Medicine,
+  CreateMedicineBody,
+  UpdateMedicineBody,
+  AdjustMedicineQuantityBody,
 } from "@/lib/types"
 
 export const getAmount = () => apiFetch<AmountResponse>("/amount")
@@ -545,6 +549,20 @@ export const deleteStudySubject = (id: string) =>
 
 export const logStudySession = (id: string, body: LogStudySessionBody) =>
   apiFetch<StudySubject>(`/study-subject/${id}/session`, { method: "POST", body })
+
+export const getMedicines = () => apiFetch<Medicine[]>("/medicine")
+
+export const createMedicine = (body: CreateMedicineBody) =>
+  apiFetch<Medicine>("/medicine", { method: "POST", body })
+
+export const updateMedicine = (id: string, body: UpdateMedicineBody) =>
+  apiFetch<Medicine>(`/medicine/${id}`, { method: "PATCH", body })
+
+export const adjustMedicineQuantity = (id: string, body: AdjustMedicineQuantityBody) =>
+  apiFetch<Medicine>(`/medicine/${id}/adjust`, { method: "PATCH", body })
+
+export const deleteMedicine = (id: string) =>
+  apiFetch<{ success: true }>(`/medicine/${id}`, { method: "DELETE" })
 
 export const getCreditCards = () => apiFetch<CreditCard[]>("/credit-card")
 

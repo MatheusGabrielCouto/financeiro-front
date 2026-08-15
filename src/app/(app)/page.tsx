@@ -43,12 +43,19 @@ import {
   getDetails,
   getEmergencyReserve,
   getFuturePurchaseProjections,
+  getMedicines,
   getNotebooks,
   getPlannedDebtWorkbook,
   getRecurringIncomes,
   getStudySubjects,
 } from "@/lib/finance-api"
 import { buildCreditCardInvoiceAlerts } from "@/lib/credit-card-alerts"
+import {
+  compareMedicineUrgency,
+  formatExpiration,
+  medicineStatusClasses,
+  medicineStatusLabel,
+} from "@/lib/medicine-status"
 import { getNotebookColorTokens } from "@/lib/notebook-colors"
 import { getPriorityNotificationCount } from "@/lib/notification-count"
 
@@ -93,6 +100,7 @@ const loadDashboardData = async () => {
     creditCards,
     studySubjects,
     notebooks,
+    medicines,
   ] = await Promise.all([
     getAmount(),
     getDetails(month, year),
@@ -107,6 +115,7 @@ const loadDashboardData = async () => {
     getCreditCards().catch(() => []),
     getStudySubjects().catch(() => []),
     getNotebooks().catch(() => []),
+    getMedicines().catch(() => []),
   ])
 
   const creditCardSummaries = await Promise.all(
@@ -317,6 +326,17 @@ const loadDashboardData = async () => {
     .sort((a, b) => b.weekProgressPct - a.weekProgressPct)
     .slice(0, 3)
 
+  const expiredMedicinesCount = medicines.filter(
+    (item) => item.status === "expired"
+  ).length
+  const expiringSoonMedicinesCount = medicines.filter(
+    (item) => item.status === "expiring_soon"
+  ).length
+  const lowStockMedicinesCount = medicines.filter((item) => item.isLowStock).length
+  const attentionMedicines = [...medicines]
+    .sort(compareMedicineUrgency)
+    .slice(0, 3)
+
   const recentNotebooks = [...notebooks]
     .sort(
       (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -375,6 +395,11 @@ const loadDashboardData = async () => {
     studyGoalMinutes,
     studyProgress,
     topStudySubjects,
+    totalMedicines: medicines.length,
+    expiredMedicinesCount,
+    expiringSoonMedicinesCount,
+    lowStockMedicinesCount,
+    attentionMedicines,
     plannedLines,
     plannedPreview,
     plannedMonthTotal,
@@ -438,6 +463,11 @@ const DashboardPage = async () => {
     studyGoalMinutes,
     studyProgress,
     topStudySubjects,
+    totalMedicines,
+    expiredMedicinesCount,
+    expiringSoonMedicinesCount,
+    lowStockMedicinesCount,
+    attentionMedicines,
     plannedLines,
     plannedPreview,
     plannedMonthTotal,
@@ -1004,6 +1034,80 @@ const DashboardPage = async () => {
                     </li>
                   ))}
                 </ul>
+              </>
+            )}
+          </article>
+
+          <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold">Remédios</h2>
+                <p className="mt-1 text-sm text-muted">Estoque e validade</p>
+              </div>
+              <Link
+                href="/remedios"
+                className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
+              >
+                Ver todos
+              </Link>
+            </div>
+
+            {totalMedicines === 0 ? (
+              <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
+                <p className="text-sm font-medium">Nenhum remédio cadastrado</p>
+                <Link
+                  href="/remedios"
+                  className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
+                >
+                  Cadastrar remédio
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-xl bg-slate-50 px-2 py-2.5 dark:bg-slate-900/50">
+                    <p className="text-lg font-semibold">{totalMedicines}</p>
+                    <p className="text-xs text-muted">Cadastrados</p>
+                  </div>
+                  <div className="rounded-xl bg-rose-50 px-2 py-2.5 dark:bg-rose-950/30">
+                    <p className="text-lg font-semibold text-danger">
+                      {expiredMedicinesCount}
+                    </p>
+                    <p className="text-xs text-muted">Vencidos</p>
+                  </div>
+                  <div className="rounded-xl bg-amber-50 px-2 py-2.5 dark:bg-amber-950/30">
+                    <p className="text-lg font-semibold text-warning">
+                      {expiringSoonMedicinesCount}
+                    </p>
+                    <p className="text-xs text-muted">Vencendo</p>
+                  </div>
+                </div>
+                <ul className="mt-4 space-y-2">
+                  {attentionMedicines.map((medicine) => (
+                    <li
+                      key={medicine.id}
+                      className="rounded-xl border border-border/70 bg-background/60 px-3 py-2.5"
+                    >
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <span className="truncate font-medium">{medicine.name}</span>
+                        <span
+                          className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-medium ${medicineStatusClasses(medicine.status)}`}
+                        >
+                          {medicineStatusLabel(medicine.status)}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-muted">
+                        {medicine.quantity} {medicine.unit} · validade{" "}
+                        {formatExpiration(medicine.expirationMonth, medicine.expirationYear)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                {lowStockMedicinesCount > 0 ? (
+                  <p className="mt-3 text-xs text-muted">
+                    {lowStockMedicinesCount} com estoque baixo
+                  </p>
+                ) : null}
               </>
             )}
           </article>

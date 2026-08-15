@@ -20,6 +20,7 @@ import {
   IconNotebook,
   IconOverview,
   IconPiggy,
+  IconPill,
   IconRecurring,
   IconReports,
   IconRoutine,
@@ -76,6 +77,7 @@ const navSections: NavSection[] = [
       { href: "/metas-pessoais", label: "Metas", icon: IconTarget },
       { href: "/estudos", label: "Estudos", icon: IconStudy },
       { href: "/cadernos", label: "Cadernos", icon: IconNotebook },
+      { href: "/remedios", label: "Remédios", icon: IconPill },
     ],
   },
   {

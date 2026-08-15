@@ -375,6 +375,39 @@ export type AddPersonalGoalEntryBody = {
   date?: string
 }
 
+export type MedicineStatus = "expired" | "expiring_soon" | "ok"
+
+export type Medicine = {
+  id: string
+  name: string
+  quantity: number
+  unit: string
+  purpose: string[]
+  expirationMonth: number
+  expirationYear: number
+  notes: string
+  status: MedicineStatus
+  isLowStock: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type CreateMedicineBody = {
+  name: string
+  quantity: number
+  unit?: string
+  purpose?: string[]
+  expirationMonth: number
+  expirationYear: number
+  notes?: string
+}
+
+export type UpdateMedicineBody = Partial<CreateMedicineBody>
+
+export type AdjustMedicineQuantityBody = {
+  delta: number
+}
+
 export type StudySubject = {
   id: string
   title: string
