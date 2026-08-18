@@ -55,12 +55,15 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
         </div>
       </aside>
 
-      <div className="relative flex min-h-screen flex-col justify-center bg-[linear-gradient(165deg,#f0f7f5_0%,#f8fafc_45%,#eef6f4_100%)] px-4 py-10 sm:px-8">
+      <div
+        className="relative flex min-h-screen flex-col justify-center px-4 py-10 sm:px-8"
+        style={{ background: "var(--auth-panel-gradient)" }}
+      >
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(15,118,110,0.12) 1px, transparent 0)",
+              "radial-gradient(circle at 1px 1px, var(--auth-dot-color) 1px, transparent 0)",
             backgroundSize: "22px 22px",
           }}
         />
@@ -69,7 +72,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent text-sm font-bold text-white shadow-lg shadow-teal-900/15">
               F
             </span>
-            <span className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight text-slate-900">
+            <span className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
               Financeiro
             </span>
           </div>

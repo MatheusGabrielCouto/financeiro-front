@@ -19,6 +19,13 @@
   --sidebar-active: #f0fdfa;
   --sidebar-muted: #64748b;
   --sidebar-border: #e2e8f0;
+  --auth-panel-gradient: linear-gradient(
+    165deg,
+    #f0f7f5 0%,
+    #f8fafc 45%,
+    #eef6f4 100%
+  );
+  --auth-dot-color: rgba(15, 118, 110, 0.12);
 }
 
 html.dark {
@@ -38,6 +45,13 @@ html.dark {
   --sidebar-active: #134e4a;
   --sidebar-muted: #94a3b8;
   --sidebar-border: #1f2937;
+  --auth-panel-gradient: linear-gradient(
+    165deg,
+    #0b1220 0%,
+    #0a0e17 45%,
+    #0c1a1c 100%
+  );
+  --auth-dot-color: rgba(45, 212, 191, 0.1);
 }
 
 @theme inline {
