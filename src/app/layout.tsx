@@ -1,21 +1,26 @@
 import type { Metadata } from "next"
-import { DM_Sans, Plus_Jakarta_Sans } from "next/font/google"
+import { JetBrains_Mono, Manrope, Sora } from "next/font/google"
 import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme"
 import "./globals.css"
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 })
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 })
 
 export const metadata: Metadata = {
-  title: "Financeiro | Dívidas",
-  description: "Dashboard segura para acompanhamento de dívidas",
+  title: "Nexo | Seu assistente pessoal",
+  description: "Um hub pessoal com financeiro, estudos e mais módulos, tudo num nexo só.",
 }
 
 const RootLayout = ({ children }: LayoutProps<"/">) => {
@@ -23,7 +28,7 @@ const RootLayout = ({ children }: LayoutProps<"/">) => {
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${plusJakarta.variable} ${dmSans.variable} h-full antialiased`}
+      className={`${manrope.variable} ${sora.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
         <script

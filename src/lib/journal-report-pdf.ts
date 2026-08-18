@@ -317,7 +317,7 @@ const drawFooter = (doc: jsPDF) => {
     doc.setFont("helvetica", "normal")
     doc.setFontSize(8)
     doc.setTextColor(...C.muted)
-    doc.text("Financeiro - diário", 16, pageHeight - 7)
+    doc.text("Nexo - diário", 16, pageHeight - 7)
     doc.text(`Página ${page} de ${pages}`, pageWidth - 16, pageHeight - 7, {
       align: "right",
     })

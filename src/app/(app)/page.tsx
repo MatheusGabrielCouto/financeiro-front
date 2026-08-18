@@ -1,22 +1,16 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import {
-  IconBell,
   IconCheck,
-  IconDebts,
   IconInstallments,
-  IconTransactions,
-  IconNotebook,
-  IconPiggy,
-  IconInsights,
   IconReports,
-  IconSimulate,
   IconTrendDown,
   IconTrendUp,
   IconWarning,
 } from "@/components/icons"
 import { BudgetSpotlight } from "@/components/budget-spotlight"
 import { CreditCardVisual } from "@/components/credit-card-visual"
+import { ModuleCard } from "@/components/module-card"
 import { MonthCompareCard } from "@/components/month-compare-card"
 import { PayInstallmentButton } from "@/components/pay-installment-button"
 import { OverdueInterestHint } from "@/components/overdue-interest-hint"
@@ -56,8 +50,16 @@ import {
   medicineStatusClasses,
   medicineStatusLabel,
 } from "@/lib/medicine-status"
+import { findModuleById, findNavItem } from "@/lib/nav-registry"
 import { getNotebookColorTokens } from "@/lib/notebook-colors"
 import { getPriorityNotificationCount } from "@/lib/notification-count"
+
+const cadernosModule = findModuleById("cadernos")!
+const estudosModule = findModuleById("estudos")!
+const remediosModule = findModuleById("remedios")!
+const rotinasModule = findModuleById("rotinas")!
+const diarioModule = findModuleById("diario")!
+const metasPessoaisModule = findModuleById("metas-pessoais")!
 
 type UpcomingItem = {
   id: string
@@ -71,7 +73,7 @@ type UpcomingItem = {
   interestRateType?: "MONTHLY" | "DAILY"
 }
 
-const loadDashboardData = async () => {
+const loadFinanceHubData = async () => {
   const { month, year } = getCurrentMonthYear()
 
   const onboardingDone = await isOnboardingDone()
@@ -98,9 +100,6 @@ const loadDashboardData = async () => {
     attentionCount,
     budgets,
     creditCards,
-    studySubjects,
-    notebooks,
-    medicines,
   ] = await Promise.all([
     getAmount(),
     getDetails(month, year),
@@ -113,9 +112,6 @@ const loadDashboardData = async () => {
     getPriorityNotificationCount(),
     getBudgets(month, year).catch(() => []),
     getCreditCards().catch(() => []),
-    getStudySubjects().catch(() => []),
-    getNotebooks().catch(() => []),
-    getMedicines().catch(() => []),
   ])
 
   const creditCardSummaries = await Promise.all(
@@ -309,44 +305,6 @@ const loadDashboardData = async () => {
     })
     .slice(0, 3)
 
-  const activeStudySubjects = studySubjects.filter((subject) => !subject.archivedAt)
-  const studyWeekMinutes = activeStudySubjects.reduce(
-    (sum, subject) => sum + subject.weekMinutes,
-    0
-  )
-  const studyGoalMinutes = activeStudySubjects.reduce(
-    (sum, subject) => sum + subject.weeklyGoalHours * 60,
-    0
-  )
-  const studyProgress =
-    studyGoalMinutes > 0
-      ? Math.min(100, Math.round((studyWeekMinutes / studyGoalMinutes) * 100))
-      : 0
-  const topStudySubjects = [...activeStudySubjects]
-    .sort((a, b) => b.weekProgressPct - a.weekProgressPct)
-    .slice(0, 3)
-
-  const expiredMedicinesCount = medicines.filter(
-    (item) => item.status === "expired"
-  ).length
-  const expiringSoonMedicinesCount = medicines.filter(
-    (item) => item.status === "expiring_soon"
-  ).length
-  const lowStockMedicinesCount = medicines.filter((item) => item.isLowStock).length
-  const attentionMedicines = [...medicines]
-    .sort(compareMedicineUrgency)
-    .slice(0, 3)
-
-  const recentNotebooks = [...notebooks]
-    .sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    )
-    .slice(0, 4)
-  const notebookPageTotal = notebooks.reduce(
-    (sum, notebook) => sum + notebook.pageCount,
-    0
-  )
-
   const plannedLines = plannedWorkbook?.lines ?? []
   const plannedPreview = plannedLines.slice(0, 4)
   const plannedMonthTotal =
@@ -391,6 +349,59 @@ const loadDashboardData = async () => {
     totalGoals,
     goalsProgress,
     topGoals,
+    plannedLines,
+    plannedPreview,
+    plannedMonthTotal,
+    plannedSurplus,
+  }
+}
+
+const loadPersonalHubData = async () => {
+  const [studySubjects, notebooks, medicines] = await Promise.all([
+    getStudySubjects().catch(() => []),
+    getNotebooks().catch(() => []),
+    getMedicines().catch(() => []),
+  ])
+
+  const activeStudySubjects = studySubjects.filter((subject) => !subject.archivedAt)
+  const studyWeekMinutes = activeStudySubjects.reduce(
+    (sum, subject) => sum + subject.weekMinutes,
+    0
+  )
+  const studyGoalMinutes = activeStudySubjects.reduce(
+    (sum, subject) => sum + subject.weeklyGoalHours * 60,
+    0
+  )
+  const studyProgress =
+    studyGoalMinutes > 0
+      ? Math.min(100, Math.round((studyWeekMinutes / studyGoalMinutes) * 100))
+      : 0
+  const topStudySubjects = [...activeStudySubjects]
+    .sort((a, b) => b.weekProgressPct - a.weekProgressPct)
+    .slice(0, 3)
+
+  const expiredMedicinesCount = medicines.filter(
+    (item) => item.status === "expired"
+  ).length
+  const expiringSoonMedicinesCount = medicines.filter(
+    (item) => item.status === "expiring_soon"
+  ).length
+  const lowStockMedicinesCount = medicines.filter((item) => item.isLowStock).length
+  const attentionMedicines = [...medicines]
+    .sort(compareMedicineUrgency)
+    .slice(0, 3)
+
+  const recentNotebooks = [...notebooks]
+    .sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    )
+    .slice(0, 4)
+  const notebookPageTotal = notebooks.reduce(
+    (sum, notebook) => sum + notebook.pageCount,
+    0
+  )
+
+  return {
     studyWeekMinutes,
     studyGoalMinutes,
     studyProgress,
@@ -400,20 +411,19 @@ const loadDashboardData = async () => {
     expiringSoonMedicinesCount,
     lowStockMedicinesCount,
     attentionMedicines,
-    plannedLines,
-    plannedPreview,
-    plannedMonthTotal,
-    plannedSurplus,
-    notebooks,
     recentNotebooks,
     notebookPageTotal,
   }
 }
 
 const DashboardPage = async () => {
-  let data: Awaited<ReturnType<typeof loadDashboardData>>
+  let finance: Awaited<ReturnType<typeof loadFinanceHubData>>
+  let personal: Awaited<ReturnType<typeof loadPersonalHubData>>
   try {
-    data = await loadDashboardData()
+    ;[finance, personal] = await Promise.all([
+      loadFinanceHubData(),
+      loadPersonalHubData(),
+    ])
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       redirect("/login")
@@ -459,6 +469,13 @@ const DashboardPage = async () => {
     totalGoals,
     goalsProgress,
     topGoals,
+    plannedLines,
+    plannedPreview,
+    plannedMonthTotal,
+    plannedSurplus,
+  } = finance
+
+  const {
     studyWeekMinutes,
     studyGoalMinutes,
     studyProgress,
@@ -468,27 +485,27 @@ const DashboardPage = async () => {
     expiringSoonMedicinesCount,
     lowStockMedicinesCount,
     attentionMedicines,
-    plannedLines,
-    plannedPreview,
-    plannedMonthTotal,
-    plannedSurplus,
     recentNotebooks,
     notebookPageTotal,
-  } = data
+  } = personal
 
   return (
       <div className="space-y-6">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted/70">
+          Financeiro
+        </p>
+
         <section
           className="dashboard-enter overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm shadow-slate-200/50"
           style={{ animationDelay: "0ms" }}
         >
-          <div className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-teal-900 px-5 py-6 text-white md:px-7 md:py-7">
-            <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-teal-400/20 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-emerald-300/10 blur-2xl" />
+          <div className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-violet-950 px-5 py-6 text-white md:px-7 md:py-7">
+            <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-violet-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-cyan-300/10 blur-2xl" />
 
             <div className="relative flex flex-wrap items-start justify-between gap-5">
               <div className="max-w-xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-200/90">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-200/90">
                   {monthLabel}
                 </p>
                 <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight md:text-4xl">
@@ -546,13 +563,13 @@ const DashboardPage = async () => {
                   <p className="text-sm text-slate-300">
                     {hasCommitments ? "Progresso do mês" : "Fluxo do mês"}
                   </p>
-                  <span className="text-sm font-semibold text-teal-200">
+                  <span className="text-sm font-semibold text-violet-200">
                     {progress}%
                   </span>
                 </div>
                 <div className="mt-4 h-3 overflow-hidden rounded-full bg-white/10">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-teal-300 to-emerald-400 transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-violet-300 to-cyan-300 transition-all"
                     style={{ width: `${Math.min(progress, 100)}%` }}
                   />
                 </div>
@@ -651,12 +668,12 @@ const DashboardPage = async () => {
               value: formatCurrency(monthSurplus),
               hint: netPositive ? "Mês sob controle" : "Atenção ao fluxo",
               className: netPositive
-                ? "border-teal-200/70 bg-teal-50/40 dark:border-teal-900/40 dark:bg-teal-950/30"
+                ? "border-violet-200/70 bg-violet-50/40 dark:border-violet-900/40 dark:bg-violet-950/30"
                 : "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/30",
               valueClass: netPositive ? "text-accent" : "text-danger",
               icon: netPositive ? IconCheck : IconWarning,
               iconClass: netPositive
-                ? "bg-teal-100 text-accent dark:bg-teal-900/40"
+                ? "bg-violet-100 text-accent dark:bg-violet-900/40"
                 : "bg-red-100 text-danger dark:bg-red-900/40",
             },
           ].map((card) => (
@@ -758,81 +775,13 @@ const DashboardPage = async () => {
         ) : null}
 
         <section
-          className="dashboard-enter rounded-3xl border border-border/70 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6"
-          style={{ animationDelay: "160ms" }}
-        >
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h2 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
-                Cadernos
-              </h2>
-              <p className="mt-1 text-sm text-muted">
-                {recentNotebooks.length > 0
-                  ? `${notebookPageTotal} página(s) em ${recentNotebooks.length === 1 ? "1 caderno" : `${recentNotebooks.length > 4 ? "4+" : recentNotebooks.length} cadernos`}`
-                  : "Suas anotações e resumos"}
-              </p>
-            </div>
-            <Link
-              href="/cadernos"
-              className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
-            >
-              Ver cadernos
-            </Link>
-          </div>
-
-          {recentNotebooks.length === 0 ? (
-            <div className="mt-5 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
-              <p className="text-sm font-medium">Nenhum caderno ainda</p>
-              <Link
-                href="/cadernos"
-                className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
-              >
-                Criar caderno
-              </Link>
-            </div>
-          ) : (
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {recentNotebooks.map((notebook) => {
-                const tokens = getNotebookColorTokens(notebook.color)
-                return (
-                  <Link
-                    key={notebook.id}
-                    href={`/cadernos?notebook=${notebook.id}`}
-                    aria-label={`Abrir caderno ${notebook.title}`}
-                    className="flex items-center gap-3 rounded-xl border border-border/80 bg-background/70 px-4 py-3 transition hover:border-accent/30 hover:bg-accent-soft/40"
-                  >
-                    <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg ${tokens.bg} ${tokens.text}`}
-                      aria-hidden="true"
-                    >
-                      {notebook.emoji}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate text-sm font-semibold">
-                        {notebook.title}
-                      </span>
-                      <span className="block text-xs text-muted">
-                        {notebook.pageCount === 1
-                          ? "1 página"
-                          : `${notebook.pageCount} páginas`}{" "}
-                        · {formatDate(notebook.updatedAt)}
-                      </span>
-                    </span>
-                  </Link>
-                )
-              })}
-            </div>
-          )}
-        </section>
-
-        <section
           className="dashboard-enter grid gap-4 lg:grid-cols-2 xl:grid-cols-4"
           style={{ animationDelay: "180ms" }}
         >
           <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-base font-semibold">Metas</h2>
+                <h2 className="text-base font-semibold">Caixinhas</h2>
                 <p className="mt-1 text-sm text-muted">
                   Progresso das caixinhas e reserva
                 </p>
@@ -847,7 +796,7 @@ const DashboardPage = async () => {
 
             {projections.length === 0 ? (
               <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
-                <p className="text-sm font-medium">Nenhuma meta ainda</p>
+                <p className="text-sm font-medium">Nenhuma caixinha ainda</p>
                 <Link
                   href="/caixinhas"
                   className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
@@ -891,7 +840,7 @@ const DashboardPage = async () => {
                         </div>
                         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                           <div
-                            className="h-full rounded-full bg-teal-400"
+                            className="h-full rounded-full bg-accent"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -912,7 +861,7 @@ const DashboardPage = async () => {
 
           <BudgetSpotlight budgets={budgets} />
 
-          <article className="rounded-2xl border border-teal-200/70 bg-teal-50/30 p-5 shadow-sm shadow-slate-200/40 dark:border-teal-900/40 dark:bg-teal-950/20 lg:col-span-2 xl:col-span-1">
+          <article className="rounded-2xl border border-amber-200/70 bg-amber-50/30 p-5 shadow-sm shadow-slate-200/40 dark:border-amber-900/40 dark:bg-amber-950/20 lg:col-span-2 xl:col-span-1">
             <div>
               <h2 className="text-base font-semibold">Planejamento</h2>
               <p className="mt-1 text-sm text-muted">
@@ -972,145 +921,6 @@ const DashboardPage = async () => {
             </Link>
           </article>
 
-          <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-base font-semibold">Estudos</h2>
-                <p className="mt-1 text-sm text-muted">Horas estudadas na semana</p>
-              </div>
-              <Link
-                href="/estudos"
-                className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
-              >
-                Ver todas
-              </Link>
-            </div>
-
-            {topStudySubjects.length === 0 ? (
-              <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
-                <p className="text-sm font-medium">Nenhuma matéria ainda</p>
-                <Link
-                  href="/estudos"
-                  className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
-                >
-                  Criar matéria
-                </Link>
-              </div>
-            ) : (
-              <>
-                <div className="mt-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">
-                      {(studyWeekMinutes / 60).toFixed(1)}h de{" "}
-                      {(studyGoalMinutes / 60).toFixed(1)}h
-                    </span>
-                    <span className="font-semibold text-accent">{studyProgress}%</span>
-                  </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                    <div
-                      className="h-full rounded-full bg-accent"
-                      style={{ width: `${studyProgress}%` }}
-                    />
-                  </div>
-                </div>
-                <ul className="mt-4 space-y-2">
-                  {topStudySubjects.map((subject) => (
-                    <li
-                      key={subject.id}
-                      className="rounded-xl border border-border/70 bg-background/60 px-3 py-2.5"
-                    >
-                      <div className="flex items-center justify-between gap-2 text-sm">
-                        <span className="truncate font-medium">{subject.title}</span>
-                        <span className="shrink-0 text-xs text-muted">
-                          {subject.weekProgressPct}%
-                        </span>
-                      </div>
-                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                        <div
-                          className="h-full rounded-full bg-teal-400"
-                          style={{ width: `${subject.weekProgressPct}%` }}
-                        />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </article>
-
-          <article className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-base font-semibold">Remédios</h2>
-                <p className="mt-1 text-sm text-muted">Estoque e validade</p>
-              </div>
-              <Link
-                href="/remedios"
-                className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
-              >
-                Ver todos
-              </Link>
-            </div>
-
-            {totalMedicines === 0 ? (
-              <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
-                <p className="text-sm font-medium">Nenhum remédio cadastrado</p>
-                <Link
-                  href="/remedios"
-                  className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
-                >
-                  Cadastrar remédio
-                </Link>
-              </div>
-            ) : (
-              <>
-                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-xl bg-slate-50 px-2 py-2.5 dark:bg-slate-900/50">
-                    <p className="text-lg font-semibold">{totalMedicines}</p>
-                    <p className="text-xs text-muted">Cadastrados</p>
-                  </div>
-                  <div className="rounded-xl bg-rose-50 px-2 py-2.5 dark:bg-rose-950/30">
-                    <p className="text-lg font-semibold text-danger">
-                      {expiredMedicinesCount}
-                    </p>
-                    <p className="text-xs text-muted">Vencidos</p>
-                  </div>
-                  <div className="rounded-xl bg-amber-50 px-2 py-2.5 dark:bg-amber-950/30">
-                    <p className="text-lg font-semibold text-warning">
-                      {expiringSoonMedicinesCount}
-                    </p>
-                    <p className="text-xs text-muted">Vencendo</p>
-                  </div>
-                </div>
-                <ul className="mt-4 space-y-2">
-                  {attentionMedicines.map((medicine) => (
-                    <li
-                      key={medicine.id}
-                      className="rounded-xl border border-border/70 bg-background/60 px-3 py-2.5"
-                    >
-                      <div className="flex items-center justify-between gap-2 text-sm">
-                        <span className="truncate font-medium">{medicine.name}</span>
-                        <span
-                          className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-medium ${medicineStatusClasses(medicine.status)}`}
-                        >
-                          {medicineStatusLabel(medicine.status)}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs text-muted">
-                        {medicine.quantity} {medicine.unit} · validade{" "}
-                        {formatExpiration(medicine.expirationMonth, medicine.expirationYear)}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-                {lowStockMedicinesCount > 0 ? (
-                  <p className="mt-3 text-xs text-muted">
-                    {lowStockMedicinesCount} com estoque baixo
-                  </p>
-                ) : null}
-              </>
-            )}
-          </article>
         </section>
 
         <section
@@ -1172,7 +982,7 @@ const DashboardPage = async () => {
                                 ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
                                 : item.kind === "planned"
                                   ? "bg-amber-50 text-warning dark:bg-amber-950/40"
-                                  : "bg-teal-50 text-accent dark:bg-teal-950/40"
+                                  : "bg-violet-50 text-accent dark:bg-violet-950/40"
                             }`}
                           >
                             {item.kind === "recurring"
@@ -1282,56 +1092,17 @@ const DashboardPage = async () => {
               <h2 className="text-base font-semibold">Ações rápidas</h2>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {[
-                  {
-                    href: `/planejamento?year=${year}`,
-                    label: "Planilha",
-                    hint: "Dívidas futuras",
-                    icon: IconReports,
-                  },
-                  {
-                    href: "/planejador",
-                    label: "Planejador",
-                    hint: "Estratégia de quitação",
-                    icon: IconDebts,
-                  },
-                  {
-                    href: "/caixinhas",
-                    label: "Caixinhas",
-                    hint: "Metas e reserva",
-                    icon: IconPiggy,
-                  },
-                  {
-                    href: "/simulador",
-                    label: "Simulador",
-                    hint: "Teste um parcelamento",
-                    icon: IconSimulate,
-                  },
-                  {
-                    href: "/insights",
-                    label: "Insights",
-                    hint: "Score e alertas",
-                    icon: IconInsights,
-                  },
-                  {
-                    href: "/extrato",
-                    label: "Extrato",
-                    hint: "Lançamentos do mês",
-                    icon: IconTransactions,
-                  },
-                  {
-                    href: "/cadernos",
-                    label: "Cadernos",
-                    hint: "Anotações e resumos",
-                    icon: IconNotebook,
-                  },
-                  {
-                    href: "/notificacoes",
-                    label: "Atenção",
-                    hint: "Vencimentos próximos",
-                    icon: IconBell,
-                  },
+                  { href: `/planejamento?year=${year}`, hint: "Dívidas futuras" },
+                  { href: "/planejador", hint: "Estratégia de quitação" },
+                  { href: "/caixinhas", hint: "Metas e reserva" },
+                  { href: "/simulador", hint: "Teste um parcelamento" },
+                  { href: "/insights", hint: "Score e alertas" },
+                  { href: "/extrato", hint: "Lançamentos do mês" },
+                  { href: "/cadernos", hint: "Anotações e resumos" },
+                  { href: "/notificacoes", hint: "Vencimentos próximos" },
                 ].map((action) => {
-                  const Icon = action.icon
+                  const navItem = findNavItem(action.href.split("?")[0])
+                  const Icon = navItem?.icon ?? IconReports
                   return (
                     <Link
                       key={action.href}
@@ -1343,7 +1114,7 @@ const DashboardPage = async () => {
                       </span>
                       <span className="min-w-0">
                         <span className="block text-sm font-semibold">
-                          {action.label}
+                          {navItem?.label ?? action.href}
                         </span>
                         <span className="block text-xs text-muted">
                           {action.hint}
@@ -1355,6 +1126,199 @@ const DashboardPage = async () => {
               </div>
             </div>
           </aside>
+        </section>
+
+        <p className="pt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted/70">
+          Pessoal
+        </p>
+
+        <section
+          className="dashboard-enter grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+          style={{ animationDelay: "240ms" }}
+        >
+          <ModuleCard module={cadernosModule} actionLabel="Ver cadernos">
+            {recentNotebooks.length === 0 ? (
+              <div className="rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
+                <p className="text-sm font-medium">Nenhum caderno ainda</p>
+                <Link
+                  href="/cadernos"
+                  className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
+                >
+                  Criar caderno
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-muted">
+                  {notebookPageTotal} página(s) em{" "}
+                  {recentNotebooks.length === 1
+                    ? "1 caderno"
+                    : `${recentNotebooks.length > 4 ? "4+" : recentNotebooks.length} cadernos`}
+                </p>
+                {recentNotebooks.slice(0, 3).map((notebook) => {
+                  const tokens = getNotebookColorTokens(notebook.color)
+                  return (
+                    <Link
+                      key={notebook.id}
+                      href={`/cadernos?notebook=${notebook.id}`}
+                      aria-label={`Abrir caderno ${notebook.title}`}
+                      className="flex items-center gap-3 rounded-xl border border-border/70 bg-background/60 px-3 py-2.5 transition hover:border-accent/30 hover:bg-accent-soft/40"
+                    >
+                      <span
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base ${tokens.bg} ${tokens.text}`}
+                        aria-hidden="true"
+                      >
+                        {notebook.emoji}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-medium">
+                          {notebook.title}
+                        </span>
+                        <span className="block text-xs text-muted">
+                          {notebook.pageCount === 1
+                            ? "1 página"
+                            : `${notebook.pageCount} páginas`}{" "}
+                          · {formatDate(notebook.updatedAt)}
+                        </span>
+                      </span>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
+          </ModuleCard>
+
+          <ModuleCard module={estudosModule}>
+            {topStudySubjects.length === 0 ? (
+              <div className="rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
+                <p className="text-sm font-medium">Nenhuma matéria ainda</p>
+                <Link
+                  href="/estudos"
+                  className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
+                >
+                  Criar matéria
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted">
+                    {(studyWeekMinutes / 60).toFixed(1)}h de{" "}
+                    {(studyGoalMinutes / 60).toFixed(1)}h
+                  </span>
+                  <span className="font-semibold text-sky-600 dark:text-sky-300">
+                    {studyProgress}%
+                  </span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                  <div
+                    className="h-full rounded-full bg-sky-500"
+                    style={{ width: `${studyProgress}%` }}
+                  />
+                </div>
+                <ul className="mt-4 space-y-2">
+                  {topStudySubjects.map((subject) => (
+                    <li
+                      key={subject.id}
+                      className="rounded-xl border border-border/70 bg-background/60 px-3 py-2.5"
+                    >
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <span className="truncate font-medium">{subject.title}</span>
+                        <span className="shrink-0 text-xs text-muted">
+                          {subject.weekProgressPct}%
+                        </span>
+                      </div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                        <div
+                          className="h-full rounded-full bg-sky-400"
+                          style={{ width: `${subject.weekProgressPct}%` }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </ModuleCard>
+
+          <ModuleCard module={remediosModule}>
+            {totalMedicines === 0 ? (
+              <div className="rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
+                <p className="text-sm font-medium">Nenhum remédio cadastrado</p>
+                <Link
+                  href="/remedios"
+                  className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
+                >
+                  Cadastrar remédio
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-xl bg-slate-50 px-2 py-2.5 dark:bg-slate-900/50">
+                    <p className="text-lg font-semibold">{totalMedicines}</p>
+                    <p className="text-xs text-muted">Cadastrados</p>
+                  </div>
+                  <div className="rounded-xl bg-rose-50 px-2 py-2.5 dark:bg-rose-950/30">
+                    <p className="text-lg font-semibold text-danger">
+                      {expiredMedicinesCount}
+                    </p>
+                    <p className="text-xs text-muted">Vencidos</p>
+                  </div>
+                  <div className="rounded-xl bg-amber-50 px-2 py-2.5 dark:bg-amber-950/30">
+                    <p className="text-lg font-semibold text-warning">
+                      {expiringSoonMedicinesCount}
+                    </p>
+                    <p className="text-xs text-muted">Vencendo</p>
+                  </div>
+                </div>
+                <ul className="mt-4 space-y-2">
+                  {attentionMedicines.map((medicine) => (
+                    <li
+                      key={medicine.id}
+                      className="rounded-xl border border-border/70 bg-background/60 px-3 py-2.5"
+                    >
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <span className="truncate font-medium">{medicine.name}</span>
+                        <span
+                          className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-medium ${medicineStatusClasses(medicine.status)}`}
+                        >
+                          {medicineStatusLabel(medicine.status)}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-muted">
+                        {medicine.quantity} {medicine.unit} · validade{" "}
+                        {formatExpiration(medicine.expirationMonth, medicine.expirationYear)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                {lowStockMedicinesCount > 0 ? (
+                  <p className="mt-3 text-xs text-muted">
+                    {lowStockMedicinesCount} com estoque baixo
+                  </p>
+                ) : null}
+              </>
+            )}
+          </ModuleCard>
+
+          <ModuleCard module={rotinasModule}>
+            <p className="text-sm text-muted">
+              Acompanhe hábitos e sequências direto no módulo.
+            </p>
+          </ModuleCard>
+
+          <ModuleCard module={diarioModule}>
+            <p className="text-sm text-muted">
+              Registre como foi o dia direto no módulo.
+            </p>
+          </ModuleCard>
+
+          <ModuleCard module={metasPessoaisModule}>
+            <p className="text-sm text-muted">
+              Acompanhe o progresso das suas metas direto no módulo.
+            </p>
+          </ModuleCard>
         </section>
       </div>
   )

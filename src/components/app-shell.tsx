@@ -5,31 +5,11 @@ import { usePathname } from "next/navigation"
 import { KeyboardEvent, useEffect, useState } from "react"
 import { AppHeader } from "@/components/app-header"
 import { KeyboardShortcuts } from "@/components/keyboard-shortcuts"
+import { NexoMark } from "@/components/nexo-mark"
 import { QuickTransactionLauncher } from "@/components/quick-transaction-launcher"
-import {
-  IconBell,
-  IconBudget,
-  IconCategory,
-  IconChevron,
-  IconClose,
-  IconCreditCard,
-  IconDebts,
-  IconInsights,
-  IconInstallments,
-  IconJournal,
-  IconNotebook,
-  IconOverview,
-  IconPiggy,
-  IconPill,
-  IconRecurring,
-  IconReports,
-  IconRoutine,
-  IconSidebar,
-  IconSimulate,
-  IconStudy,
-  IconTarget,
-  IconTransactions,
-} from "@/components/icons"
+import { IconChevron, IconClose, IconSidebar } from "@/components/icons"
+import { getModuleAccentClasses } from "@/lib/module-accents"
+import { AREAS, ALL_MODULES } from "@/lib/nav-registry"
 import { getPageMeta } from "@/lib/page-meta"
 import type { Category, User } from "@/lib/types"
 
@@ -40,76 +20,11 @@ type AppShellProps = {
   children: React.ReactNode
 }
 
-type NavItem = {
-  href: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-}
-
-type NavSection = {
-  id: string
-  title: string
-  items: NavItem[]
-}
-
-const SIDEBAR_COLLAPSED_KEY = "financeiro-sidebar-collapsed"
-const SIDEBAR_GROUPS_KEY = "financeiro-sidebar-groups"
-
-const navSections: NavSection[] = [
-  {
-    id: "overview",
-    title: "Visão geral",
-    items: [
-      { href: "/", label: "Início", icon: IconOverview },
-      { href: "/extrato", label: "Extrato", icon: IconTransactions },
-      { href: "/relatorios", label: "Relatórios", icon: IconReports },
-      { href: "/insights", label: "Insights", icon: IconInsights },
-      { href: "/notificacoes", label: "Atenção", icon: IconBell },
-      { href: "/fechamento", label: "Fechamento", icon: IconReports },
-    ],
-  },
-  {
-    id: "personal",
-    title: "Vida pessoal",
-    items: [
-      { href: "/rotinas", label: "Rotinas", icon: IconRoutine },
-      { href: "/diario", label: "Diário", icon: IconJournal },
-      { href: "/metas-pessoais", label: "Metas", icon: IconTarget },
-      { href: "/estudos", label: "Estudos", icon: IconStudy },
-      { href: "/cadernos", label: "Cadernos", icon: IconNotebook },
-      { href: "/remedios", label: "Remédios", icon: IconPill },
-    ],
-  },
-  {
-    id: "debts",
-    title: "Dívidas",
-    items: [
-      { href: "/dividas", label: "Todas as dívidas", icon: IconDebts },
-      { href: "/parcelas", label: "A pagar este mês", icon: IconInstallments },
-      { href: "/calendario", label: "Calendário", icon: IconInstallments },
-      { href: "/cartoes", label: "Cartões", icon: IconCreditCard },
-      { href: "/planejador", label: "Planejador", icon: IconDebts },
-      { href: "/simulador", label: "Simulador", icon: IconSimulate },
-    ],
-  },
-  {
-    id: "planning",
-    title: "Planejamento",
-    items: [
-      { href: "/planejamento", label: "Planilha", icon: IconReports },
-      { href: "/pra-pagar", label: "Pra pagar", icon: IconInstallments },
-      { href: "/gastos-previstos", label: "Gastos previstos", icon: IconInstallments },
-      { href: "/caixinhas", label: "Caixinhas", icon: IconPiggy },
-      { href: "/recorrentes", label: "Contas fixas", icon: IconRecurring },
-      { href: "/receitas-fixas", label: "Receitas fixas", icon: IconTransactions },
-      { href: "/orcamento", label: "Orçamento", icon: IconBudget },
-      { href: "/categorias", label: "Categorias", icon: IconCategory },
-    ],
-  },
-]
+const SIDEBAR_COLLAPSED_KEY = "nexo-sidebar-collapsed"
+const SIDEBAR_GROUPS_KEY = "nexo-sidebar-groups"
 
 const defaultOpenGroups = Object.fromEntries(
-  navSections.map((section) => [section.id, true])
+  ALL_MODULES.map((module) => [module.id, true])
 ) as Record<string, boolean>
 
 const isItemActive = (pathname: string, href: string) =>
@@ -164,14 +79,14 @@ export const AppShell = ({
   }, [openGroups, prefsReady])
 
   useEffect(() => {
-    const activeSection = navSections.find((section) =>
-      section.items.some((item) => isItemActive(pathname, item.href))
+    const activeModule = ALL_MODULES.find((module) =>
+      module.navItems.some((item) => isItemActive(pathname, item.href))
     )
-    if (!activeSection) return
+    if (!activeModule) return
 
     setOpenGroups((current) => {
-      if (current[activeSection.id]) return current
-      return { ...current, [activeSection.id]: true }
+      if (current[activeModule.id]) return current
+      return { ...current, [activeModule.id]: true }
     })
   }, [pathname])
 
@@ -182,10 +97,10 @@ export const AppShell = ({
     setSidebarCollapsed((current) => !current)
   }
 
-  const handleToggleGroup = (sectionId: string) => {
+  const handleToggleGroup = (moduleId: string) => {
     setOpenGroups((current) => ({
       ...current,
-      [sectionId]: !current[sectionId],
+      [moduleId]: !current[moduleId],
     }))
   }
 
@@ -217,16 +132,16 @@ export const AppShell = ({
           className={`flex items-center ${isRail ? "" : "gap-2.5"}`}
           aria-label="Ir para o início"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-hover text-sm font-bold text-white shadow-md shadow-teal-900/15">
-            F
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-hover text-white shadow-md shadow-accent/20">
+            <NexoMark className="h-5 w-5" />
           </span>
           {!isRail ? (
             <span>
               <span className="block font-[family-name:var(--font-display)] text-base font-semibold tracking-tight text-foreground">
-                Financeiro
+                Nexo
               </span>
               <span className="block text-[11px] text-muted">
-                Controle inteligente
+                Seu hub pessoal
               </span>
             </span>
           ) : null}
@@ -249,104 +164,157 @@ export const AppShell = ({
       </div>
 
       <nav
-        className={`scrollbar-thin min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain pb-4 pt-3 ${
+        className={`scrollbar-thin min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain pb-4 pt-3 ${
           isRail ? "px-2" : "px-3"
         }`}
         aria-label="Navegação principal"
       >
-        {navSections.map((section) => {
-          const isGroupOpen = openGroups[section.id] ?? true
+        {AREAS.map((area) => (
+          <div key={area.id} className="space-y-2">
+            {!isRail ? (
+              <p className="px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted/70">
+                {area.label}
+              </p>
+            ) : (
+              <div
+                className="mx-2 border-t border-sidebar-border/60"
+                aria-hidden="true"
+              />
+            )}
 
-          return (
-            <div key={section.id}>
-              {isRail ? (
-                <button
-                  type="button"
-                  onClick={() => handleToggleGroup(section.id)}
-                  onKeyDown={(event) =>
-                    handleKeyDownAction(event, () =>
-                      handleToggleGroup(section.id)
-                    )
-                  }
-                  className="mx-auto mb-1 flex h-6 w-6 items-center justify-center rounded-md text-muted transition hover:bg-sidebar-hover hover:text-foreground"
-                  aria-label={`${isGroupOpen ? "Recolher" : "Expandir"} grupo ${section.title}`}
-                  aria-expanded={isGroupOpen}
-                  title={section.title}
-                  tabIndex={0}
-                >
-                  <span
-                    className={`block h-1 w-1 rounded-full transition ${
-                      isGroupOpen ? "bg-accent" : "bg-slate-300"
-                    }`}
-                  />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleToggleGroup(section.id)}
-                  onKeyDown={(event) =>
-                    handleKeyDownAction(event, () =>
-                      handleToggleGroup(section.id)
-                    )
-                  }
-                  className="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-left transition hover:bg-sidebar-hover"
-                  aria-label={`${isGroupOpen ? "Recolher" : "Expandir"} grupo ${section.title}`}
-                  aria-expanded={isGroupOpen}
-                  tabIndex={0}
-                >
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
-                    {section.title}
-                  </span>
-                  <IconChevron
-                    className={`h-3.5 w-3.5 text-muted transition-transform ${
-                      isGroupOpen ? "rotate-90" : ""
-                    }`}
-                  />
-                </button>
-              )}
+            <div className="space-y-1">
+              {area.modules.map((module) => {
+                const accent = getModuleAccentClasses(module.accent)
 
-              {isGroupOpen ? (
-                <ul className={`space-y-1 ${isRail ? "" : "mt-1"}`}>
-                  {section.items.map((item) => {
-                    const Icon = item.icon
-                    const active = isItemActive(pathname, item.href)
+                if (module.navItems.length === 1) {
+                  const item = module.navItems[0]
+                  const Icon = item.icon
+                  const active = isItemActive(pathname, item.href)
 
-                    return (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          title={item.label}
-                          className={`flex items-center rounded-xl text-sm transition ${
-                            isRail
-                              ? "justify-center px-2 py-2.5"
-                              : "gap-2.5 px-3 py-2.5"
-                          } ${
-                            active
-                              ? "bg-sidebar-active font-semibold text-accent shadow-sm ring-1 ring-accent/10"
-                              : "text-slate-600 hover:bg-sidebar-hover hover:text-foreground dark:text-slate-300"
+                  return (
+                    <Link
+                      key={module.id}
+                      href={item.href}
+                      title={item.label}
+                      className={`flex items-center rounded-xl text-sm transition ${
+                        isRail ? "justify-center px-2 py-2.5" : "gap-2.5 px-3 py-2.5"
+                      } ${
+                        active
+                          ? `${accent.activeBg} font-semibold ${accent.activeText} shadow-sm ${accent.activeRing}`
+                          : "text-slate-600 hover:bg-sidebar-hover hover:text-foreground dark:text-slate-300"
+                      }`}
+                      aria-current={active ? "page" : undefined}
+                      aria-label={item.label}
+                    >
+                      <span
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                          active
+                            ? `${accent.iconBg} ${accent.iconText}`
+                            : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      {!isRail ? <span>{item.label}</span> : null}
+                    </Link>
+                  )
+                }
+
+                const isGroupOpen = openGroups[module.id] ?? true
+
+                return (
+                  <div key={module.id}>
+                    {isRail ? (
+                      <button
+                        type="button"
+                        onClick={() => handleToggleGroup(module.id)}
+                        onKeyDown={(event) =>
+                          handleKeyDownAction(event, () =>
+                            handleToggleGroup(module.id)
+                          )
+                        }
+                        className="mx-auto mb-1 flex h-6 w-6 items-center justify-center rounded-md text-muted transition hover:bg-sidebar-hover hover:text-foreground"
+                        aria-label={`${isGroupOpen ? "Recolher" : "Expandir"} módulo ${module.label}`}
+                        aria-expanded={isGroupOpen}
+                        title={module.label}
+                        tabIndex={0}
+                      >
+                        <span
+                          className={`block h-1 w-1 rounded-full transition ${
+                            isGroupOpen ? accent.dot : "bg-slate-300"
                           }`}
-                          aria-current={active ? "page" : undefined}
-                          aria-label={item.label}
-                        >
-                          <span
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                              active
-                                ? "bg-accent text-white"
-                                : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-                            }`}
-                          >
-                            <Icon className="h-4 w-4" />
-                          </span>
-                          {!isRail ? <span>{item.label}</span> : null}
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ul>
-              ) : null}
+                        />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleToggleGroup(module.id)}
+                        onKeyDown={(event) =>
+                          handleKeyDownAction(event, () =>
+                            handleToggleGroup(module.id)
+                          )
+                        }
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-left transition hover:bg-sidebar-hover"
+                        aria-label={`${isGroupOpen ? "Recolher" : "Expandir"} módulo ${module.label}`}
+                        aria-expanded={isGroupOpen}
+                        tabIndex={0}
+                      >
+                        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
+                          {module.label}
+                        </span>
+                        <IconChevron
+                          className={`h-3.5 w-3.5 text-muted transition-transform ${
+                            isGroupOpen ? "rotate-90" : ""
+                          }`}
+                        />
+                      </button>
+                    )}
+
+                    {isGroupOpen ? (
+                      <ul className={`space-y-1 ${isRail ? "" : "mt-1"}`}>
+                        {module.navItems.map((item) => {
+                          const Icon = item.icon
+                          const active = isItemActive(pathname, item.href)
+
+                          return (
+                            <li key={item.href}>
+                              <Link
+                                href={item.href}
+                                title={item.label}
+                                className={`flex items-center rounded-xl text-sm transition ${
+                                  isRail
+                                    ? "justify-center px-2 py-2.5"
+                                    : "gap-2.5 px-3 py-2.5"
+                                } ${
+                                  active
+                                    ? `${accent.activeBg} font-semibold ${accent.activeText} shadow-sm ${accent.activeRing}`
+                                    : "text-slate-600 hover:bg-sidebar-hover hover:text-foreground dark:text-slate-300"
+                                }`}
+                                aria-current={active ? "page" : undefined}
+                                aria-label={item.label}
+                              >
+                                <span
+                                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                                    active
+                                      ? `${accent.iconBg} ${accent.iconText}`
+                                      : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                                  }`}
+                                >
+                                  <Icon className="h-4 w-4" />
+                                </span>
+                                {!isRail ? <span>{item.label}</span> : null}
+                              </Link>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    ) : null}
+                  </div>
+                )
+              })}
             </div>
-          )
-        })}
+          </div>
+        ))}
       </nav>
 
       {!showMobileClose ? (

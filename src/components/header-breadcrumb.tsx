@@ -1,23 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import type { ComponentType } from "react"
-import {
-  IconBell,
-  IconBudget,
-  IconCategory,
-  IconChevron,
-  IconDebts,
-  IconInsights,
-  IconInstallments,
-  IconOverview,
-  IconPiggy,
-  IconRecurring,
-  IconReports,
-  IconSimulate,
-  IconTransactions,
-  IconUser,
-} from "@/components/icons"
+import { IconChevron, IconOverview } from "@/components/icons"
 import type { PageCrumb } from "@/lib/page-meta"
 
 type HeaderBreadcrumbProps = {
@@ -25,38 +9,7 @@ type HeaderBreadcrumbProps = {
   section: string
 }
 
-const crumbIcon = (
-  label: string,
-  section: string
-): ComponentType<{ className?: string }> => {
-  const key = label.toLowerCase()
-  if (key.includes("início")) return IconOverview
-  if (key.includes("extrato")) return IconTransactions
-  if (key.includes("relat")) return IconReports
-  if (key.includes("insight")) return IconInsights
-  if (key.includes("notifica")) return IconBell
-  if (key.includes("dívida") || key.includes("divida") || key === "detalhe" || key === "nova")
-    return IconDebts
-  if (key.includes("pagar")) return IconInstallments
-  if (key.includes("planilha") || key.includes("planejamento")) return IconReports
-  if (key.includes("planej")) return IconDebts
-  if (key.includes("simul")) return IconSimulate
-  if (key.includes("caixinha")) return IconPiggy
-  if (key.includes("conta")) return IconRecurring
-  if (key.includes("receita")) return IconTransactions
-  if (key.includes("orçamento") || key.includes("orcamento")) return IconBudget
-  if (key.includes("categoria")) return IconCategory
-  if (key.includes("perfil")) return IconUser
-  if (key.includes("interno") || key.includes("ferramenta")) return IconSimulate
-  if (section === "Dívidas") return IconDebts
-  if (section === "Planejamento") return IconPiggy
-  return IconOverview
-}
-
-export const HeaderBreadcrumb = ({
-  crumbs,
-  section,
-}: HeaderBreadcrumbProps) => {
+export const HeaderBreadcrumb = ({ crumbs }: HeaderBreadcrumbProps) => {
   if (crumbs.length === 0) return null
 
   return (
@@ -67,7 +20,7 @@ export const HeaderBreadcrumb = ({
       <ol className="flex min-w-0 items-center gap-0.5 sm:gap-1">
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1
-          const Icon = crumbIcon(crumb.label, section)
+          const Icon = crumb.icon ?? IconOverview
           const content = (
             <>
               <Icon

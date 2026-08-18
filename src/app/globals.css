@@ -3,55 +3,61 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f4f7f6;
-  --foreground: #0f172a;
+  --background: #f6f5fb;
+  --foreground: #17162b;
   --surface: #ffffff;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --accent: #0f766e;
-  --accent-hover: #0d9488;
-  --accent-soft: #ccfbf1;
+  --muted: #6b678c;
+  --border: #e4e1f2;
+  --accent: #6c4fe0;
+  --accent-hover: #5b3fd1;
+  --accent-soft: #ede9fc;
   --danger: #dc2626;
   --warning: #d97706;
   --success: #059669;
   --sidebar: #ffffff;
-  --sidebar-hover: #f1f5f9;
-  --sidebar-active: #f0fdfa;
-  --sidebar-muted: #64748b;
-  --sidebar-border: #e2e8f0;
+  --sidebar-hover: #f3f1fb;
+  --sidebar-active: #ede9fc;
+  --sidebar-muted: #6b678c;
+  --sidebar-border: #e4e1f2;
   --auth-panel-gradient: linear-gradient(
     165deg,
-    #f0f7f5 0%,
-    #f8fafc 45%,
-    #eef6f4 100%
+    #f3f0fc 0%,
+    #f8f7fc 45%,
+    #eeeafa 100%
   );
-  --auth-dot-color: rgba(15, 118, 110, 0.12);
+  --auth-dot-color: rgba(108, 79, 224, 0.12);
+  --nexo-violet: #6c4fe0;
+  --nexo-cyan: #0891b2;
+  --nexo-magenta: #c0327d;
 }
 
 html.dark {
-  --background: #0b1220;
-  --foreground: #e2e8f0;
-  --surface: #111827;
-  --muted: #94a3b8;
-  --border: #1f2937;
-  --accent: #2dd4bf;
-  --accent-hover: #5eead4;
-  --accent-soft: #134e4a;
+  --background: #0a0a13;
+  --foreground: #f2f1fc;
+  --surface: #1b1a36;
+  --muted: #9e9bc7;
+  --border: #2c2a52;
+  --accent: #7c6cff;
+  --accent-hover: #9585ff;
+  --accent-soft: #2a2358;
   --danger: #f87171;
   --warning: #fbbf24;
   --success: #34d399;
-  --sidebar: #0f172a;
-  --sidebar-hover: #1e293b;
-  --sidebar-active: #134e4a;
-  --sidebar-muted: #94a3b8;
-  --sidebar-border: #1f2937;
+  --sidebar: #14132a;
+  --sidebar-hover: #201f42;
+  --sidebar-active: #2a2358;
+  --sidebar-muted: #706c9e;
+  --sidebar-border: #2c2a52;
   --auth-panel-gradient: linear-gradient(
     165deg,
-    #0b1220 0%,
-    #0a0e17 45%,
-    #0c1a1c 100%
+    #0a0a13 0%,
+    #0d0c1c 45%,
+    #12102a 100%
   );
-  --auth-dot-color: rgba(45, 212, 191, 0.1);
+  --auth-dot-color: rgba(124, 108, 255, 0.12);
+  --nexo-violet: #7c6cff;
+  --nexo-cyan: #4cc9f0;
+  --nexo-magenta: #ff5fa8;
 }
 
 @theme inline {
@@ -71,8 +77,12 @@ html.dark {
   --color-sidebar-active: var(--sidebar-active);
   --color-sidebar-muted: var(--sidebar-muted);
   --color-sidebar-border: var(--sidebar-border);
-  --font-sans: var(--font-plus-jakarta);
-  --font-display: var(--font-dm-sans);
+  --color-nexo-violet: var(--nexo-violet);
+  --color-nexo-cyan: var(--nexo-cyan);
+  --color-nexo-magenta: var(--nexo-magenta);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-sora);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 body {

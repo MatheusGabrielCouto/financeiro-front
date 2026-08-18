@@ -1,6 +1,11 @@
+import { IconCreditCard, IconDebts, IconUser } from "@/components/icons"
+import type { IconComponent } from "@/lib/nav-registry"
+import { findAreaByModuleId, findModuleByHref } from "@/lib/nav-registry"
+
 export type PageCrumb = {
   label: string
   href?: string
+  icon?: IconComponent
 }
 
 export type PageMeta = {
@@ -9,69 +14,17 @@ export type PageMeta = {
   crumbs: PageCrumb[]
 }
 
+const DIVIDAS_HREF = "/dividas"
+const CARTOES_HREF = "/cartoes"
+
 export const getPageMeta = (pathname: string): PageMeta => {
-  if (pathname === "/") {
-    return {
-      title: "Início",
-      section: "Visão geral",
-      crumbs: [{ label: "Início" }],
-    }
-  }
-
-  if (pathname.startsWith("/rotinas")) {
-    return {
-      title: "Rotinas",
-      section: "Vida pessoal",
-      crumbs: [{ label: "Rotinas" }],
-    }
-  }
-
-  if (pathname.startsWith("/diario")) {
-    return {
-      title: "Diário",
-      section: "Vida pessoal",
-      crumbs: [{ label: "Diário" }],
-    }
-  }
-
-  if (pathname.startsWith("/metas-pessoais")) {
-    return {
-      title: "Metas pessoais",
-      section: "Vida pessoal",
-      crumbs: [{ label: "Metas" }],
-    }
-  }
-
-  if (pathname.startsWith("/estudos")) {
-    return {
-      title: "Estudos",
-      section: "Vida pessoal",
-      crumbs: [{ label: "Estudos" }],
-    }
-  }
-
-  if (pathname.startsWith("/cadernos")) {
-    return {
-      title: "Cadernos",
-      section: "Vida pessoal",
-      crumbs: [{ label: "Cadernos" }],
-    }
-  }
-
-  if (pathname.startsWith("/remedios")) {
-    return {
-      title: "Remédios",
-      section: "Vida pessoal",
-      crumbs: [{ label: "Remédios" }],
-    }
-  }
-
+  // Rotas dinâmicas/multi-nível que o registro plano de módulos não modela.
   if (pathname.startsWith("/dividas/nova")) {
     return {
       title: "Nova dívida",
       section: "Dívidas",
       crumbs: [
-        { label: "Dívidas", href: "/dividas" },
+        { label: "Dívidas", href: DIVIDAS_HREF, icon: IconDebts },
         { label: "Nova" },
       ],
     }
@@ -82,38 +35,8 @@ export const getPageMeta = (pathname: string): PageMeta => {
       title: "Detalhe da dívida",
       section: "Dívidas",
       crumbs: [
-        { label: "Dívidas", href: "/dividas" },
+        { label: "Dívidas", href: DIVIDAS_HREF, icon: IconDebts },
         { label: "Detalhe" },
-      ],
-    }
-  }
-
-  if (pathname.startsWith("/dividas")) {
-    return {
-      title: "Todas as dívidas",
-      section: "Dívidas",
-      crumbs: [{ label: "Dívidas" }],
-    }
-  }
-
-  if (pathname.startsWith("/parcelas")) {
-    return {
-      title: "A pagar este mês",
-      section: "Dívidas",
-      crumbs: [
-        { label: "Dívidas", href: "/dividas" },
-        { label: "A pagar" },
-      ],
-    }
-  }
-
-  if (pathname.startsWith("/calendario")) {
-    return {
-      title: "Calendário",
-      section: "Dívidas",
-      crumbs: [
-        { label: "Dívidas", href: "/dividas" },
-        { label: "Calendário" },
       ],
     }
   }
@@ -123,7 +46,7 @@ export const getPageMeta = (pathname: string): PageMeta => {
       title: "Novo cartão",
       section: "Dívidas",
       crumbs: [
-        { label: "Cartões", href: "/cartoes" },
+        { label: "Cartões", href: CARTOES_HREF, icon: IconCreditCard },
         { label: "Novo" },
       ],
     }
@@ -134,143 +57,9 @@ export const getPageMeta = (pathname: string): PageMeta => {
       title: "Detalhe do cartão",
       section: "Dívidas",
       crumbs: [
-        { label: "Cartões", href: "/cartoes" },
+        { label: "Cartões", href: CARTOES_HREF, icon: IconCreditCard },
         { label: "Detalhe" },
       ],
-    }
-  }
-
-  if (pathname.startsWith("/cartoes")) {
-    return {
-      title: "Cartões",
-      section: "Dívidas",
-      crumbs: [{ label: "Cartões" }],
-    }
-  }
-
-  if (pathname.startsWith("/planejamento")) {
-    return {
-      title: "Planejamento",
-      section: "Planejamento",
-      crumbs: [{ label: "Planejamento" }],
-    }
-  }
-
-  if (pathname.startsWith("/gastos-previstos")) {
-    return {
-      title: "Gastos previstos",
-      section: "Planejamento",
-      crumbs: [{ label: "Gastos previstos" }],
-    }
-  }
-
-  if (pathname.startsWith("/pra-pagar")) {
-    return {
-      title: "Pra pagar",
-      section: "Planejamento",
-      crumbs: [{ label: "Pra pagar" }],
-    }
-  }
-
-  if (pathname.startsWith("/planejador")) {
-    return {
-      title: "Planejador de dívidas",
-      section: "Dívidas",
-      crumbs: [
-        { label: "Dívidas", href: "/dividas" },
-        { label: "Planejador" },
-      ],
-    }
-  }
-
-  if (pathname.startsWith("/simulador")) {
-    return {
-      title: "Simulador",
-      section: "Dívidas",
-      crumbs: [
-        { label: "Dívidas", href: "/dividas" },
-        { label: "Simulador" },
-      ],
-    }
-  }
-
-  if (pathname.startsWith("/extrato")) {
-    return {
-      title: "Extrato",
-      section: "Visão geral",
-      crumbs: [{ label: "Extrato" }],
-    }
-  }
-
-  if (pathname.startsWith("/relatorios")) {
-    return {
-      title: "Detalhamento",
-      section: "Visão geral",
-      crumbs: [{ label: "Relatórios" }],
-    }
-  }
-
-  if (pathname.startsWith("/insights")) {
-    return {
-      title: "Insights",
-      section: "Visão geral",
-      crumbs: [{ label: "Insights" }],
-    }
-  }
-
-  if (pathname.startsWith("/notificacoes")) {
-    return {
-      title: "Atenção",
-      section: "Visão geral",
-      crumbs: [{ label: "Atenção" }],
-    }
-  }
-
-  if (pathname.startsWith("/fechamento")) {
-    return {
-      title: "Fechamento",
-      section: "Visão geral",
-      crumbs: [{ label: "Fechamento" }],
-    }
-  }
-
-  if (pathname.startsWith("/caixinhas")) {
-    return {
-      title: "Caixinhas",
-      section: "Planejamento",
-      crumbs: [{ label: "Caixinhas" }],
-    }
-  }
-
-  if (pathname.startsWith("/recorrentes")) {
-    return {
-      title: "Contas fixas",
-      section: "Planejamento",
-      crumbs: [{ label: "Contas fixas" }],
-    }
-  }
-
-  if (pathname.startsWith("/receitas-fixas")) {
-    return {
-      title: "Receitas fixas",
-      section: "Planejamento",
-      crumbs: [{ label: "Receitas fixas" }],
-    }
-  }
-
-  if (pathname.startsWith("/orcamento")) {
-    return {
-      title: "Orçamento",
-      section: "Planejamento",
-      crumbs: [{ label: "Orçamento" }],
-    }
-  }
-
-  if (pathname.startsWith("/categorias")) {
-    return {
-      title: "Categorias",
-      section: "Planejamento",
-      crumbs: [{ label: "Categorias" }],
     }
   }
 
@@ -278,7 +67,7 @@ export const getPageMeta = (pathname: string): PageMeta => {
     return {
       title: "Perfil",
       section: "Conta",
-      crumbs: [{ label: "Perfil" }],
+      crumbs: [{ label: "Perfil", icon: IconUser }],
     }
   }
 
@@ -290,9 +79,31 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
+  const appModule = findModuleByHref(pathname)
+  if (appModule) {
+    const item =
+      appModule.navItems.find(
+        (navItem) =>
+          pathname === navItem.href || pathname.startsWith(`${navItem.href}/`)
+      ) ?? appModule.navItems[0]
+    const area = findAreaByModuleId(appModule.id)
+    const isModuleRoot = item.href === appModule.href
+
+    return {
+      title: item.label,
+      section: area?.label ?? appModule.label,
+      crumbs: isModuleRoot
+        ? [{ label: item.label, icon: item.icon }]
+        : [
+            { label: appModule.label, href: appModule.href, icon: appModule.icon },
+            { label: item.label, icon: item.icon },
+          ],
+    }
+  }
+
   return {
-    title: "Financeiro",
+    title: "Nexo",
     section: "App",
-    crumbs: [{ label: "Financeiro" }],
+    crumbs: [{ label: "Nexo" }],
   }
 }

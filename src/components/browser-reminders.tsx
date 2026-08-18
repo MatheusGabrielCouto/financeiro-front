@@ -203,7 +203,7 @@ export const BrowserReminders = ({
     setInAppPreview(null)
     setIsTesting(true)
 
-    const title = "Financeiro — teste"
+    const title = "Nexo — teste"
     const body =
       "Notificação de teste enviada com sucesso. Seus lembretes estão funcionando."
 

@@ -1,7 +1,7 @@
 export type ThemePreference = "light" | "dark" | "system"
 export type ResolvedTheme = "light" | "dark"
 
-export const THEME_STORAGE_KEY = "financeiro-theme"
+export const THEME_STORAGE_KEY = "nexo-theme"
 
 export const resolveTheme = (
   preference: ThemePreference,
