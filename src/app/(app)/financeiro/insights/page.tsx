@@ -129,7 +129,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
   const year = params.year ? Number(params.year) : current.year
 
   if (!Number.isFinite(month) || !Number.isFinite(year) || month < 1 || month > 12) {
-    redirect(`/insights?month=${current.month}&year=${current.year}`)
+    redirect(`/financeiro/insights?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -157,28 +157,28 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
         key: "income",
         label: "Renda",
         item: score.breakdown.income,
-        href: "/receitas-fixas",
+        href: "/financeiro/receitas-fixas",
         action: "Ajustar receitas",
       },
       {
         key: "expenses",
         label: "Gastos",
         item: score.breakdown.expenses,
-        href: "/orcamento",
+        href: "/financeiro/orcamento",
         action: "Ver orçamento",
       },
       {
         key: "debts",
         label: "Dívidas",
         item: score.breakdown.debts,
-        href: "/dividas",
+        href: "/financeiro/dividas",
         action: "Ver dívidas",
       },
       {
         key: "reserve",
         label: "Reserva",
         item: score.breakdown.reserve,
-        href: "/caixinhas",
+        href: "/financeiro/caixinhas",
         action: "Fortalecer reserva",
       },
     ] as const
@@ -245,7 +245,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                   <MonthYearFilter
                     month={month}
                     year={year}
-                    basePath="/insights"
+                    basePath="/financeiro/insights"
                   />
                 </div>
               </Suspense>
@@ -395,7 +395,7 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
                     Continue lançando gastos no extrato para gerar insights.
                   </p>
                   <Link
-                    href="/extrato"
+                    href="/financeiro/extrato"
                     className="mt-4 inline-flex text-sm font-semibold text-accent hover:underline"
                   >
                     Ir para o extrato
@@ -448,10 +448,10 @@ const InsightsPage = async ({ searchParams }: InsightsPageProps) => {
               <h2 className="text-base font-semibold">Atalhos úteis</h2>
               <div className="mt-3 grid gap-2">
                 {[
-                  { href: "/caixinhas", label: "Caixinhas", hint: "Guardar e reservar" },
-                  { href: "/orcamento", label: "Orçamento", hint: "Limitar categorias" },
-                  { href: "/parcelas", label: "A pagar", hint: "Quitar pendências" },
-                  { href: "/relatorios", label: "Relatórios", hint: "Ver tendência" },
+                  { href: "/financeiro/caixinhas", label: "Caixinhas", hint: "Guardar e reservar" },
+                  { href: "/financeiro/orcamento", label: "Orçamento", hint: "Limitar categorias" },
+                  { href: "/financeiro/parcelas", label: "A pagar", hint: "Quitar pendências" },
+                  { href: "/financeiro/relatorios", label: "Relatórios", hint: "Ver tendência" },
                 ].map((item) => (
                   <Link
                     key={item.href}

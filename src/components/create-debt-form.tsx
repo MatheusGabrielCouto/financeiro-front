@@ -157,7 +157,7 @@ export const CreateDebtForm = () => {
         return
       }
 
-      router.replace("/dividas")
+      router.replace("/financeiro/dividas")
       router.refresh()
     } catch {
       setError("Erro de conexão ao criar dívida")
@@ -460,7 +460,7 @@ export const CreateDebtForm = () => {
         </button>
         <button
           type="button"
-          onClick={() => router.push("/dividas")}
+          onClick={() => router.push("/financeiro/dividas")}
           className="rounded-xl border border-border px-5 py-2.5 text-sm font-medium hover:bg-background"
           aria-label="Cancelar e voltar"
         >

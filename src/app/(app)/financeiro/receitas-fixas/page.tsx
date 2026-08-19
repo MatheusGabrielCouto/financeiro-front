@@ -66,7 +66,7 @@ const ReceitasFixasPage = async () => {
               </p>
             </div>
             <Link
-              href="/recorrentes"
+              href="/financeiro/recorrentes"
               className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
             >
               Ir para contas fixas
@@ -242,7 +242,7 @@ const ReceitasFixasPage = async () => {
                 em Contas fixas.
               </p>
               <Link
-                href="/recorrentes"
+                href="/financeiro/recorrentes"
                 className="mt-4 inline-flex rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Cadastrar conta fixa

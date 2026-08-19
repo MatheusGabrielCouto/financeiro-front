@@ -4,15 +4,29 @@ import {
   setAuthCookies,
 } from "@/lib/auth-cookies"
 import { publicApiFetch, ApiError } from "@/lib/api-server"
-import type { SessionResponse } from "@/lib/types"
+import type { SessionResponse, TwoFactorChallengeResponse } from "@/lib/types"
+
+const isTwoFactorChallenge = (
+  data: SessionResponse | TwoFactorChallengeResponse
+): data is TwoFactorChallengeResponse =>
+  "requires_2fa" in data && data.requires_2fa === true
 
 export const POST = async (request: Request) => {
   try {
     const body = await request.json()
-    const data = await publicApiFetch<SessionResponse>("/sessions", {
+    const data = await publicApiFetch<
+      SessionResponse | TwoFactorChallengeResponse
+    >("/sessions", {
       method: "POST",
       body,
     })
+
+    if (isTwoFactorChallenge(data)) {
+      return NextResponse.json({
+        requires_2fa: true,
+        challenge_token: data.challenge_token,
+      })
+    }
 
     const response = NextResponse.json({
       user: data.user,

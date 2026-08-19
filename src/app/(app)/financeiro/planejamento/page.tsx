@@ -16,7 +16,7 @@ const PlanejamentoPage = async ({ searchParams }: PlanejamentoPageProps) => {
   const year = params.year ? Number(params.year) : current.year
 
   if (!Number.isFinite(year) || year < 2000 || year > 2100) {
-    redirect(`/planejamento?year=${current.year}`)
+    redirect(`/financeiro/planejamento?year=${current.year}`)
   }
 
   try {

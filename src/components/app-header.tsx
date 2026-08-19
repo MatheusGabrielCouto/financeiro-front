@@ -34,11 +34,11 @@ export const AppHeader = ({
   onKeyDownAction,
 }: AppHeaderProps) => {
   return (
-    <header className="sticky top-0 z-30 shrink-0 border-b border-teal-900/10 bg-surface/90 shadow-[0_1px_0_0_rgba(13,148,136,0.06)] backdrop-blur-xl">
+    <header className="sticky top-0 z-30 shrink-0 border-b border-border/70 bg-surface/85 backdrop-blur-xl">
       <div className="flex min-h-[3.75rem] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 lg:px-6">
         <button
           type="button"
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-900/15 bg-surface text-slate-600 shadow-sm dark:text-slate-300 lg:hidden"
+          className="interactive-lift inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/80 bg-surface-soft text-slate-600 shadow-sm dark:text-slate-300 lg:hidden"
           aria-label="Abrir menu"
           aria-expanded={mobileOpen}
           tabIndex={0}
@@ -49,7 +49,7 @@ export const AppHeader = ({
 
         <button
           type="button"
-          className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-900/15 bg-surface text-slate-600 shadow-sm transition hover:border-teal-700/30 hover:bg-teal-50/70 hover:text-accent dark:text-slate-300 dark:hover:bg-teal-950/40 lg:inline-flex"
+          className="interactive-lift hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/80 bg-surface-soft text-slate-600 shadow-sm hover:border-accent/30 hover:bg-accent-soft/70 hover:text-accent dark:text-slate-300 dark:hover:bg-accent-soft/40 lg:inline-flex"
           aria-label={sidebarCollapsed ? "Expandir menu" : "Minimizar menu"}
           aria-expanded={!sidebarCollapsed}
           tabIndex={0}

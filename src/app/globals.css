@@ -29,6 +29,16 @@
   --nexo-violet: #6c4fe0;
   --nexo-cyan: #0891b2;
   --nexo-magenta: #c0327d;
+  --surface-soft: #fcfbff;
+  --surface-elevated: #ffffff;
+  --ring-soft: rgba(108, 79, 224, 0.14);
+  --shadow-soft: 0 10px 30px rgba(108, 79, 224, 0.08);
+  --shadow-card: 0 6px 24px rgba(17, 24, 39, 0.08);
+  --dashboard-noise: radial-gradient(
+    1200px 420px at 15% -5%,
+    rgba(108, 79, 224, 0.08) 0%,
+    transparent 60%
+  );
 }
 
 html.dark {
@@ -58,6 +68,16 @@ html.dark {
   --nexo-violet: #7c6cff;
   --nexo-cyan: #4cc9f0;
   --nexo-magenta: #ff5fa8;
+  --surface-soft: #171632;
+  --surface-elevated: #1b1a36;
+  --ring-soft: rgba(149, 133, 255, 0.28);
+  --shadow-soft: 0 14px 34px rgba(2, 6, 23, 0.55);
+  --shadow-card: 0 8px 28px rgba(2, 6, 23, 0.5);
+  --dashboard-noise: radial-gradient(
+    1100px 380px at 10% -10%,
+    rgba(124, 108, 255, 0.16) 0%,
+    transparent 64%
+  );
 }
 
 @theme inline {
@@ -87,6 +107,8 @@ html.dark {
 
 body {
   background: var(--background);
+  background-image: var(--dashboard-noise);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
   min-height: 100vh;
@@ -98,6 +120,29 @@ html {
 
 * {
   box-sizing: border-box;
+}
+
+.panel {
+  border: 1px solid color-mix(in oklab, var(--border) 86%, transparent);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-card);
+  border-radius: 1rem;
+}
+
+.panel-soft {
+  border: 1px solid color-mix(in oklab, var(--border) 76%, transparent);
+  background: color-mix(in oklab, var(--surface-soft) 94%, transparent);
+  box-shadow: var(--shadow-soft);
+  border-radius: 1rem;
+}
+
+.interactive-lift {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.interactive-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px color-mix(in oklab, var(--accent) 14%, transparent);
 }
 
 @keyframes auth-enter {
@@ -279,39 +324,6 @@ html {
   .dashboard-enter {
     animation: none;
   }
-}
-
-/* Cadernos — "warm study desk" theme, scoped to the /cadernos route only */
-.cadernos-theme {
-  --background: #f6f1e4;
-  --foreground: #2a231a;
-  --surface: #fffdf7;
-  --muted: #8a7c66;
-  --border: #e4d9c0;
-  --accent: #a8542a;
-  --accent-hover: #c2652f;
-  --accent-soft: #f3ddc8;
-  --sidebar: #fffdf7;
-  --sidebar-hover: #f3ecdc;
-  --sidebar-active: #f3ddc8;
-  --sidebar-muted: #8a7c66;
-  --sidebar-border: #e4d9c0;
-}
-
-html.dark .cadernos-theme {
-  --background: #181510;
-  --foreground: #ece4d3;
-  --surface: #211c14;
-  --muted: #a99c86;
-  --border: #35291c;
-  --accent: #e08a52;
-  --accent-hover: #eda06e;
-  --accent-soft: #3a2716;
-  --sidebar: #211c14;
-  --sidebar-hover: #2b2317;
-  --sidebar-active: #3a2716;
-  --sidebar-muted: #a99c86;
-  --sidebar-border: #35291c;
 }
 
 .nb-mark,

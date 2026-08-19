@@ -182,7 +182,7 @@ export const PlannedDebtSheet = ({
   }
 
   const handleYearChange = (nextYear: number) => {
-    router.push(`/planejamento?year=${nextYear}`)
+    router.push(`/financeiro/planejamento?year=${nextYear}`)
   }
 
   const handleCreateLine = async () => {
@@ -894,7 +894,7 @@ export const PlannedDebtSheet = ({
                 </p>
               </div>
               <Link
-                href="/receitas-fixas"
+                href="/financeiro/receitas-fixas"
                 className="text-xs font-semibold text-accent hover:underline"
               >
                 Editar
@@ -907,7 +907,7 @@ export const PlannedDebtSheet = ({
                   Cadastre receitas fixas para calcular a sobra.
                 </p>
                 <Link
-                  href="/receitas-fixas"
+                  href="/financeiro/receitas-fixas"
                   className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
                 >
                   Ir para receitas
@@ -954,7 +954,7 @@ export const PlannedDebtSheet = ({
                 </p>
               </div>
               <Link
-                href="/recorrentes"
+                href="/financeiro/recorrentes"
                 className="text-xs font-semibold text-accent hover:underline"
               >
                 Gerenciar

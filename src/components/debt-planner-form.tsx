@@ -245,7 +245,7 @@ export const DebtPlannerForm = ({ initialData }: DebtPlannerFormProps) => {
           bola de neve ou avalanche.
         </p>
         <Link
-          href="/dividas"
+          href="/financeiro/dividas"
           className="mt-5 inline-flex rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
         >
           Ir para dívidas
@@ -398,7 +398,7 @@ export const DebtPlannerForm = ({ initialData }: DebtPlannerFormProps) => {
               </p>
             </div>
             <Link
-              href="/dividas"
+              href="/financeiro/dividas"
               className="rounded-xl border border-border px-3 py-2 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
             >
               Gerenciar

@@ -220,7 +220,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
     year < 2000 ||
     year > 2100
   ) {
-    redirect(`/relatorios?month=${current.month}&year=${current.year}`)
+    redirect(`/financeiro/relatorios?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -433,7 +433,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                     <MonthYearFilter
                       month={month}
                       year={year}
-                      basePath="/relatorios"
+                      basePath="/financeiro/relatorios"
                     />
                   </div>
                   <ExportDataButtons
@@ -651,7 +651,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
           <BreakdownCard
             title="Entradas recorrentes"
             count={incomes.length}
-            href="/receitas-fixas"
+            href="/financeiro/receitas-fixas"
             emptyLabel="Nenhuma receita fixa neste mês"
           >
             {incomes.map((item) => (
@@ -668,7 +668,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
           <BreakdownCard
             title="Contas fixas"
             count={recurrings.length}
-            href="/recorrentes"
+            href="/financeiro/recorrentes"
             emptyLabel="Nenhuma conta fixa cadastrada"
           >
             {recurrings.map((item) => (
@@ -687,7 +687,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
           <BreakdownCard
             title="Parcelas do mês"
             count={debts.length}
-            href="/parcelas"
+            href="/financeiro/parcelas"
             emptyLabel="Nenhuma parcela neste período"
           >
             {debts.map((item) => {
@@ -709,7 +709,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
           <BreakdownCard
             title="Gastos previstos"
             count={plannedExpenses.length}
-            href="/gastos-previstos"
+            href="/financeiro/gastos-previstos"
             emptyLabel="Nenhum gasto previsto neste mês"
           >
             {plannedExpenses.map((item) => {
@@ -731,7 +731,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
           <BreakdownCard
             title="Movimentação de caixinhas"
             count={caixinhas.length}
-            href="/caixinhas"
+            href="/financeiro/caixinhas"
             emptyLabel="Sem depósitos ou retiradas neste mês"
           >
             {caixinhas.map((item) => (
@@ -809,7 +809,7 @@ const RelatoriosPage = async ({ searchParams }: RelatoriosPageProps) => {
                 </p>
               </div>
               <Link
-                href="/dividas"
+                href="/financeiro/dividas"
                 className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Dívidas

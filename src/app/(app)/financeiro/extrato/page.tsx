@@ -36,7 +36,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
   const tipo = params.tipo
 
   if (!Number.isFinite(month) || !Number.isFinite(year) || month < 1 || month > 12) {
-    redirect(`/extrato?month=${current.month}&year=${current.year}`)
+    redirect(`/financeiro/extrato?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -89,7 +89,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
         year: String(year),
       })
       if (nextTipo !== "todos") query.set("tipo", nextTipo)
-      return `/extrato?${query.toString()}`
+      return `/financeiro/extrato?${query.toString()}`
     }
 
     return (
@@ -110,7 +110,7 @@ const ExtratoPage = async ({ searchParams }: ExtratoPageProps) => {
             </div>
             <div className="flex flex-col items-stretch gap-3 sm:items-end">
               <Suspense fallback={<div className="text-sm text-muted">Carregando...</div>}>
-                <MonthYearFilter month={month} year={year} basePath="/extrato" />
+                <MonthYearFilter month={month} year={year} basePath="/financeiro/extrato" />
               </Suspense>
               <div className="flex flex-wrap items-center justify-end gap-2">
                 <ExportDataButtons

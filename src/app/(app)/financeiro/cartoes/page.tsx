@@ -68,7 +68,7 @@ const CartoesPage = async () => {
                 </p>
               </div>
               <Link
-                href="/cartoes/novo"
+                href="/financeiro/cartoes/novo"
                 className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
               >
                 Novo cartão
@@ -124,7 +124,7 @@ const CartoesPage = async () => {
               próximo do cartão real.
             </p>
             <Link
-              href="/cartoes/novo"
+              href="/financeiro/cartoes/novo"
               className="mt-5 inline-flex rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
             >
               Adicionar cartão
@@ -144,7 +144,7 @@ const CartoesPage = async () => {
                   className="group flex flex-col gap-4 rounded-3xl border border-border/70 bg-surface p-4 shadow-sm shadow-slate-200/40 transition hover:border-teal-200/70 dark:hover:border-teal-900/50 md:p-5"
                 >
                   <Link
-                    href={`/cartoes/${card.id}`}
+                    href={`/financeiro/cartoes/${card.id}`}
                     aria-label={`Abrir cartão ${card.name}`}
                     tabIndex={0}
                     className="mx-auto block w-full max-w-[26rem] outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
@@ -170,7 +170,7 @@ const CartoesPage = async () => {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <Link
-                        href={`/cartoes/${card.id}`}
+                        href={`/financeiro/cartoes/${card.id}`}
                         className="rounded-xl bg-accent px-3 py-2 text-xs font-semibold text-white transition hover:bg-accent-hover"
                       >
                         Ver fatura

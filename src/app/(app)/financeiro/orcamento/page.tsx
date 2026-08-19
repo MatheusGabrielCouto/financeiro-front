@@ -24,7 +24,7 @@ const buildHref = (month: number, year: number, status: string) => {
     year: String(year),
   })
   if (status !== "todos") params.set("status", status)
-  return `/orcamento?${params.toString()}`
+  return `/financeiro/orcamento?${params.toString()}`
 }
 
 type OrcamentoPageProps = {
@@ -39,7 +39,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
   const statusFilter = params.status ?? "todos"
 
   if (!Number.isFinite(month) || !Number.isFinite(year) || month < 1 || month > 12) {
-    redirect(`/orcamento?month=${current.month}&year=${current.year}`)
+    redirect(`/financeiro/orcamento?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -101,7 +101,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
             <Suspense
               fallback={<div className="text-sm text-muted">Carregando...</div>}
             >
-              <MonthYearFilter month={month} year={year} basePath="/orcamento" />
+              <MonthYearFilter month={month} year={year} basePath="/financeiro/orcamento" />
             </Suspense>
           </div>
 
@@ -230,7 +230,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
                     acompanhar seus gastos.
                   </p>
                   <Link
-                    href="/categorias"
+                    href="/financeiro/categorias"
                     className="mt-5 inline-flex text-sm font-medium text-accent hover:underline"
                   >
                     Gerenciar categorias
@@ -323,7 +323,7 @@ const OrcamentoPage = async ({ searchParams }: OrcamentoPageProps) => {
                 <li>A partir de 80%, o card sinaliza atenção.</li>
               </ul>
               <Link
-                href="/extrato"
+                href="/financeiro/extrato"
                 className="mt-4 inline-flex text-sm font-semibold text-accent hover:underline"
               >
                 Ver extrato do mês

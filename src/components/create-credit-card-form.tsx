@@ -63,7 +63,7 @@ export const CreateCreditCardForm = () => {
         )
         return
       }
-      router.push(`/cartoes/${payload.id}`)
+      router.push(`/financeiro/cartoes/${payload.id}`)
       router.refresh()
     } catch {
       setError("Erro de conexão")
@@ -205,7 +205,7 @@ export const CreateCreditCardForm = () => {
           </button>
           <button
             type="button"
-            onClick={() => router.push("/cartoes")}
+            onClick={() => router.push("/financeiro/cartoes")}
             className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
           >
             Cancelar

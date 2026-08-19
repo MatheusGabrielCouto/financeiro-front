@@ -63,7 +63,7 @@ const toneLabel: Record<CalendarDueTone, string> = {
 }
 
 const buildDayHref = (month: number, year: number, day: number) =>
-  `/calendario?month=${month}&year=${year}&day=${day}`
+  `/financeiro/calendario?month=${month}&year=${year}&day=${day}`
 
 const weekdayLong = (date: Date) =>
   new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(date)
@@ -82,7 +82,7 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
     month < 1 ||
     month > 12
   ) {
-    redirect(`/calendario?month=${current.month}&year=${current.year}`)
+    redirect(`/financeiro/calendario?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -232,7 +232,7 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
                   <MonthYearFilter
                     month={month}
                     year={year}
-                    basePath="/calendario"
+                    basePath="/financeiro/calendario"
                   />
                 </div>
               </Suspense>
@@ -442,7 +442,7 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
                     Nada vence nesta data. Veja o que ainda falta no mês.
                   </p>
                   <Link
-                    href={`/parcelas?month=${month}&year=${year}`}
+                    href={`/financeiro/parcelas?month=${month}&year=${year}`}
                     className="mt-4 inline-flex rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     A pagar este mês
@@ -493,7 +493,7 @@ const CalendarioPage = async ({ searchParams }: CalendarioPageProps) => {
 
             <div className="border-t border-border/70 px-5 py-4">
               <Link
-                href={`/parcelas?month=${month}&year=${year}`}
+                href={`/financeiro/parcelas?month=${month}&year=${year}`}
                 className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover sm:w-auto"
               >
                 Ir para pagamentos

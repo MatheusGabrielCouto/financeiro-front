@@ -387,13 +387,13 @@ export const InstallmentSimulationForm = () => {
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
-                    href="/dividas/nova"
+                    href="/financeiro/dividas/nova"
                     className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
                   >
                     Criar dívida
                   </Link>
                   <Link
-                    href="/planejador"
+                    href="/financeiro/planejador"
                     className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Ver planejador
@@ -408,19 +408,19 @@ export const InstallmentSimulationForm = () => {
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
-                    href="/receitas-fixas"
+                    href="/financeiro/receitas-fixas"
                     className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Receitas fixas
                   </Link>
                   <Link
-                    href="/parcelas"
+                    href="/financeiro/parcelas"
                     className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Pagar pendências
                   </Link>
                   <Link
-                    href="/insights"
+                    href="/financeiro/insights"
                     className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Ver insights

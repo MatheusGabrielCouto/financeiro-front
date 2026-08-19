@@ -15,7 +15,7 @@ export const HeaderNotifications = ({ count }: HeaderNotificationsProps) => {
 
   return (
     <Link
-      href="/notificacoes"
+      href="/financeiro/notificacoes"
       className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-teal-900/15 bg-surface text-slate-600 shadow-sm transition hover:border-teal-700/30 hover:bg-teal-50/70 hover:text-accent dark:text-slate-300 dark:hover:bg-teal-950/40"
       aria-label={label}
       tabIndex={0}

@@ -92,7 +92,7 @@ export const buildCreditCardInvoiceAlerts = async ({
           dueDay: card.dueDay,
           dueDate: dueDate.toISOString(),
           urgency: getInvoiceUrgency(dueDate, today),
-          href: `/cartoes/${card.id}?month=${month}&year=${year}`,
+          href: `/financeiro/cartoes/${card.id}?month=${month}&year=${year}`,
         } satisfies CreditCardInvoiceAlert
       } catch {
         return null

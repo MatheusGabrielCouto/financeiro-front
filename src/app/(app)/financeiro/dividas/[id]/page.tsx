@@ -47,7 +47,7 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
       <div className="space-y-6">
         <section className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
           <Link
-            href="/dividas"
+            href="/financeiro/dividas"
             className="text-sm font-medium text-accent hover:underline"
           >
             ← Voltar para dívidas
@@ -88,7 +88,7 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
             <div className="flex flex-wrap items-center gap-2">
               <EditDebtForm debt={debt} categories={categories} />
               <Link
-                href="/parcelas"
+                href="/financeiro/parcelas"
                 className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Ir para parcelas
@@ -96,7 +96,7 @@ const DebtDetailPage = async ({ params }: DebtDetailPageProps) => {
               <DeleteDebtButton
                 debtId={debt.id}
                 debtTitle={debt.title}
-                redirectTo="/dividas"
+                redirectTo="/financeiro/dividas"
               />
             </div>
           </div>

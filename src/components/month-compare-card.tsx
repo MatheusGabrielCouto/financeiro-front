@@ -145,7 +145,7 @@ export const MonthCompareCard = ({
         </div>
         {isHome ? (
           <Link
-            href="/relatorios"
+            href="/financeiro/relatorios"
             className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
             aria-label="Abrir relatórios"
           >

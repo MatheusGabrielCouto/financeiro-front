@@ -20,13 +20,13 @@ const SimuladorPage = () => {
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               <Link
-                href="/planejador"
+                href="/financeiro/planejador"
                 className="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/15"
               >
                 Planejador de dívidas
               </Link>
               <Link
-                href="/parcelas"
+                href="/financeiro/parcelas"
                 className="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/15"
               >
                 A pagar este mês

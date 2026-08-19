@@ -14,12 +14,12 @@ export type PageMeta = {
   crumbs: PageCrumb[]
 }
 
-const DIVIDAS_HREF = "/dividas"
-const CARTOES_HREF = "/cartoes"
+const DIVIDAS_HREF = "/financeiro/dividas"
+const CARTOES_HREF = "/financeiro/cartoes"
 
 export const getPageMeta = (pathname: string): PageMeta => {
   // Rotas dinâmicas/multi-nível que o registro plano de módulos não modela.
-  if (pathname.startsWith("/dividas/nova")) {
+  if (pathname.startsWith("/financeiro/dividas/nova")) {
     return {
       title: "Nova dívida",
       section: "Dívidas",
@@ -30,7 +30,7 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
-  if (pathname.startsWith("/dividas/")) {
+  if (pathname.startsWith("/financeiro/dividas/")) {
     return {
       title: "Detalhe da dívida",
       section: "Dívidas",
@@ -41,7 +41,7 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
-  if (pathname.startsWith("/cartoes/novo")) {
+  if (pathname.startsWith("/financeiro/cartoes/novo")) {
     return {
       title: "Novo cartão",
       section: "Dívidas",
@@ -52,7 +52,7 @@ export const getPageMeta = (pathname: string): PageMeta => {
     }
   }
 
-  if (pathname.startsWith("/cartoes/")) {
+  if (pathname.startsWith("/financeiro/cartoes/")) {
     return {
       title: "Detalhe do cartão",
       section: "Dívidas",

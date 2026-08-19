@@ -30,13 +30,13 @@ const PlanejadorPage = async () => {
               </div>
               <div className="flex flex-wrap gap-2">
                 <Link
-                  href="/dividas"
+                  href="/financeiro/dividas"
                   className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15"
                 >
                   Ver dívidas
                 </Link>
                 <Link
-                  href="/simulador"
+                  href="/financeiro/simulador"
                   className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15"
                 >
                   Simulador

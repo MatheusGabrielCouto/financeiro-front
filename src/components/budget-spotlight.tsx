@@ -44,7 +44,7 @@ export const BudgetSpotlight = ({
           </p>
         </div>
         <Link
-          href="/orcamento"
+          href="/financeiro/orcamento"
           className="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
           aria-label="Ver orçamento completo"
         >
@@ -56,7 +56,7 @@ export const BudgetSpotlight = ({
         <div className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-slate-900/50">
           <p className="text-sm font-medium">Nenhum limite definido</p>
           <Link
-            href="/orcamento"
+            href="/financeiro/orcamento"
             className="mt-2 inline-flex text-sm font-semibold text-accent hover:underline"
           >
             Definir orçamento

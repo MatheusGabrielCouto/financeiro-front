@@ -52,7 +52,7 @@ const syncUrl = (notebookId: string | null, pageId: string | null) => {
   if (notebookId) params.set("notebook", notebookId)
   if (pageId) params.set("page", pageId)
   const query = params.toString()
-  window.history.replaceState(null, "", query ? `/cadernos?${query}` : "/cadernos")
+  window.history.replaceState(null, "", query ? `/pessoal/cadernos?${query}` : "/pessoal/cadernos")
 }
 
 const SAVE_STATUS_LABEL: Record<SaveStatus, string> = {
@@ -348,7 +348,7 @@ export const CadernosApp = ({
   const isBusy = isLoadingNotebook || isLoadingPage
 
   return (
-    <div className="cadernos-theme flex h-full min-h-0 flex-col text-foreground">
+    <div className="flex h-full min-h-0 flex-col text-foreground">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-3 md:px-6">
         <h1 className="font-[family-name:var(--font-fraunces)] text-xl font-semibold tracking-tight">
           Cadernos

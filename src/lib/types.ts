@@ -10,6 +10,7 @@ export type User = {
   email: string
   amount: number
   createdAt?: string
+  totpEnabled?: boolean
 }
 
 export type Category = {
@@ -408,6 +409,138 @@ export type AdjustMedicineQuantityBody = {
   delta: number
 }
 
+export type RecipeDifficulty = "EASY" | "MEDIUM" | "HARD"
+
+export type RecipeCategory = {
+  id: string
+  name: string
+  emoji: string
+  color: string
+  sortOrder: number
+  recipeCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type RecipeCategorySummary = {
+  id: string
+  name: string
+  emoji: string
+  color: string
+}
+
+export type RecipeIngredient = {
+  id: string
+  name: string
+  quantity: string | null
+  unit: string | null
+  groupLabel: string | null
+  sortOrder: number
+}
+
+export type RecipeStep = {
+  id: string
+  instruction: string
+  timerMinutes: number | null
+  sortOrder: number
+}
+
+export type RecipePhoto = {
+  id: string
+  url: string
+  caption: string
+  sortOrder: number
+  createdAt: string
+}
+
+export type RecipeNote = {
+  id: string
+  content: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type RecipeListItem = {
+  id: string
+  title: string
+  description: string
+  servings: number | null
+  prepMinutes: number | null
+  cookMinutes: number | null
+  difficulty: RecipeDifficulty | null
+  categoryId: string | null
+  category: RecipeCategorySummary | null
+  coverPhotoUrl: string | null
+  archivedAt: string | null
+  isFavorite: boolean
+  timesCooked: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type Recipe = RecipeListItem & {
+  coverPhotoId: string | null
+  ingredients: RecipeIngredient[]
+  steps: RecipeStep[]
+  photos: RecipePhoto[]
+  notes: RecipeNote[]
+}
+
+export type RecipeCookSession = {
+  id: string
+  recipeId: string
+  status: "IN_PROGRESS" | "COMPLETED" | "ABANDONED"
+  checkedIngredientIds: string[]
+  checkedStepIds: string[]
+  startedAt: string
+  completedAt: string | null
+}
+
+export type RecipeCookHistoryItem = {
+  id: string
+  sessionId: string
+  completedAt: string
+  durationMinutes: number | null
+}
+
+export type RecipeIngredientInput = {
+  name: string
+  quantity?: string | null
+  unit?: string | null
+  groupLabel?: string | null
+  sortOrder?: number
+}
+
+export type RecipeStepInput = {
+  instruction: string
+  timerMinutes?: number | null
+  sortOrder?: number
+}
+
+export type CreateRecipeCategoryBody = {
+  name: string
+  emoji?: string
+  color?: string
+}
+
+export type UpdateRecipeCategoryBody = Partial<CreateRecipeCategoryBody>
+
+export type CreateRecipeBody = {
+  title: string
+  description?: string
+  servings?: number | null
+  prepMinutes?: number | null
+  cookMinutes?: number | null
+  difficulty?: RecipeDifficulty | null
+  categoryId?: string | null
+  ingredients?: RecipeIngredientInput[]
+  steps?: RecipeStepInput[]
+}
+
+export type UpdateRecipeBody = Partial<CreateRecipeBody> & {
+  coverPhotoId?: string | null
+}
+
 export type StudySubject = {
   id: string
   title: string
@@ -481,6 +614,21 @@ export type SessionResponse = {
   refresh_token: string
   expires_at: string
   user: User
+}
+
+export type TwoFactorChallengeResponse = {
+  requires_2fa: true
+  challenge_token: string
+}
+
+export type LoginApiResponse =
+  | { user: User }
+  | TwoFactorChallengeResponse
+
+export type TwoFactorSetupResponse = {
+  secret: string
+  otpauthUrl: string
+  qrCode: string
 }
 
 export type RefreshResponse = {

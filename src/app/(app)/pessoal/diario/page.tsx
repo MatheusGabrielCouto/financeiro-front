@@ -57,7 +57,7 @@ const DiarioPage = async ({ searchParams }: DiarioPageProps) => {
     year < 2000 ||
     year > 2100
   ) {
-    redirect(`/diario?month=${current.month}&year=${current.year}`)
+    redirect(`/pessoal/diario?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -83,7 +83,7 @@ const DiarioPage = async ({ searchParams }: DiarioPageProps) => {
       p.set("year", String(year))
       if (search) p.set("search", search)
       p.set("date", date)
-      return `/diario?${p.toString()}`
+      return `/pessoal/diario?${p.toString()}`
     }
 
     const csvHeaders = ["Data", "Humor", "Conteúdo"]
@@ -154,11 +154,11 @@ const DiarioPage = async ({ searchParams }: DiarioPageProps) => {
                   <h2 className="text-base font-semibold">Entradas</h2>
                   <p className="text-sm text-muted">{monthLabel}</p>
                 </div>
-                <MonthYearFilter month={month} year={year} basePath="/diario" />
+                <MonthYearFilter month={month} year={year} basePath="/pessoal/diario" />
               </div>
 
               <div className="space-y-3 p-3 md:p-4">
-                <JournalSearch basePath="/diario" initialValue={search} />
+                <JournalSearch basePath="/pessoal/diario" initialValue={search} />
 
                 {entries.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-border/80 bg-background px-6 py-14 text-center">

@@ -319,7 +319,7 @@ export const FechamentoWizard = ({
                         ariaLabel={`Pagar ${item.title}`}
                       />
                       <Link
-                        href="/gastos-previstos"
+                        href="/financeiro/gastos-previstos"
                         className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                       >
                         Abrir
@@ -391,7 +391,7 @@ export const FechamentoWizard = ({
                   {surplusAck ? "Sobra revisada" : "Marcar sobra como revisada"}
                 </button>
                 <Link
-                  href={`/relatorios?month=${month}&year=${year}`}
+                  href={`/financeiro/relatorios?month=${month}&year=${year}`}
                   className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                 >
                   Abrir relatórios
@@ -427,7 +427,7 @@ export const FechamentoWizard = ({
                   {exported ? "Exportação ok" : "Já exportei / concluir"}
                 </button>
                 <Link
-                  href={`/extrato?month=${month}&year=${year}`}
+                  href={`/financeiro/extrato?month=${month}&year=${year}`}
                   className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                 >
                   Extrato

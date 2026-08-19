@@ -140,10 +140,10 @@ export const payableItemHref = (
   year: number
 ) => {
   if (item.kind === "installment") {
-    return `/parcelas?month=${month}&year=${year}`
+    return `/financeiro/parcelas?month=${month}&year=${year}`
   }
-  if (item.kind === "recurring") return "/recorrentes"
-  return "/gastos-previstos"
+  if (item.kind === "recurring") return "/financeiro/recorrentes"
+  return "/financeiro/gastos-previstos"
 }
 
 export const dayKey = (date: Date) => {

@@ -97,8 +97,8 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
       })
 
     const filterHref = (nextStatus: string) => {
-      if (nextStatus === "todas") return "/caixinhas"
-      return `/caixinhas?status=${nextStatus}`
+      if (nextStatus === "todas") return "/financeiro/caixinhas"
+      return `/financeiro/caixinhas?status=${nextStatus}`
     }
 
     const filters = [
@@ -129,7 +129,7 @@ const CaixinhasPage = async ({ searchParams }: CaixinhasPageProps) => {
               </div>
               <div className="flex flex-wrap gap-2">
                 <Link
-                  href="/insights"
+                  href="/financeiro/insights"
                   className="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
                 >
                   Ver insights

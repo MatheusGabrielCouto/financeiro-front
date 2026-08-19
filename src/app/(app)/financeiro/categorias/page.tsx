@@ -195,7 +195,7 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
       if (nextTipo !== "todas") nextParams.set("tipo", nextTipo)
       if (query) nextParams.set("q", query)
       const qs = nextParams.toString()
-      return qs ? `/categorias?${qs}` : "/categorias"
+      return qs ? `/financeiro/categorias?${qs}` : "/financeiro/categorias"
     }
 
     return (
@@ -216,7 +216,7 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
               </p>
             </div>
             <Link
-              href="/orcamento"
+              href="/financeiro/orcamento"
               className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               Ir para orçamento
@@ -340,13 +340,13 @@ const CategoriasPage = async ({ searchParams }: CategoriasPageProps) => {
               </ul>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
-                  href="/extrato"
+                  href="/financeiro/extrato"
                   className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   Extrato
                 </Link>
                 <Link
-                  href="/orcamento"
+                  href="/financeiro/orcamento"
                   className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   Orçamento

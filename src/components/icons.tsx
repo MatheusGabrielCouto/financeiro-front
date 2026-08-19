@@ -98,6 +98,24 @@ export const IconPlus = ({ className }: IconProps) => (
   </svg>
 )
 
+export const IconImport = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 3v10.59l3.3-3.3 1.4 1.42L12 17.41 7.3 12.71l1.4-1.42L11 13.59V3h2ZM5 19v2h14v-2H5Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const IconExport = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 20V9.41l3.3 3.3 1.4-1.42L12 6.59 7.3 11.29l1.4 1.42L11 9.41V20h2ZM5 3v2h14V3H5Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
 export const IconTransactions = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path
@@ -322,6 +340,15 @@ export const IconPill = ({ className }: IconProps) => (
   </svg>
 )
 
+export const IconRecipe = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 2v14h12V5H6Zm3 2h6v2H9V7Zm0 4h6v2H9v-2Zm0 4h4v2H9v-2Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
 export const IconHighlighter = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path
@@ -334,5 +361,14 @@ export const IconHighlighter = ({ className }: IconProps) => (
 export const IconBookmarkFlag = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M6 2a2 2 0 0 0-2 2v18l8-5.5 8 5.5V4a2 2 0 0 0-2-2H6Z" fill="currentColor" />
+  </svg>
+)
+
+export const IconStar = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+      fill="currentColor"
+    />
   </svg>
 )

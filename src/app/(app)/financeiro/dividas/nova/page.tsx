@@ -6,7 +6,7 @@ const NovaDividaPage = () => {
     <div className="space-y-6">
       <section className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40 md:p-6">
         <Link
-          href="/dividas"
+          href="/financeiro/dividas"
           className="text-sm font-medium text-accent hover:underline"
         >
           ← Voltar para dívidas

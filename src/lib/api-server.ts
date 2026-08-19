@@ -14,6 +14,11 @@ const getApiUrl = () => {
   return url.replace(/\/$/, "")
 }
 
+const REQUEST_TIMEOUT_MS = 15000
+
+const isTimeoutError = (error: unknown) =>
+  error instanceof Error && error.name === "TimeoutError"
+
 export class ApiError extends Error {
   status: number
 
@@ -43,12 +48,18 @@ const refreshAccessToken = async (): Promise<string | null> => {
   const refreshToken = await getRefreshToken()
   if (!refreshToken) return null
 
-  const response = await fetch(`${getApiUrl()}/sessions/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: refreshToken }),
-    cache: "no-store",
-  })
+  let response: Response
+  try {
+    response = await fetch(`${getApiUrl()}/sessions/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+      cache: "no-store",
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    })
+  } catch {
+    return null
+  }
 
   if (!response.ok) return null
 
@@ -96,6 +107,7 @@ export const apiFetch = async <T>(
       headers: buildHeaders(accessToken),
       body: body !== undefined ? JSON.stringify(body) : undefined,
       cache: "no-store",
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     })
 
   let accessToken = auth ? await getAccessToken() : null
@@ -103,7 +115,10 @@ export const apiFetch = async <T>(
 
   try {
     response = await doFetch(accessToken)
-  } catch {
+  } catch (error) {
+    if (isTimeoutError(error)) {
+      throw new ApiError(`Tempo esgotado ao conectar em ${getApiUrl()}.`, 504)
+    }
     throw new ApiError(
       `Não foi possível conectar em ${getApiUrl()}. Verifique a API_URL.`,
       503
@@ -118,7 +133,10 @@ export const apiFetch = async <T>(
     accessToken = refreshed
     try {
       response = await doFetch(accessToken)
-    } catch {
+    } catch (error) {
+      if (isTimeoutError(error)) {
+        throw new ApiError(`Tempo esgotado ao conectar em ${getApiUrl()}.`, 504)
+      }
       throw new ApiError(
         `Não foi possível conectar em ${getApiUrl()}. Verifique a API_URL.`,
         503

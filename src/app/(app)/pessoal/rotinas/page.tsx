@@ -201,7 +201,7 @@ const RotinasPage = async ({ searchParams }: RotinasPageProps) => {
     year < 2000 ||
     year > 2100
   ) {
-    redirect(`/rotinas?month=${current.month}&year=${current.year}`)
+    redirect(`/pessoal/rotinas?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -427,7 +427,7 @@ const RotinasPage = async ({ searchParams }: RotinasPageProps) => {
                 </div>
               }
             >
-              <MonthYearFilter month={month} year={year} basePath="/rotinas" />
+              <MonthYearFilter month={month} year={year} basePath="/pessoal/rotinas" />
             </Suspense>
           </div>
 

@@ -9,7 +9,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close()
-  const target = event.notification.data?.url || "/notificacoes"
+  const target = event.notification.data?.url || "/financeiro/notificacoes"
 
   event.waitUntil(
     self.clients

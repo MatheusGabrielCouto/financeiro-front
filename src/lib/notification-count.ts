@@ -42,7 +42,7 @@ export const buildInsightAlerts = ({
       title: "Fluxo apertado no mês",
       description: "A sobra prevista ficou negativa com os compromissos atuais.",
       tone: "warning",
-      href: "/relatorios",
+      href: "/financeiro/relatorios",
     })
   }
 
@@ -52,7 +52,7 @@ export const buildInsightAlerts = ({
       title: "Metas de caixinha em atenção",
       description: `${caixinhaAlerts} meta(s) próximas do prazo ou sem progresso suficiente.`,
       tone: "accent",
-      href: "/caixinhas",
+      href: "/financeiro/caixinhas",
     })
   }
 

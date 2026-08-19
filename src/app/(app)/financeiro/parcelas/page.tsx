@@ -44,7 +44,7 @@ const buildHref = (
   })
   if (status !== "todas") params.set("status", status)
   if (tipo !== "todos") params.set("tipo", tipo)
-  return `/parcelas?${params.toString()}`
+  return `/financeiro/parcelas?${params.toString()}`
 }
 
 const toneBar: Record<CalendarDueTone, string> = {
@@ -79,7 +79,7 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
     month < 1 ||
     month > 12
   ) {
-    redirect(`/parcelas?month=${current.month}&year=${current.year}`)
+    redirect(`/financeiro/parcelas?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -178,12 +178,12 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                     <MonthYearFilter
                       month={month}
                       year={year}
-                      basePath="/parcelas"
+                      basePath="/financeiro/parcelas"
                     />
                   </div>
                 </Suspense>
                 <Link
-                  href={`/calendario?month=${month}&year=${year}`}
+                  href={`/financeiro/calendario?month=${month}&year=${year}`}
                   className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-white/15"
                 >
                   Ver calendário
@@ -268,7 +268,7 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                 </p>
               </div>
               <Link
-                href="/cartoes"
+                href="/financeiro/cartoes"
                 className="rounded-xl border border-border px-3 py-2 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Ver cartões
@@ -416,27 +416,27 @@ const ParcelasPage = async ({ searchParams }: ParcelasPageProps) => {
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
                   {cardInvoiceAlerts.length > 0 ? (
                     <Link
-                      href="/cartoes"
+                      href="/financeiro/cartoes"
                       className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
                     >
                       Ir para cartões
                     </Link>
                   ) : (
                     <Link
-                      href="/dividas/nova"
+                      href="/financeiro/dividas/nova"
                       className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
                     >
                       Nova dívida
                     </Link>
                   )}
                   <Link
-                    href="/recorrentes"
+                    href="/financeiro/recorrentes"
                     className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Contas fixas
                   </Link>
                   <Link
-                    href="/gastos-previstos"
+                    href="/financeiro/gastos-previstos"
                     className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                   >
                     Gastos previstos

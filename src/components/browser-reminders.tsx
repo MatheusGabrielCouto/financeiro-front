@@ -136,7 +136,7 @@ export const BrowserReminders = ({
     void showBrowserNotification(title, {
       body,
       tag: `financeiro-reminders-${todayKey}`,
-      data: { url: "/notificacoes" },
+      data: { url: "/financeiro/notificacoes" },
     })
       .then(() => {
         localStorage.setItem(LAST_SHOWN_KEY, todayKey)

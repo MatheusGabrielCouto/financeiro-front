@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { ProfileForm } from "@/components/profile-form"
+import { TwoFactorSettings } from "@/components/two-factor-settings"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ApiError } from "@/lib/api-server"
 import { buildDueAlerts, countPriorityAlerts } from "@/lib/due-alerts"
@@ -61,7 +62,10 @@ const PerfilPage = async () => {
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-          <ProfileForm key={`${user.name}-${user.email}`} user={user} />
+          <div className="space-y-4">
+            <ProfileForm key={`${user.name}-${user.email}`} user={user} />
+            <TwoFactorSettings totpEnabled={Boolean(user.totpEnabled)} />
+          </div>
 
           <div className="space-y-4">
             <div className="rounded-2xl border border-border/80 bg-surface p-5 shadow-sm shadow-slate-200/40">
@@ -100,7 +104,7 @@ const PerfilPage = async () => {
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
-                  href="/notificacoes"
+                  href="/financeiro/notificacoes"
                   className="inline-flex rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
                 >
                   Ver notificações

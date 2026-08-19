@@ -70,7 +70,7 @@ export const buildDueAlerts = ({
       dueDate: dueDate.toISOString(),
       kind: "installment",
       urgency,
-      href: "/parcelas",
+      href: "/financeiro/parcelas",
     })
   }
 
@@ -101,7 +101,7 @@ export const buildDueAlerts = ({
         dueDate: dueDate.toISOString(),
         kind: "recurring",
         urgency,
-        href: "/recorrentes",
+        href: "/financeiro/recorrentes",
       })
     }
   }
@@ -119,7 +119,7 @@ export const buildDueAlerts = ({
       dueDate: dueDate.toISOString(),
       kind: "planned_expense",
       urgency,
-      href: "/gastos-previstos",
+      href: "/financeiro/gastos-previstos",
     })
   }
 

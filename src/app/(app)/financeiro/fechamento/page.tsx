@@ -32,7 +32,7 @@ const FechamentoPage = async ({ searchParams }: FechamentoPageProps) => {
     month < 1 ||
     month > 12
   ) {
-    redirect(`/fechamento?month=${current.month}&year=${current.year}`)
+    redirect(`/financeiro/fechamento?month=${current.month}&year=${current.year}`)
   }
 
   try {
@@ -184,7 +184,7 @@ const FechamentoPage = async ({ searchParams }: FechamentoPageProps) => {
           <Suspense
             fallback={<div className="text-sm text-muted">Carregando...</div>}
           >
-            <MonthYearFilter month={month} year={year} basePath="/fechamento" />
+            <MonthYearFilter month={month} year={year} basePath="/financeiro/fechamento" />
           </Suspense>
         </div>
         <FechamentoWizard

@@ -42,7 +42,7 @@ const CartaoDetailPage = async ({
     month < 1 ||
     month > 12
   ) {
-    redirect(`/cartoes/${id}`)
+    redirect(`/financeiro/cartoes/${id}`)
   }
 
   try {
@@ -78,7 +78,7 @@ const CartaoDetailPage = async ({
             <div className="relative flex flex-wrap items-start justify-between gap-4">
               <div>
                 <Link
-                  href="/cartoes"
+                  href="/financeiro/cartoes"
                   className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-200/80 transition hover:text-teal-100"
                 >
                   ← Cartões
@@ -101,7 +101,7 @@ const CartaoDetailPage = async ({
                   <MonthYearFilter
                     month={month}
                     year={year}
-                    basePath={`/cartoes/${id}`}
+                    basePath={`/financeiro/cartoes/${id}`}
                   />
                 </div>
               </Suspense>
@@ -285,7 +285,7 @@ const CartaoDetailPage = async ({
               confirmTitle="Excluir cartão"
               confirmMessage={`Remover ${card.name}? Esta ação não pode ser desfeita.`}
               ariaLabel={`Excluir cartão ${card.name}`}
-              redirectTo="/cartoes"
+              redirectTo="/financeiro/cartoes"
             />
           </div>
         </section>

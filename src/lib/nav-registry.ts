@@ -12,6 +12,7 @@ import {
   IconOverview,
   IconPiggy,
   IconPill,
+  IconRecipe,
   IconRecurring,
   IconReports,
   IconRoutine,
@@ -19,6 +20,7 @@ import {
   IconStudy,
   IconTarget,
   IconTransactions,
+  IconUser,
 } from "@/components/icons"
 
 export type IconComponent = ComponentType<{ className?: string }>
@@ -53,6 +55,8 @@ export type AppModule = {
 export type Area = {
   id: string
   label: string
+  icon: IconComponent
+  homeHref: string
   modules: AppModule[]
 }
 
@@ -60,6 +64,8 @@ export const AREAS: Area[] = [
   {
     id: "financeiro",
     label: "Financeiro",
+    icon: IconOverview,
+    homeHref: "/financeiro",
     modules: [
       {
         id: "visao-geral",
@@ -67,14 +73,14 @@ export const AREAS: Area[] = [
         description: "Saldo, extrato e panorama do mês",
         icon: IconOverview,
         accent: "violet",
-        href: "/",
+        href: "/financeiro",
         navItems: [
-          { href: "/", label: "Início", icon: IconOverview },
-          { href: "/extrato", label: "Extrato", icon: IconTransactions },
-          { href: "/relatorios", label: "Relatórios", icon: IconReports },
-          { href: "/insights", label: "Insights", icon: IconInsights },
-          { href: "/notificacoes", label: "Atenção", icon: IconBell },
-          { href: "/fechamento", label: "Fechamento", icon: IconReports },
+          { href: "/financeiro", label: "Início", icon: IconOverview },
+          { href: "/financeiro/extrato", label: "Extrato", icon: IconTransactions },
+          { href: "/financeiro/relatorios", label: "Relatórios", icon: IconReports },
+          { href: "/financeiro/insights", label: "Insights", icon: IconInsights },
+          { href: "/financeiro/notificacoes", label: "Atenção", icon: IconBell },
+          { href: "/financeiro/fechamento", label: "Fechamento", icon: IconReports },
         ],
       },
       {
@@ -83,14 +89,14 @@ export const AREAS: Area[] = [
         description: "Parcelas, cartões e planejador",
         icon: IconDebts,
         accent: "rose",
-        href: "/dividas",
+        href: "/financeiro/dividas",
         navItems: [
-          { href: "/dividas", label: "Todas as dívidas", icon: IconDebts },
-          { href: "/parcelas", label: "A pagar este mês", icon: IconInstallments },
-          { href: "/calendario", label: "Calendário", icon: IconInstallments },
-          { href: "/cartoes", label: "Cartões", icon: IconCreditCard },
-          { href: "/planejador", label: "Planejador", icon: IconDebts },
-          { href: "/simulador", label: "Simulador", icon: IconSimulate },
+          { href: "/financeiro/dividas", label: "Todas as dívidas", icon: IconDebts },
+          { href: "/financeiro/parcelas", label: "A pagar este mês", icon: IconInstallments },
+          { href: "/financeiro/calendario", label: "Calendário", icon: IconInstallments },
+          { href: "/financeiro/cartoes", label: "Cartões", icon: IconCreditCard },
+          { href: "/financeiro/planejador", label: "Planejador", icon: IconDebts },
+          { href: "/financeiro/simulador", label: "Simulador", icon: IconSimulate },
         ],
       },
       {
@@ -99,16 +105,16 @@ export const AREAS: Area[] = [
         description: "Orçamento, caixinhas e contas fixas",
         icon: IconBudget,
         accent: "amber",
-        href: "/planejamento",
+        href: "/financeiro/planejamento",
         navItems: [
-          { href: "/planejamento", label: "Planilha", icon: IconReports },
-          { href: "/pra-pagar", label: "Pra pagar", icon: IconInstallments },
-          { href: "/gastos-previstos", label: "Gastos previstos", icon: IconInstallments },
-          { href: "/caixinhas", label: "Caixinhas", icon: IconPiggy },
-          { href: "/recorrentes", label: "Contas fixas", icon: IconRecurring },
-          { href: "/receitas-fixas", label: "Receitas fixas", icon: IconTransactions },
-          { href: "/orcamento", label: "Orçamento", icon: IconBudget },
-          { href: "/categorias", label: "Categorias", icon: IconCategory },
+          { href: "/financeiro/planejamento", label: "Planilha", icon: IconReports },
+          { href: "/financeiro/pra-pagar", label: "Pra pagar", icon: IconInstallments },
+          { href: "/financeiro/gastos-previstos", label: "Gastos previstos", icon: IconInstallments },
+          { href: "/financeiro/caixinhas", label: "Caixinhas", icon: IconPiggy },
+          { href: "/financeiro/recorrentes", label: "Contas fixas", icon: IconRecurring },
+          { href: "/financeiro/receitas-fixas", label: "Receitas fixas", icon: IconTransactions },
+          { href: "/financeiro/orcamento", label: "Orçamento", icon: IconBudget },
+          { href: "/financeiro/categorias", label: "Categorias", icon: IconCategory },
         ],
       },
     ],
@@ -116,15 +122,26 @@ export const AREAS: Area[] = [
   {
     id: "pessoal",
     label: "Pessoal",
+    icon: IconUser,
+    homeHref: "/pessoal",
     modules: [
+      {
+        id: "visao-geral-pessoal",
+        label: "Início",
+        description: "Seus módulos pessoais, num painel só",
+        icon: IconOverview,
+        accent: "violet",
+        href: "/pessoal",
+        navItems: [{ href: "/pessoal", label: "Início", icon: IconOverview }],
+      },
       {
         id: "estudos",
         label: "Estudos",
         description: "Matérias e sessões de estudo",
         icon: IconStudy,
         accent: "sky",
-        href: "/estudos",
-        navItems: [{ href: "/estudos", label: "Estudos", icon: IconStudy }],
+        href: "/pessoal/estudos",
+        navItems: [{ href: "/pessoal/estudos", label: "Estudos", icon: IconStudy }],
       },
       {
         id: "rotinas",
@@ -132,8 +149,8 @@ export const AREAS: Area[] = [
         description: "Hábitos e check-in diário",
         icon: IconRoutine,
         accent: "emerald",
-        href: "/rotinas",
-        navItems: [{ href: "/rotinas", label: "Rotinas", icon: IconRoutine }],
+        href: "/pessoal/rotinas",
+        navItems: [{ href: "/pessoal/rotinas", label: "Rotinas", icon: IconRoutine }],
       },
       {
         id: "diario",
@@ -141,8 +158,8 @@ export const AREAS: Area[] = [
         description: "Notas rápidas do dia a dia",
         icon: IconJournal,
         accent: "indigo",
-        href: "/diario",
-        navItems: [{ href: "/diario", label: "Diário", icon: IconJournal }],
+        href: "/pessoal/diario",
+        navItems: [{ href: "/pessoal/diario", label: "Diário", icon: IconJournal }],
       },
       {
         id: "metas-pessoais",
@@ -150,8 +167,8 @@ export const AREAS: Area[] = [
         description: "Progresso em metas não financeiras",
         icon: IconTarget,
         accent: "fuchsia",
-        href: "/metas-pessoais",
-        navItems: [{ href: "/metas-pessoais", label: "Metas", icon: IconTarget }],
+        href: "/pessoal/metas-pessoais",
+        navItems: [{ href: "/pessoal/metas-pessoais", label: "Metas", icon: IconTarget }],
       },
       {
         id: "remedios",
@@ -159,8 +176,17 @@ export const AREAS: Area[] = [
         description: "Doses e horários",
         icon: IconPill,
         accent: "orange",
-        href: "/remedios",
-        navItems: [{ href: "/remedios", label: "Remédios", icon: IconPill }],
+        href: "/pessoal/remedios",
+        navItems: [{ href: "/pessoal/remedios", label: "Remédios", icon: IconPill }],
+      },
+      {
+        id: "receitas",
+        label: "Receitas",
+        description: "Livro de receitas com modo preparo",
+        icon: IconRecipe,
+        accent: "violet",
+        href: "/pessoal/receitas",
+        navItems: [{ href: "/pessoal/receitas", label: "Receitas", icon: IconRecipe }],
       },
       {
         id: "cadernos",
@@ -168,8 +194,8 @@ export const AREAS: Area[] = [
         description: "Anotações e cadernos livres",
         icon: IconNotebook,
         accent: "cyan",
-        href: "/cadernos",
-        navItems: [{ href: "/cadernos", label: "Cadernos", icon: IconNotebook }],
+        href: "/pessoal/cadernos",
+        navItems: [{ href: "/pessoal/cadernos", label: "Cadernos", icon: IconNotebook }],
       },
     ],
   },
@@ -184,7 +210,10 @@ export const findModuleById = (moduleId: string): AppModule | undefined =>
   ALL_MODULES.find((appModule) => appModule.id === moduleId)
 
 const isPathMatch = (pathname: string, href: string) =>
-  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`)
+  pathname === href || pathname.startsWith(`${href}/`)
+
+export const findAreaByHref = (pathname: string): Area | undefined =>
+  AREAS.find((area) => pathname === area.homeHref || pathname.startsWith(`${area.homeHref}/`))
 
 export const findModuleByHref = (pathname: string): AppModule | undefined => {
   let best: AppModule | undefined

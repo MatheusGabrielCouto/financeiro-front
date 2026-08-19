@@ -1,7 +1,9 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import { IconPill } from "@/components/icons"
+import { formatExpiration } from "@/lib/medicine-status"
 
 const MONTH_OPTIONS = [
   { value: 1, label: "Janeiro" },
@@ -20,6 +22,9 @@ const MONTH_OPTIONS = [
 
 const currentYear = new Date().getFullYear()
 
+const fieldClass =
+  "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent transition focus:ring-2"
+
 export const MedicineForm = () => {
   const router = useRouter()
   const [name, setName] = useState("")
@@ -31,6 +36,15 @@ export const MedicineForm = () => {
   const [notes, setNotes] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+
+  const purposeTags = useMemo(
+    () =>
+      purpose
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    [purpose]
+  )
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -63,10 +77,7 @@ export const MedicineForm = () => {
           name: name.trim(),
           quantity: quantityValue,
           unit: unit.trim() || "un",
-          purpose: purpose
-            .split(",")
-            .map((item) => item.trim())
-            .filter(Boolean),
+          purpose: purposeTags,
           expirationMonth: monthValue,
           expirationYear: yearValue,
           notes: notes.trim(),
@@ -100,49 +111,78 @@ export const MedicineForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" aria-label="Novo remédio">
-      <label className="block space-y-1">
+      <div className="rounded-2xl border border-border/70 bg-accent-soft/20 p-4">
+        <div className="flex items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent">
+            <IconPill className="h-5 w-5" />
+          </span>
+          <div className="min-w-0">
+            <p className="font-[family-name:var(--font-display)] text-base font-semibold">
+              {name.trim() || "Nome do remédio"}
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              {quantity ? `${quantity} ${unit}` : "Quantidade"} · validade{" "}
+              {formatExpiration(Number(expirationMonth), Number(expirationYear) || currentYear)}
+            </p>
+            {purposeTags.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {purposeTags.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full bg-background px-2 py-0.5 text-xs font-medium text-muted ring-1 ring-border"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <label className="block space-y-1.5">
         <span className="text-sm font-medium">Nome</span>
         <input
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Ex.: Dipirona"
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
+          className={fieldClass}
           aria-label="Nome do remédio"
         />
       </label>
 
       <div className="grid grid-cols-2 gap-3">
-        <label className="block space-y-1">
+        <label className="block space-y-1.5">
           <span className="text-sm font-medium">Quantidade</span>
           <input
             inputMode="numeric"
             value={quantity}
             onChange={(event) => setQuantity(event.target.value)}
             placeholder="10"
-            className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
+            className={fieldClass}
             aria-label="Quantidade em estoque"
           />
         </label>
 
-        <label className="block space-y-1">
+        <label className="block space-y-1.5">
           <span className="text-sm font-medium">Unidade</span>
           <input
             value={unit}
             onChange={(event) => setUnit(event.target.value)}
             placeholder="comprimidos, ml..."
-            className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
+            className={fieldClass}
             aria-label="Unidade de medida"
           />
         </label>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <label className="block space-y-1">
+        <label className="block space-y-1.5">
           <span className="text-sm font-medium">Mês de validade</span>
           <select
             value={expirationMonth}
             onChange={(event) => setExpirationMonth(event.target.value)}
-            className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
+            className={fieldClass}
             aria-label="Mês de validade"
           >
             {MONTH_OPTIONS.map((month) => (
@@ -153,45 +193,45 @@ export const MedicineForm = () => {
           </select>
         </label>
 
-        <label className="block space-y-1">
+        <label className="block space-y-1.5">
           <span className="text-sm font-medium">Ano de validade</span>
           <input
             inputMode="numeric"
             value={expirationYear}
             onChange={(event) => setExpirationYear(event.target.value)}
             placeholder={String(currentYear)}
-            className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
+            className={fieldClass}
             aria-label="Ano de validade"
           />
         </label>
       </div>
 
-      <label className="block space-y-1">
+      <label className="block space-y-1.5">
         <span className="text-sm font-medium">Para que serve</span>
         <input
           value={purpose}
           onChange={(event) => setPurpose(event.target.value)}
           placeholder="Febre, dor de cabeça..."
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
+          className={fieldClass}
           aria-label="Para que serve, separado por vírgula"
         />
         <span className="block text-xs text-muted">Separe por vírgula</span>
       </label>
 
-      <label className="block space-y-1">
+      <label className="block space-y-1.5">
         <span className="text-sm font-medium">Observações (opcional)</span>
         <textarea
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           placeholder="Ex.: tomar após as refeições"
           rows={2}
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-accent focus:ring-2"
+          className={`${fieldClass} resize-y`}
           aria-label="Observações"
         />
       </label>
 
       {error ? (
-        <p className="text-sm text-danger" role="alert">
+        <p className="rounded-xl border border-danger/30 bg-danger/5 px-3 py-2 text-sm text-danger" role="alert">
           {error}
         </p>
       ) : null}

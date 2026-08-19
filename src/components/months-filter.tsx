@@ -22,7 +22,7 @@ export const MonthsFilter = ({ months }: MonthsFilterProps) => {
     setSelected(value)
     const params = new URLSearchParams(searchParams.toString())
     params.set("months", String(value))
-    router.push(`/relatorios?${params.toString()}`)
+    router.push(`/financeiro/relatorios?${params.toString()}`)
   }
 
   return (

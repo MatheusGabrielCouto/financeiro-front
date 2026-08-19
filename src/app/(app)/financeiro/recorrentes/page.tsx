@@ -60,7 +60,7 @@ const RecorrentesPage = async () => {
                 </span>{" "}
                 O salário e outras receitas ficam em{" "}
                 <Link
-                  href="/receitas-fixas"
+                  href="/financeiro/receitas-fixas"
                   className="font-semibold text-accent hover:underline"
                 >
                   Receitas fixas
@@ -69,7 +69,7 @@ const RecorrentesPage = async () => {
               </p>
             </div>
             <Link
-              href="/receitas-fixas"
+              href="/financeiro/receitas-fixas"
               className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
             >
               Ir para receitas fixas
@@ -232,7 +232,7 @@ const RecorrentesPage = async () => {
                 cadastrados em Receitas fixas — não aqui.
               </p>
               <Link
-                href="/receitas-fixas"
+                href="/financeiro/receitas-fixas"
                 className="mt-4 inline-flex rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
               >
                 Cadastrar salário / receita

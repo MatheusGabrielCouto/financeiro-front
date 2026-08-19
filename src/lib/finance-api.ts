@@ -79,6 +79,11 @@ import type {
   CreateMedicineBody,
   UpdateMedicineBody,
   AdjustMedicineQuantityBody,
+  Recipe,
+  RecipeCategory,
+  RecipeCookHistoryItem,
+  RecipeCookSession,
+  RecipeListItem,
 } from "@/lib/types"
 
 export const getAmount = () => apiFetch<AmountResponse>("/amount")
@@ -563,6 +568,50 @@ export const adjustMedicineQuantity = (id: string, body: AdjustMedicineQuantityB
 
 export const deleteMedicine = (id: string) =>
   apiFetch<{ success: true }>(`/medicine/${id}`, { method: "DELETE" })
+
+export const getRecipeCategories = () =>
+  apiFetch<RecipeCategory[]>("/recipe/category")
+
+import { buildRecipeListQuery } from "@/lib/recipe-filters"
+
+export type RecipeListQueryParams = {
+  categoryId?: string
+  search?: string
+  includeArchived?: boolean
+  favoritesOnly?: boolean
+  difficulty?: "EASY" | "MEDIUM" | "HARD"
+  maxTime?: "15" | "30" | "60"
+  cooked?: "0" | "1"
+  uncategorized?: boolean
+  sort?: "recent" | "title" | "cooked" | "quick"
+}
+
+const appendRecipeQuery = (query: URLSearchParams, params?: RecipeListQueryParams) => {
+  const built = buildRecipeListQuery(params)
+  built.forEach((value, key) => query.set(key, value))
+}
+
+export const getRecipes = (params?: RecipeListQueryParams) => {
+  const query = new URLSearchParams()
+  appendRecipeQuery(query, params)
+  const suffix = query.toString()
+  return apiFetch<RecipeListItem[]>(`/recipe${suffix ? `?${suffix}` : ""}`)
+}
+
+export const exportRecipes = (params?: RecipeListQueryParams) => {
+  const query = new URLSearchParams()
+  appendRecipeQuery(query, params)
+  const suffix = query.toString()
+  return apiFetch<Recipe[]>(`/recipe/export${suffix ? `?${suffix}` : ""}`)
+}
+
+export const getRecipe = (id: string) => apiFetch<Recipe>(`/recipe/${id}`)
+
+export const getRecipeCookSession = (id: string) =>
+  apiFetch<RecipeCookSession | null>(`/recipe/${id}/cook-session/active`)
+
+export const getRecipeCookHistory = (id: string) =>
+  apiFetch<RecipeCookHistoryItem[]>(`/recipe/${id}/history`)
 
 export const getCreditCards = () => apiFetch<CreditCard[]>("/credit-card")
 

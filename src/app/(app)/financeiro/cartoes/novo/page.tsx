@@ -5,7 +5,7 @@ const NovoCartaoPage = () => (
   <div className="space-y-5">
     <div className="max-w-2xl">
       <Link
-        href="/cartoes"
+        href="/financeiro/cartoes"
         className="text-xs font-semibold uppercase tracking-[0.14em] text-accent hover:underline"
       >
         ← Cartões

@@ -31,11 +31,11 @@ export const KeyboardShortcuts = () => {
 
       if (event.key === "/") {
         event.preventDefault()
-        if (pathname.startsWith("/extrato")) {
+        if (pathname.startsWith("/financeiro/extrato")) {
           window.dispatchEvent(new CustomEvent("financeiro:focus-extrato-search"))
           return
         }
-        router.push("/extrato?focus=search")
+        router.push("/financeiro/extrato?focus=search")
       }
     }
 

@@ -77,8 +77,8 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
     })
 
     const filterHref = (nextStatus: string) => {
-      if (nextStatus === "todas") return "/dividas"
-      return `/dividas?status=${nextStatus}`
+      if (nextStatus === "todas") return "/financeiro/dividas"
+      return `/financeiro/dividas?status=${nextStatus}`
     }
 
     const activeDebts = enriched.filter((item) => !item.isSettled)
@@ -176,7 +176,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                 pdfLabel="Relatório PDF"
               />
               <Link
-                href="/dividas/nova"
+                href="/financeiro/dividas/nova"
                 className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-hover"
               >
                 <IconPlus className="h-4 w-4" />
@@ -266,7 +266,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                   Cadastre financiamentos, empréstimos ou compras parceladas.
                 </p>
                 <Link
-                  href="/dividas/nova"
+                  href="/financeiro/dividas/nova"
                   className="mt-5 inline-flex rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white"
                 >
                   Cadastrar primeira dívida
@@ -300,7 +300,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <Link
-                              href={`/dividas/${debt.id}`}
+                              href={`/financeiro/dividas/${debt.id}`}
                               className="truncate text-base font-semibold hover:text-accent"
                             >
                               {debt.title}
@@ -324,7 +324,7 @@ const DividasPage = async ({ searchParams }: DividasPageProps) => {
 
                         <div className="flex flex-wrap items-center gap-2">
                           <Link
-                            href={`/dividas/${debt.id}`}
+                            href={`/financeiro/dividas/${debt.id}`}
                             className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                           >
                             Ver detalhes

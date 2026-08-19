@@ -146,8 +146,8 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
     const doneTotal = doneItems.reduce((sum, item) => sum + item.value, 0)
 
     const filterHref = (status?: string) => {
-      if (!status) return "/pra-pagar"
-      return `/pra-pagar?status=${status}`
+      if (!status) return "/financeiro/pra-pagar"
+      return `/financeiro/pra-pagar?status=${status}`
     }
 
     const filters = [
@@ -178,13 +178,13 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
-                href="/extrato"
+                href="/financeiro/extrato"
                 className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-900/50"
               >
                 Extrato
               </Link>
               <Link
-                href="/gastos-previstos"
+                href="/financeiro/gastos-previstos"
                 className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
               >
                 Gastos previstos
@@ -269,13 +269,13 @@ const PraPagarPage = async ({ searchParams }: PraPagarPageProps) => {
                     </p>
                     <div className="mt-5 flex flex-wrap justify-center gap-2">
                       <Link
-                        href="/gastos-previstos"
+                        href="/financeiro/gastos-previstos"
                         className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
                       >
                         Ver gastos previstos
                       </Link>
                       <Link
-                        href="/extrato"
+                        href="/financeiro/extrato"
                         className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
                       >
                         Ir ao extrato

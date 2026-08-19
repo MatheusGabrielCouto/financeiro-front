@@ -185,13 +185,13 @@ const NotificacoesPage = async () => {
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
-                href="/pra-pagar"
+                href="/financeiro/pra-pagar"
                 className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Pra pagar
               </Link>
               <Link
-                href="/parcelas"
+                href="/financeiro/parcelas"
                 className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
               >
                 Ir para pagamentos
@@ -280,7 +280,7 @@ const NotificacoesPage = async () => {
                     </p>
                   </div>
                   <Link
-                    href="/cartoes"
+                    href="/financeiro/cartoes"
                     className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
                     Ver cartões
@@ -343,7 +343,7 @@ const NotificacoesPage = async () => {
                     </p>
                   </div>
                   <Link
-                    href="/pra-pagar"
+                    href="/financeiro/pra-pagar"
                     className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
                     Abrir lista
@@ -394,7 +394,7 @@ const NotificacoesPage = async () => {
                             ariaLabel={`Marcar ${item.title} como feito`}
                           />
                           <Link
-                            href="/pra-pagar"
+                            href="/financeiro/pra-pagar"
                             className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-50 dark:hover:bg-slate-800"
                           >
                             Abrir
@@ -496,25 +496,25 @@ const NotificacoesPage = async () => {
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
-                  href="/pra-pagar"
+                  href="/financeiro/pra-pagar"
                   className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold"
                 >
                   Pra pagar
                 </Link>
                 <Link
-                  href="/gastos-previstos"
+                  href="/financeiro/gastos-previstos"
                   className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold"
                 >
                   Previstos
                 </Link>
                 <Link
-                  href="/cartoes"
+                  href="/financeiro/cartoes"
                   className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold"
                 >
                   Cartões
                 </Link>
                 <Link
-                  href="/recorrentes"
+                  href="/financeiro/recorrentes"
                   className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-semibold"
                 >
                   Contas fixas

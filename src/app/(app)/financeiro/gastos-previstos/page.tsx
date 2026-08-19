@@ -35,7 +35,7 @@ const GastosPrevistosPage = async ({
     !Number.isFinite(year)
   ) {
     redirect(
-      `/gastos-previstos?month=${current.month}&year=${current.year}`
+      `/financeiro/gastos-previstos?month=${current.month}&year=${current.year}`
     )
   }
 
@@ -66,7 +66,7 @@ const GastosPrevistosPage = async ({
         year: String(year),
       })
       if (status) search.set("status", status)
-      return `/gastos-previstos?${search.toString()}`
+      return `/financeiro/gastos-previstos?${search.toString()}`
     }
 
     return (
@@ -90,7 +90,7 @@ const GastosPrevistosPage = async ({
               <MonthYearFilter
                 month={month}
                 year={year}
-                basePath="/gastos-previstos"
+                basePath="/financeiro/gastos-previstos"
               />
             </Suspense>
           </div>
@@ -199,13 +199,13 @@ const GastosPrevistosPage = async ({
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Link
-                  href="/planejamento"
+                  href="/financeiro/planejamento"
                   className="text-xs font-semibold text-accent hover:underline"
                 >
                   Ver planilha
                 </Link>
                 <Link
-                  href="/caixinhas"
+                  href="/financeiro/caixinhas"
                   className="text-xs font-semibold text-accent hover:underline"
                 >
                   Caixinhas
